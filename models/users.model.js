@@ -25,7 +25,7 @@ const UserSchema = Schema({
     },
     img: {
         type: String
-    },    
+    },
     mesero: {
         type: Boolean,
         default: false
