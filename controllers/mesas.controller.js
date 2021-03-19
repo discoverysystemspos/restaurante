@@ -42,6 +42,7 @@ const getMesaId = async(req, res = response) => {
 
         const mesa = await Mesas.findById(id)
             .populate('carrito.product', 'name')
+            .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
 
         res.json({
@@ -123,17 +124,16 @@ const updateMesa = async(req, res = response) => {
         // SEARCH MESA
 
         // VALIDATE MESA
-        const { ...campos } = req.body;
+        const {...campos } = req.body;
 
-        if ( campos.carrito ) {
-            
-            if ( campos.carrito.length > 0 ) {
-                campos.disponible = false;            
-            }else {            
+        if (campos.carrito) {
+
+            if (campos.carrito.length > 0) {
+                campos.disponible = false;
+            } else {
                 campos.disponible = true;
             }
         }
-
 
         // UPDATE
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false });
@@ -155,6 +155,7 @@ const updateMesa = async(req, res = response) => {
 /** =====================================================================
  *  UPDATE MESA
 =========================================================================*/
+
 
 // /** =====================================================================
 //  *  DELETE DEPARTMENT

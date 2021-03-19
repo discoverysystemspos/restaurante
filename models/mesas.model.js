@@ -32,11 +32,15 @@ const MesasSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    cliente: {
+        type: Schema.Types.ObjectId,
+        ref: 'Clients'
+    },
     status: {
         type: Boolean,
         default: true
     },
-    carrito:[carritoSchema],
+    carrito: [carritoSchema],
     fecha: {
         type: Date,
         default: Date.now
