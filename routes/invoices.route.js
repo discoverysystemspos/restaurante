@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getInvoices, createInvoice, getInvoiceId, getInvoicesDate, returnInvoice } = require('../controllers/invoices.controller');
+const { getInvoices, createInvoice, getInvoiceId, getInvoicesDate, returnInvoice, updateInvoice } = require('../controllers/invoices.controller');
 
 const router = Router();
 
@@ -53,6 +53,14 @@ router.post('/:turno', [
     createInvoice);
 /** =====================================================================
 *  CREATE INVOICE
+=========================================================================*/
+
+/** =====================================================================
+*  PUT INVOICE
+=========================================================================*/
+router.put('/:id', validarJWT, updateInvoice);
+/** =====================================================================
+*  PUT INVOICE
 =========================================================================*/
 
 /** =====================================================================

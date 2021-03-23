@@ -108,25 +108,25 @@ const departmentProduct = async(req, res = response) => {
 
         // data = await User.find({ name: regex });
         [products, total] = await Promise.all([
-            Product.find({department: department})
+            Product.find(department)
             .populate('kit.product', 'name')
             .populate('department', 'name'),
             Product.countDocuments()
         ]);
-        
+
         res.json({
             ok: true,
             products,
             total
         });
-        
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({
             ok: false,
             msg: 'Error inesperado, porfavor intente nuevamente'
         });
-        
+
     }
 
 }
