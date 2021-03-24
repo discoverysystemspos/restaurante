@@ -43,7 +43,6 @@ router.put('/:id', [
         validarJWT,
         check('name', 'El nombre es olbigatorio').not().isEmpty(),
         check('cedula', 'La Cedula es olbigatoria').not().isEmpty(),
-        check('email', 'El email es olbigatorio').isEmail(),
         validarCampos
     ],
     updateClient
