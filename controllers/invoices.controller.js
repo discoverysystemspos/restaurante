@@ -129,7 +129,7 @@ const getInvoiceId = async(req, res = response) => {
 
         const invoice = await Invoice.findById(id)
             .populate('client', 'name cedula telefono email')
-            .populate('products.product', 'name')
+            .populate('products.product', 'name code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
@@ -219,7 +219,7 @@ const updateInvoice = async(req, res = response) => {
         // SEARCH INVOICE
 
         const {...campos } = req.body;
-        const invoiceUpdate = await Invoice.findByIdAndUpdate(_id, campos, { new: true });
+        const invoiceUpdate = await Invoice.findByIdAndUpdate(_id, campos, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
