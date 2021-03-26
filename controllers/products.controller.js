@@ -108,7 +108,7 @@ const departmentProduct = async(req, res = response) => {
 
         // data = await User.find({ name: regex });
         [products, total] = await Promise.all([
-            Product.find(department)
+            Product.find({ department: department })
             .populate('kit.product', 'name')
             .populate('department', 'name'),
             Product.countDocuments()
