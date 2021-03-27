@@ -247,6 +247,11 @@ const updateInvoice = async(req, res = response) => {
 =========================================================================*/
 const returnInvoice = async(req, res = response) => {
 
+    return res.status(200).json({
+        ok: true,
+        msg: 'en la ruta'
+    });
+
     try {
 
         const id = req.params.id;
