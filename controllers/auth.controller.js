@@ -32,15 +32,21 @@ const login = async(req, res = response) => {
                 ok: false,
                 msg: 'El usuario o la contraseña es incorrecta'
             });
+        } else {
+
+            if (userDB.status) {
+
+                const token = await generarJWT(userDB.id);
+
+                res.json({
+                    ok: true,
+                    token
+                });
+            }
+
         }
 
         // JWT - JWT
-        const token = await generarJWT(userDB.id);
-
-        res.json({
-            ok: true,
-            token
-        });
 
     } catch (error) {
         console.log(error);

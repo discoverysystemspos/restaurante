@@ -41,14 +41,12 @@ router.get('/:id', validarJWT, getInvoiceId);
  *  CREATE INVOICE
 =========================================================================*/
 router.post('/:turno', [
-
         validarJWT,
         check('client', 'EL ID del cliente debe ser correcto').isMongoId(),
         check('type', 'Tienes que especificar que metodo de pago uso').not().isEmpty(),
         check('amount', 'El monto es obligatorio').not().isEmpty(),
         check('products', 'No ha seleccionado ningun producto').not().isEmpty(),
         validarCampos
-
     ],
     createInvoice);
 /** =====================================================================
@@ -58,7 +56,7 @@ router.post('/:turno', [
 /** =====================================================================
 *  PUT INVOICE
 =========================================================================*/
-router.put('/:id', validarJWT, updateInvoice);
+router.put('/pago/:id', validarJWT, updateInvoice);
 /** =====================================================================
 *  PUT INVOICE
 =========================================================================*/

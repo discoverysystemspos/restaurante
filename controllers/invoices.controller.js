@@ -204,12 +204,12 @@ const createInvoice = async(req, res = response) => {
 =========================================================================*/
 const updateInvoice = async(req, res = response) => {
 
-    const _id = req.params.id;
+    const id = req.params.id;
 
     try {
 
         // SEARCH INVOICE
-        const invoiceDB = await Invoice.findById(_id);
+        const invoiceDB = await Invoice.findById(id);
         if (!invoiceDB) {
             return res.status(404).json({
                 ok: false,
@@ -219,7 +219,7 @@ const updateInvoice = async(req, res = response) => {
         // SEARCH INVOICE
 
         const {...campos } = req.body;
-        const invoiceUpdate = await Invoice.findByIdAndUpdate(_id, campos, { new: true, useFindAndModify: false });
+        const invoiceUpdate = await Invoice.findByIdAndUpdate(id, campos, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,

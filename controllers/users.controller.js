@@ -115,7 +115,7 @@ const updateUser = async(req, res = response) => {
             // ENCRYPTAR PASSWORD
             const salt = bcrypt.genSaltSync();
             campos.password = bcrypt.hashSync(password, salt);
-            
+
         }
 
         // UPDATE
@@ -150,29 +150,36 @@ const deleteUser = async(req, res = response) => {
 
     try {
 
-        // SEARCH USER
-        const userDB = await User.findById(uid);
+        // SEARCH DEPARTMENT
+        const userDB = await User.findById({ _id: uid });
         if (!userDB) {
-            return res.status(404).json({
+            return res.status(400).json({
                 ok: false,
                 msg: 'No existe ningun usuario con este ID'
             });
         }
-        // SEARCH USER
+        // SEARCH DEPARTMENT
 
-        // DELETE USER
-        await User.findByIdAndDelete(uid);
+        // CHANGE STATUS
+        if (userDB.status === true) {
+            userDB.status = false;
+        } else {
+            userDB.status = true;
+        }
+        // CHANGE STATUS
+
+        const userUpdate = await User.findByIdAndUpdate(uid, userDB, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            user: 'Usuario eliminado exitosamente!'
+            User: userUpdate
         });
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({
+        return res.status(500).json({
             ok: false,
-            msg: 'Error Inesperado'
+            msg: 'Error inesperado, porfavor intente nuevamente'
         });
     }
 
