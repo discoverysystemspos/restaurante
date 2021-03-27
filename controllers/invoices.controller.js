@@ -206,6 +206,11 @@ const updateInvoice = async(req, res = response) => {
 
     const id = req.params.id;
 
+    return res.status(200).json({
+        ok: true,
+        msg: 'en la ruta'
+    });
+
     try {
 
         // SEARCH INVOICE
@@ -247,10 +252,6 @@ const updateInvoice = async(req, res = response) => {
 =========================================================================*/
 const returnInvoice = async(req, res = response) => {
 
-    return res.status(200).json({
-        ok: true,
-        msg: 'en la ruta'
-    });
 
     try {
 
