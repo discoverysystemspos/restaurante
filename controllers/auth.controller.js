@@ -35,12 +35,16 @@ const login = async(req, res = response) => {
         } else {
 
             if (userDB.status) {
-
                 const token = await generarJWT(userDB.id);
 
                 res.json({
                     ok: true,
                     token
+                });
+            } else {
+                return res.status(401).json({
+                    ok: false,
+                    msg: 'Tu cuenta a sido desactivada por un administrador'
                 });
             }
 

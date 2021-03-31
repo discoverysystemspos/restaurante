@@ -135,8 +135,6 @@ const updateUser = async(req, res = response) => {
         });
     }
 
-
-
 };
 /** =====================================================================
  *  UPDATE USER
@@ -172,7 +170,7 @@ const deleteUser = async(req, res = response) => {
 
         res.json({
             ok: true,
-            User: userUpdate
+            user: userUpdate
         });
 
     } catch (error) {
