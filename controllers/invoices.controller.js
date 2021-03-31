@@ -18,7 +18,7 @@ const getInvoices = async(req, res = response) => {
         const [invoices, total] = await Promise.all([
 
             Invoice.find()
-            .populate('client', 'name cedula telefono email')
+            .populate('client', 'name cedula telefono email address city')
             .populate('products.product', 'name')
             .populate('user', 'name')
             .populate('mesero', 'name')
@@ -94,7 +94,7 @@ const getInvoicesDate = async(req, res = response) => {
                     ]
                 }
             })
-            .populate('client', 'name cedula telefono email')
+            .populate('client', 'name cedula telefono email address city')
             .sort({ invoice: -1 }),
             Invoice.countDocuments()
         ]);
@@ -128,7 +128,7 @@ const getInvoiceId = async(req, res = response) => {
     try {
 
         const invoice = await Invoice.findById(id)
-            .populate('client', 'name cedula telefono email')
+            .populate('client', 'name cedula telefono email address city')
             .populate('products.product', 'name code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
