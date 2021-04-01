@@ -9,7 +9,7 @@ const getDatos = async(req, res) => {
 
     const status = true;
 
-    const datos = await Datos.findOne({status}, 'name address phone nit tax logo');
+    const datos = await Datos.findOne({ status });
 
     res.json({
         ok: true,

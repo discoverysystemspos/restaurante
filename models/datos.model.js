@@ -27,6 +27,24 @@ const DatoSchema = Schema({
         default: 0,
         require: true
     },
+    printpos: {
+        type: Boolean,
+        default: true
+    },
+    responsable: {
+        type: Boolean,
+        default: false
+    },
+    impuestoconsumo: {
+        type: Boolean,
+        default: false
+    },
+    resolucion: {
+        type: String
+    },
+    prefijopos: {
+        type: String
+    },
     logo: {
         type: String
     },
