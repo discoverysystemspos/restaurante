@@ -257,6 +257,11 @@ const returnInvoice = async(req, res = response) => {
         // CHANGE STATUS
         if (invoice.status === true) {
             invoice.status = false;
+
+            if (invoice.credito) {
+                invoice.credito = false;
+            }
+
         } else {
             return res.status(400).json({
                 ok: false,
@@ -285,12 +290,80 @@ const returnInvoice = async(req, res = response) => {
 
     }
 
-
 }
 
 /** =====================================================================
  *  RETURN INVOICE
 =========================================================================*/
+/** =====================================================================
+ *  DELETE PRODUCT INVOICE
+=========================================================================*/
+const deleteProductInvoice = async(req, res = response) => {
+
+        const _id = req.params.id;
+
+        const factura = req.params.factura;
+
+        try {
+
+            // SEARCH PRODUCT
+            const invoiceDB = await Invoice.findById({ _id: factura });
+            if (!invoiceDB) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'No existe ninguna factura con este ID'
+                });
+            }
+
+            // COMPROBAR SI ES EL ULTIMO PRODUCTO
+            if (invoiceDB.products.length < 2) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'No puedes eliminar el ultimo producto de la factura, si deseas cancelar la factura dar click en cancelar factura'
+                });
+            }
+
+            const tempArr = invoiceDB.products.filter(record => {
+                return record.id === _id;
+            })
+
+            returnStock(tempArr);
+
+            let index = invoiceDB.products.indexOf(tempArr[0]);
+
+            let monto = (tempArr[0].qty * tempArr[0].price);
+
+            invoiceDB.amount -= monto;
+
+            invoiceDB.products.splice(index, 1);
+
+            const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
+                .populate('client', 'name cedula telefono email address city')
+                .populate('products.product', 'name code type')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .populate('user', 'name');
+
+            res.json({
+                ok: true,
+                invoice: invoiceUpdate
+            });
+
+        } catch (error) {
+
+            console.log(error);
+            return res.status(500).json({
+                ok: false,
+                msg: 'Error inesperado, porfavor intente nuevamente'
+            });
+
+        }
+
+
+    }
+    /** =====================================================================
+     *  DELETE PRODUCT INVOICE
+    =========================================================================*/
 
 
 
@@ -301,5 +374,6 @@ module.exports = {
     getInvoiceId,
     getInvoicesDate,
     returnInvoice,
-    updateInvoice
+    updateInvoice,
+    deleteProductInvoice
 };

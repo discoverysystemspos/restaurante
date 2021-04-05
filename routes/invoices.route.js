@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getInvoices, createInvoice, getInvoiceId, getInvoicesDate, returnInvoice, updateInvoice } = require('../controllers/invoices.controller');
+const { getInvoices, createInvoice, getInvoiceId, getInvoicesDate, returnInvoice, updateInvoice, deleteProductInvoice } = require('../controllers/invoices.controller');
 
 const router = Router();
 
@@ -67,6 +67,14 @@ router.put('/pago/:id', validarJWT, updateInvoice);
 router.delete('/:id', validarJWT, returnInvoice);
 /** =====================================================================
 *  RETURN INVOICE
+=========================================================================*/
+
+/** =====================================================================
+*  DELETE PRODUCT OF INVOICE
+=========================================================================*/
+router.delete('/:factura/product/:id', validarJWT, deleteProductInvoice);
+/** =====================================================================
+*  DELETE PRODUCT OF INVOICE
 =========================================================================*/
 
 
