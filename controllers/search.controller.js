@@ -48,6 +48,7 @@ const search = async(req, res = response) => {
                         { cedula: regex },
                         { phone: regex },
                         { email: regex },
+                        { address: regex },
                         { city: regex },
                         { Department: regex }
                     ]
@@ -93,7 +94,7 @@ const search = async(req, res = response) => {
             ]);
             break;
         case 'mesa':
-            
+
             [data, total] = await Promise.all([
                 Mesa.find({
                     $or: [
@@ -103,7 +104,7 @@ const search = async(req, res = response) => {
                 Mesa.countDocuments()
             ]);
             break;
-        
+
         default:
             res.status(400).json({
                 ok: false,

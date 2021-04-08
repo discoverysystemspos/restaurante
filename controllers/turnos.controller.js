@@ -15,7 +15,7 @@ const getTurnos = async(req, res = response) => {
             Turno.find()
             .populate('cajero', 'name')
             .populate('caja', 'name')
-            .sort({'fecha': -1})
+            .sort({ 'fecha': -1 })
             .skip(desde)
             .limit(10),
             Turno.countDocuments()
@@ -47,47 +47,43 @@ const getTurnosDate = async(req, res = response) => {
     const fecha = req.params.fecha;
 
     try {
-        
+
         const [turnos, total] = await Promise.all([
-            Turno.find( {
+            Turno.find({
                 $expr: {
-                  $and: [
-                    {
-                      $eq: [
-                        {
-                          $year: "$fecha"
+                    $and: [{
+                            $eq: [{
+                                    $year: "$fecha"
+                                },
+                                {
+                                    $year: new Date(fecha)
+                                }
+                            ]
                         },
                         {
-                          $year: new Date(fecha)
-                        }
-                      ]
-                    },
-                    {
-                      $eq: [
-                        {
-                          $month: "$fecha"
+                            $eq: [{
+                                    $month: "$fecha"
+                                },
+                                {
+                                    $month: new Date(fecha)
+                                }
+                            ]
                         },
                         {
-                          $month: new Date(fecha)
+                            $eq: [{
+                                    $dayOfMonth: "$fecha"
+                                },
+                                {
+                                    $dayOfMonth: new Date(fecha)
+                                }
+                            ]
                         }
-                      ]
-                    },
-                    {
-                      $eq: [
-                        {
-                          $dayOfMonth: "$fecha"
-                        },
-                        {
-                          $dayOfMonth: new Date(fecha)
-                        }
-                      ]
-                    }
-                  ]
+                    ]
                 }
-              })
+            })
             .populate('cajero', 'name')
             .populate('caja', 'name')
-            .sort({'fecha': -1}),
+            .sort({ 'fecha': -1 }),
             Turno.countDocuments()
         ]);
 
@@ -123,7 +119,7 @@ const getTurnoId = async(req, res = response) => {
         const turnoDB = await Turno.findById({ _id: tid })
             .populate('cajero', 'name')
             .populate('caja', 'name')
-            .populate('sales.facturas', 'amount payments status');
+            .populate('sales.facturas', 'amount payments status type');
         // SEARCH TURNO        
 
         res.json({
@@ -214,7 +210,7 @@ const updateTurno = async(req, res = response) => {
         // SEARCH DEPARTMENT
 
         // UPDATE
-        const { ...campos } = req.body;
+        const {...campos } = req.body;
         const turnoUpdate = await Turno.findByIdAndUpdate(tid, campos, { new: true, useFindAndModify: false });
 
         res.json({
