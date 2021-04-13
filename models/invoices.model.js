@@ -6,7 +6,7 @@ autoIncrement.initialize(connection);
 
 // PRODUCTS SCHEMA
 const ProductosSchema = Schema({
-    
+
     product: {
         type: Schema.Types.ObjectId,
         ref: 'Product',
@@ -20,7 +20,7 @@ const ProductosSchema = Schema({
         type: Number,
         require: true
     }
-    
+
 });
 
 // Payment SCHEMA
@@ -55,7 +55,7 @@ const InvoiceSchema = Schema({
     mesero: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    },    
+    },
     mesa: {
         type: Schema.Types.ObjectId,
         ref: 'Mesas'
@@ -66,6 +66,10 @@ const InvoiceSchema = Schema({
         require: true
     },
     amount: {
+        type: Number,
+        require: true
+    },
+    tip: {
         type: Number,
         require: true
     },

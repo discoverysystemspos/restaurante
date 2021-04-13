@@ -27,6 +27,22 @@ const DatoSchema = Schema({
         default: 0,
         require: true
     },
+    commission: {
+        type: Boolean,
+        default: false
+    },
+    comision: {
+        type: Number,
+        default: 0
+    },
+    tip: {
+        type: Boolean,
+        default: false
+    },
+    propina: {
+        type: Number,
+        default: 0
+    },
     printpos: {
         type: Boolean,
         default: true
