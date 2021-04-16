@@ -9,9 +9,9 @@ const soldProduct = async(products) => {
     if (!products) {
         return false;
     }
-    
+
     for (let i = 0; i < products.length; i++) {
-        
+
         let id = products[i].product;
 
         const product = await Product.findById(id);
@@ -24,16 +24,36 @@ const soldProduct = async(products) => {
                 product.sold = 0;
             }
 
+
             // ACTUALIZAMOS
             product.sold += products[i].qty;
+
+            // COMPROBAR SI EL PRODUCTO SE AGOTA
+            const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
+
+            if (stock > 0) {
+
+                product.out = false;
+
+                if (stock < product.min) {
+                    product.low = true;
+                } else {
+                    product.low = false;
+                }
+
+            } else {
+                product.out = true;
+            }
+            // COMPROBAR SI EL PRODUCTO SE AGOTA
+
             const productUpdate = await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
-                        
-        }else {
+
+        } else {
 
             const kits = product.kit
 
             for (let i = 0; i < kits.length; i++) {
-                
+
                 let id = kits[i].product;
 
                 const productKit = await Product.findById(id);
@@ -46,11 +66,11 @@ const soldProduct = async(products) => {
                 // ACTUALIZAMOS
                 productKit.sold += kits[i].qty;
                 const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
-                
+
             }
 
         }
-        
+
     }
 
 
@@ -63,58 +83,78 @@ const soldProduct = async(products) => {
 =========================================================================*/
 const returnStock = async(products) => {
 
-    if (!products) {
-        return false;
-    }
-    
-    for (let i = 0; i < products.length; i++) {
-        
-        let id = products[i].product;
+        if (!products) {
+            return false;
+        }
 
-        const product = await Product.findById(id);
+        for (let i = 0; i < products.length; i++) {
 
-        // SI ES DIFERENTE A UN KIT
-        if (product.type !== 'Paquete') {
+            let id = products[i].product;
 
-            // SI NO SE HA VENDIDO
-            if (!product.returned) {
-                product.returned = 0;
-            }
+            const product = await Product.findById(id);
 
-            // ACTUALIZAMOS
-            product.returned += products[i].qty;
-            const productUpdate = await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
-                        
-        }else {
-
-            const kits = product.kit
-
-            for (let i = 0; i < kits.length; i++) {
-                
-                let id = kits[i].product;
-
-                const productKit = await Product.findById(id);
+            // SI ES DIFERENTE A UN KIT
+            if (product.type !== 'Paquete') {
 
                 // SI NO SE HA VENDIDO
-                if (!productKit.returned) {
-                    productKit.returned = 0;
+                if (!product.returned) {
+                    product.returned = 0;
                 }
 
+                product.returned += products[i].qty;
+
+                // COMPROBAR SI EL PRODUCTO SE AGOTA
+                const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
+
+                if (stock > 0) {
+
+                    product.out = false;
+
+                    if (stock < product.min) {
+                        product.low = true;
+                    } else {
+                        product.low = false;
+                    }
+
+                } else {
+                    product.out = true;
+                }
+                // COMPROBAR SI EL PRODUCTO SE AGOTA
+
+
                 // ACTUALIZAMOS
-                productKit.returned += kits[i].qty;
-                const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
-                
+                const productUpdate = await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
+
+            } else {
+
+                const kits = product.kit
+
+                for (let i = 0; i < kits.length; i++) {
+
+                    let id = kits[i].product;
+
+                    const productKit = await Product.findById(id);
+
+                    // SI NO SE HA VENDIDO
+                    if (!productKit.returned) {
+                        productKit.returned = 0;
+                    }
+
+                    // ACTUALIZAMOS
+                    productKit.returned += kits[i].qty;
+                    const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
+
+                }
+
             }
 
         }
-        
+
+
     }
-
-
-}
-/** =====================================================================
- *  RETURN STOCK
-=========================================================================*/
+    /** =====================================================================
+     *  RETURN STOCK
+    =========================================================================*/
 
 // EXPORT
 module.exports = {

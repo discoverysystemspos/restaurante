@@ -225,6 +225,26 @@ const updateProduct = async(req, res = response) => {
             }
         }
 
+        // COMPROBAR SI EL PRODUCTO SE AGOTA
+        const stock = (productDB.stock + campos.returned + campos.bought) - (campos.sold + campos.damaged);
+
+        console.log(stock);
+
+        if (stock > 0) {
+
+            campos.out = false;
+
+            if (stock < campos.min) {
+                campos.low = true;
+            } else {
+                campos.low = false;
+            }
+
+        } else {
+            campos.out = true;
+        }
+        // COMPROBAR SI EL PRODUCTO SE AGOTA
+
         // UPDATE
         campos.code = code;
         campos.name = name;

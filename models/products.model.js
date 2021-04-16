@@ -48,31 +48,46 @@ const ProductSchema = Schema({
         ref: 'Department',
     },
     stock: {
-        type: Number
+        type: Number,
+        default: 0
     },
     min: {
-        type: Number
+        type: Number,
+        default: 0
     },
     max: {
-        type: Number
+        type: Number,
+        default: 0
     },
     bought: {
-        type: Number
+        type: Number,
+        default: 0
     },
     sold: {
-        type: Number
+        type: Number,
+        default: 0
     },
     returned: {
-        type: Number
+        type: Number,
+        default: 0
     },
     damaged: {
-        type: Number
+        type: Number,
+        default: 0
     },
     img: {
         type: String
     },
     expiration: {
         type: Date
+    },
+    low: {
+        type: Boolean,
+        default: false
+    },
+    out: {
+        type: Boolean,
+        default: false
     },
     status: {
         type: Boolean,
