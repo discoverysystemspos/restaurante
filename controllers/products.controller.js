@@ -268,9 +268,7 @@ const updateProduct = async(req, res = response) => {
         }
 
         // COMPROBAR SI EL PRODUCTO SE AGOTA
-        const stock = (productDB.stock + campos.returned + campos.bought) - (campos.sold + campos.damaged);
-
-        console.log(stock);
+        const stock = (productDB.stock + (campos.returned || 0) + (campos.bought || 0)) - ((campos.sold || 0) + (campos.damaged || 0));
 
         if (stock > 0) {
 
