@@ -40,6 +40,48 @@ const getProducts = async(req, res = response) => {
 /** =====================================================================
  *  GET PRODUCTS
 =========================================================================*/
+/** =====================================================================
+ *  GET TOTAL COST PRODUCTS   
+=========================================================================*/
+const getCostProducts = async(req, res = response) => {
+
+
+    try {
+
+        const product = await Product.find({ status: true, out: false });
+
+        let costo = 0;
+        let precio = 0;
+
+        for (let i = 0; i < product.length; i++) {
+
+            const stock = ((product[i].stock + product[i].returned + product[i].bought) - (product[i].sold + product[i].damaged));
+
+            costo += (stock * product[i].cost);
+            precio += (stock * product[i].price);
+
+        }
+
+
+        res.json({
+            ok: true,
+            costo,
+            precio
+
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+};
+/** =====================================================================
+ *  GET TOTAL COST PRODUCTS
+=========================================================================*/
+
 const oneProduct = async(req, res = response) => {
 
     const id = req.params.id;
@@ -317,5 +359,6 @@ module.exports = {
     deleteProduct,
     oneProduct,
     codeProduct,
-    departmentProduct
+    departmentProduct,
+    getCostProducts
 };
