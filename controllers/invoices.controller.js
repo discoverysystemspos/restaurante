@@ -53,6 +53,40 @@ const getInvoices = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  GET INVOICE DATE INITIAL AND DATE END
+=========================================================================*/
+const getInvoicesAll = async(req, res = response) => {
+
+    const fechaI = req.params.fechaI;
+    const fechaE = req.params.fechaE;
+    const uid = req.params.user;
+
+    try {
+
+        res.json({
+            ok: true,
+            fechaI,
+            fechaE,
+            uid
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+}
+
+/** =====================================================================
+ *  GET INVOICE DATE INITIAL AND DATE END
+=========================================================================*/
+
+/** =====================================================================
  *  GET INVOICE DATE 
 =========================================================================*/
 const getInvoicesDate = async(req, res = response) => {
@@ -372,5 +406,6 @@ module.exports = {
     getInvoicesDate,
     returnInvoice,
     updateInvoice,
-    deleteProductInvoice
+    deleteProductInvoice,
+    getInvoicesAll
 };
