@@ -18,7 +18,7 @@ const getInvoices = async(req, res = response) => {
         const [invoices, total] = await Promise.all([
 
             Invoice.find()
-            .populate('client', 'name cedula telefono email address city')
+            .populate('client', 'name cedula telefono email address city tip')
             .populate('products.product', 'name')
             .populate('user', 'name')
             .populate('mesero', 'name')
@@ -29,7 +29,6 @@ const getInvoices = async(req, res = response) => {
 
             Invoice.countDocuments()
         ]);
-
 
         res.json({
             ok: true,
@@ -57,17 +56,57 @@ const getInvoices = async(req, res = response) => {
 =========================================================================*/
 const getInvoicesAll = async(req, res = response) => {
 
-    const fechaI = req.params.fechaI;
-    const fechaE = req.params.fechaE;
-    const uid = req.params.user;
+    const initial = req.query.initial;
+    const end = req.query.end;
+    const mesa = req.query.user || 'none';
+    const status = req.query.status || true;
+    const credito = req.query.credito || false;
 
     try {
 
+        let invoices;
+
+        if (mesa === 'none') {
+
+            invoices = await Invoice.find({
+                    $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
+                    status,
+                    credito
+                })
+                .populate('client', 'name cedula telefono email address city tip')
+                .populate('products.product', 'name')
+                .populate('user', 'name')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .sort({ invoice: -1 });
+        } else {
+
+            invoices = await Invoice.find({
+                    $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
+                    status,
+                    credito,
+                    mesa
+                })
+                .populate('client', 'name cedula telefono email address city tip')
+                .populate('products.product', 'name')
+                .populate('user', 'name')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .sort({ invoice: -1 })
+                .limit(1000);
+        }
+
+        let montos = 0;
+
+        invoices.forEach(invoice => {
+            montos += invoice.amount;
+        });
+
+
         res.json({
             ok: true,
-            fechaI,
-            fechaE,
-            uid
+            invoices,
+            montos
         });
 
     } catch (error) {
@@ -162,7 +201,7 @@ const getInvoiceId = async(req, res = response) => {
     try {
 
         const invoice = await Invoice.findById(id)
-            .populate('client', 'name cedula telefono email address city')
+            .populate('client', 'name cedula telefono email address city tip')
             .populate('products.product', 'name code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
@@ -372,7 +411,7 @@ const deleteProductInvoice = async(req, res = response) => {
             invoiceDB.products.splice(index, 1);
 
             const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
-                .populate('client', 'name cedula telefono email address city')
+                .populate('client', 'name cedula telefono email address city tip')
                 .populate('products.product', 'name code type')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')

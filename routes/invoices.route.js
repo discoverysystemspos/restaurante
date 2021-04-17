@@ -24,7 +24,7 @@ router.get('/', validarJWT, getInvoices);
 /** =====================================================================
  *  GET INVOICES DATE
 =========================================================================*/
-router.get('/date/all/:fechaI&:fechaE', validarJWT, getInvoicesAll);
+router.get('/fecha/', validarJWT, getInvoicesAll);
 /** =====================================================================
  *  GET INVOICES DATE
 =========================================================================*/
