@@ -62,6 +62,8 @@ const getInvoicesAll = async(req, res = response) => {
     const status = req.query.status || true;
     const credito = req.query.credito || false;
 
+    console.log(credito);
+
     try {
 
         let invoices;
@@ -92,8 +94,7 @@ const getInvoicesAll = async(req, res = response) => {
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')
-                .sort({ invoice: -1 })
-                .limit(1000);
+                .sort({ invoice: -1 });
         }
 
         let montos = 0;
