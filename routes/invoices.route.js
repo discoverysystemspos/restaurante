@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getInvoices, createInvoice, getInvoiceId, getInvoicesDate, returnInvoice, updateInvoice, deleteProductInvoice, getInvoicesAll } = require('../controllers/invoices.controller');
+const { getInvoices, createInvoice, getInvoiceId, getInvoicesDate, returnInvoice, updateInvoice, deleteProductInvoice, getInvoicesAll, updateProductQty } = require('../controllers/invoices.controller');
 
 const router = Router();
 
@@ -70,25 +70,28 @@ router.put('/pago/:id', validarJWT, updateInvoice);
 =========================================================================*/
 
 /** =====================================================================
-*  RETURN INVOICE
-=========================================================================*/
+ *  RETURN INVOICE
+ =========================================================================*/
 router.delete('/:id', validarJWT, returnInvoice);
 /** =====================================================================
-*  RETURN INVOICE
+  *  RETURN INVOICE
 =========================================================================*/
 
 /** =====================================================================
-*  DELETE PRODUCT OF INVOICE
-=========================================================================*/
+ *  DELETE PRODUCT OF INVOICE
+ =========================================================================*/
 router.delete('/:factura/product/:id', validarJWT, deleteProductInvoice);
 /** =====================================================================
-*  DELETE PRODUCT OF INVOICE
+ *  DELETE PRODUCT OF INVOICE
+ =========================================================================*/
+
+/** =====================================================================
+*  PUT INVOICE
 =========================================================================*/
-
-
-
-
-
+router.put('/:factura/product/:id/qty/:qty', validarJWT, updateProductQty);
+/** =====================================================================
+*  PUT INVOICE
+=========================================================================*/
 
 
 

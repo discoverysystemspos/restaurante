@@ -438,6 +438,79 @@ const deleteProductInvoice = async(req, res = response) => {
      *  DELETE PRODUCT INVOICE
     =========================================================================*/
 
+/** =====================================================================
+ *  UPDATE PRODUCT QTY
+=========================================================================*/
+const updateProductQty = async(req, res = response) => {
+
+    const _id = req.params.id;
+
+    const factura = req.params.factura;
+
+    const qty = req.params.qty;
+
+    try {
+
+        // SEARCH PRODUCT
+        const invoiceDB = await Invoice.findById({ _id: factura });
+        if (!invoiceDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ninguna factura con este ID'
+            });
+        }
+
+        const tempArr = invoiceDB.products.filter(record => {
+            return record.id === _id;
+        })
+
+        tempArr[0].qty -= qty;
+
+        let index = invoiceDB.products.indexOf(tempArr[0]);
+
+        invoiceDB.products.splice(index, 1);
+
+        invoiceDB.products.push(tempArr[0]);
+
+        let monto = (qty * tempArr[0].price);
+
+        invoiceDB.amount -= monto;
+
+        const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
+            .populate('client', 'name cedula telefono email address city tip')
+            .populate('products.product', 'name code type')
+            .populate('mesero', 'name')
+            .populate('mesa', 'name')
+            .populate('user', 'name');
+
+        // DEVOLVER PRODUCTO
+        proDev = tempArr;
+        proDev[0].qty = qty;
+
+        returnStock(proDev);
+
+        res.json({
+            ok: true,
+            invoice: invoiceUpdate
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+}
+
+
+/** =====================================================================
+ *  UPDATE PRODUCT QTY
+=========================================================================*/
+
 // EXPORTS
 module.exports = {
     getInvoices,
@@ -447,5 +520,6 @@ module.exports = {
     returnInvoice,
     updateInvoice,
     deleteProductInvoice,
-    getInvoicesAll
+    getInvoicesAll,
+    updateProductQty
 };
