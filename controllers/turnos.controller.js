@@ -44,42 +44,15 @@ const getTurnos = async(req, res = response) => {
 =========================================================================*/
 const getTurnosDate = async(req, res = response) => {
 
-    const fecha = req.params.fecha;
+    const initial = req.query.initial;
+    const end = req.query.end;
 
     try {
 
         const [turnos, total] = await Promise.all([
+
             Turno.find({
-                $expr: {
-                    $and: [{
-                            $eq: [{
-                                    $year: "$fecha"
-                                },
-                                {
-                                    $year: new Date(fecha)
-                                }
-                            ]
-                        },
-                        {
-                            $eq: [{
-                                    $month: "$fecha"
-                                },
-                                {
-                                    $month: new Date(fecha)
-                                }
-                            ]
-                        },
-                        {
-                            $eq: [{
-                                    $dayOfMonth: "$fecha"
-                                },
-                                {
-                                    $dayOfMonth: new Date(fecha)
-                                }
-                            ]
-                        }
-                    ]
-                }
+                $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }]
             })
             .populate('cajero', 'name')
             .populate('caja', 'name')

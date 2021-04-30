@@ -56,75 +56,71 @@ const getInvoices = async(req, res = response) => {
 =========================================================================*/
 const getInvoicesAll = async(req, res = response) => {
 
-    const initial = req.query.initial;
-    const end = req.query.end;
-    const mesa = req.query.user || 'none';
-    const status = req.query.status || true;
-    const credito = req.query.credito || false;
+        const initial = req.query.initial;
+        const end = req.query.end;
+        const mesa = req.query.user || 'none';
+        const status = req.query.status || true;
+        const credito = req.query.credito || false;
 
-    console.log(credito);
+        try {
 
-    try {
+            let invoices;
 
-        let invoices;
+            if (mesa === 'none') {
 
-        if (mesa === 'none') {
+                invoices = await Invoice.find({
+                        $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
+                        status,
+                        credito
+                    })
+                    .populate('client', 'name cedula telefono email address city tip')
+                    .populate('products.product', 'name')
+                    .populate('user', 'name')
+                    .populate('mesero', 'name')
+                    .populate('mesa', 'name')
+                    .sort({ invoice: -1 });
+            } else {
 
-            invoices = await Invoice.find({
-                    $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
-                    status,
-                    credito
-                })
-                .populate('client', 'name cedula telefono email address city tip')
-                .populate('products.product', 'name')
-                .populate('user', 'name')
-                .populate('mesero', 'name')
-                .populate('mesa', 'name')
-                .sort({ invoice: -1 });
-        } else {
+                invoices = await Invoice.find({
+                        $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
+                        status,
+                        credito,
+                        mesa
+                    })
+                    .populate('client', 'name cedula telefono email address city tip')
+                    .populate('products.product', 'name')
+                    .populate('user', 'name')
+                    .populate('mesero', 'name')
+                    .populate('mesa', 'name')
+                    .sort({ invoice: -1 });
+            }
 
-            invoices = await Invoice.find({
-                    $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
-                    status,
-                    credito,
-                    mesa
-                })
-                .populate('client', 'name cedula telefono email address city tip')
-                .populate('products.product', 'name')
-                .populate('user', 'name')
-                .populate('mesero', 'name')
-                .populate('mesa', 'name')
-                .sort({ invoice: -1 });
+            let montos = 0;
+
+            invoices.forEach(invoice => {
+                montos += invoice.amount;
+            });
+
+            res.json({
+                ok: true,
+                invoices,
+                montos
+            });
+
+        } catch (error) {
+
+            console.log(error);
+            return res.status(500).json({
+                ok: false,
+                msg: 'Error inesperado, porfavor intente nuevamente'
+            });
+
         }
 
-        let montos = 0;
-
-        invoices.forEach(invoice => {
-            montos += invoice.amount;
-        });
-
-
-        res.json({
-            ok: true,
-            invoices,
-            montos
-        });
-
-    } catch (error) {
-
-        console.log(error);
-        return res.status(500).json({
-            ok: false,
-            msg: 'Error inesperado, porfavor intente nuevamente'
-        });
-
     }
-
-}
-
-/** =====================================================================
- *  GET INVOICE DATE INITIAL AND DATE END
-=========================================================================*/
+    /** =====================================================================
+     *  GET INVOICE DATE INITIAL AND DATE END
+    =========================================================================*/
 
 /** =====================================================================
  *  GET INVOICE DATE 
