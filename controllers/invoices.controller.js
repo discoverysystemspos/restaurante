@@ -96,15 +96,18 @@ const getInvoicesAll = async(req, res = response) => {
             }
 
             let montos = 0;
+            let costos = 0;
 
             invoices.forEach(invoice => {
                 montos += invoice.amount;
+                costos += invoice.cost;
             });
 
             res.json({
                 ok: true,
                 invoices,
-                montos
+                montos,
+                costos
             });
 
         } catch (error) {

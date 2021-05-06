@@ -69,6 +69,10 @@ const InvoiceSchema = Schema({
         type: Number,
         require: true
     },
+    cost: {
+        type: Number,
+        require: true
+    },
     tip: {
         type: Number,
         require: true
