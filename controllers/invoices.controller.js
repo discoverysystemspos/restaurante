@@ -201,7 +201,7 @@ const getInvoiceId = async(req, res = response) => {
     try {
 
         const invoice = await Invoice.findById(id)
-            .populate('client', 'name cedula telefono email address city tip')
+            .populate('client', 'name cedula phone email address city tip')
             .populate('products.product', 'name code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
