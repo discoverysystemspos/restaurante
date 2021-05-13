@@ -36,10 +36,11 @@ app.use('/api/invoice', require('./routes/invoices.route'));
 app.use('/api/caja', require('./routes/cajas.route'));
 app.use('/api/turno', require('./routes/turnos.route'));
 app.use('/api/mesas', require('./routes/mesas.route'));
- 
+app.use('/api/bascula', require('./routes/bascula.route'));
+
 // SPA
 app.get('*', (req, res) => {
-    res.sendFile( path.resolve( __dirname, 'public/index.html' ) );
+    res.sendFile(path.resolve(__dirname, 'public/index.html'));
 });
 
 app.listen(process.env.PORT, () => {

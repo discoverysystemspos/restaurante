@@ -55,6 +55,10 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+    bascula: {
+        type: Boolean,
+        default: false
+    },
     resolucion: {
         type: String
     },
