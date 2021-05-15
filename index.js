@@ -38,6 +38,10 @@ app.use('/api/turno', require('./routes/turnos.route'));
 app.use('/api/mesas', require('./routes/mesas.route'));
 app.use('/api/bascula', require('./routes/bascula.route'));
 
+// LOGS
+app.use('/api/log/products', require('./routes/log.products.route'));
+// LOGS
+
 // SPA
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public/index.html'));
