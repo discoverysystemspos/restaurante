@@ -1,5 +1,6 @@
 // MODELS
 const Product = require('../models/products.model');
+const LogProducts = require('../models/log.products.model');
 
 /** =====================================================================
  *  UPDATE STOCK 
@@ -23,7 +24,6 @@ const soldProduct = async(products) => {
             if (!product.sold) {
                 product.sold = 0;
             }
-
 
             // ACTUALIZAMOS
             product.sold += products[i].qty;
