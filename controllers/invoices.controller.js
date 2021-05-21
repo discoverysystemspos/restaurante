@@ -251,7 +251,7 @@ const createInvoice = async(req, res = response) => {
 
         await invoice.save();
 
-        soldProduct(invoice.products);
+        soldProduct(invoice.products, invoice.invoice, user);
 
         res.json({
             ok: true,

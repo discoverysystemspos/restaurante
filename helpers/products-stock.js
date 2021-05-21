@@ -5,7 +5,9 @@ const LogProducts = require('../models/log.products.model');
 /** =====================================================================
  *  UPDATE STOCK 
 =========================================================================*/
-const soldProduct = async(products) => {
+const soldProduct = async(products, invoice, user) => {
+
+    let factura = `Factura #${invoice}`
 
     if (!products) {
         return false;
@@ -48,9 +50,49 @@ const soldProduct = async(products) => {
 
             const productUpdate = await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
 
+            let habia = stock + products[i].qty;
+
+            let log = {
+                code: product.code,
+                name: product.name,
+                description: factura,
+                type: 'Salida',
+                befored: habia,
+                qty: products[i].qty,
+                stock: stock,
+                cajero: user
+            }
+
+            const logProducts = new LogProducts(log);
+
+            await logProducts.save();
+
         } else {
 
             const kits = product.kit
+
+            // ACTUALIZAMOS
+            product.sold += products[i].qty;
+
+            // COMPROBAR SI EL PRODUCTO SE AGOTA
+            const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
+
+            let habia = stock + products[i].qty;
+
+            let log = {
+                code: product.code,
+                name: product.name,
+                description: factura,
+                type: 'Salida',
+                befored: habia,
+                qty: products[i].qty,
+                stock: stock,
+                cajero: user
+            }
+
+            const logProducts = new LogProducts(log);
+
+            await logProducts.save();
 
             for (let i = 0; i < kits.length; i++) {
 
