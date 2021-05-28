@@ -1,6 +1,7 @@
 const { response } = require('express');
 
 const Product = require('../models/products.model');
+const LogProducts = require('../models/log.products.model');
 
 /** =====================================================================
  *  GET PRODUCTS
@@ -61,7 +62,6 @@ const getCostProducts = async(req, res = response) => {
             precio += (stock * product[i].price);
 
         }
-
 
         res.json({
             ok: true,
@@ -230,6 +230,8 @@ const updateProduct = async(req, res = response) => {
 
     const pid = req.params.id;
 
+    const user = req.uid;
+
     try {
 
         // SEARCH PRODUCT
@@ -290,6 +292,58 @@ const updateProduct = async(req, res = response) => {
         campos.name = name;
         const productUpdate = await Product.findByIdAndUpdate(pid, campos, { new: true, useFindAndModify: false });
 
+        // COMPROBAR SI ES UNA COMPRA O RETORNO
+        if (campos.bought || campos.damaged) {
+
+            if (campos.bought !== productDB.bought) {
+
+                let change = campos.bought - productDB.bought;
+
+                let habia = stock - change;
+
+                let description = 'Compra';
+
+                let log = {
+                    code: productDB.code,
+                    name: productDB.name,
+                    description,
+                    type: 'Agrego',
+                    befored: habia,
+                    qty: change,
+                    stock: stock,
+                    cajero: user
+                }
+
+                let logProducts = new LogProducts(log);
+
+                await logProducts.save();
+
+            } else if (campos.damaged !== productDB.damaged) {
+
+                let change = campos.damaged - productDB.damaged;
+
+                let habia = stock + change;
+
+                let description = 'Dañados o Perdidos';
+
+                let log = {
+                    code: productDB.code,
+                    name: productDB.name,
+                    description,
+                    type: 'Elimino',
+                    befored: habia,
+                    qty: change,
+                    stock: stock,
+                    cajero: user
+                }
+
+                let logProducts = new LogProducts(log);
+
+                await logProducts.save();
+
+            }
+        }
+
         res.json({
             ok: true,
             product: productUpdate
@@ -309,7 +363,7 @@ const updateProduct = async(req, res = response) => {
  *  UPDATE PRODUCT
 =========================================================================*/
 /** =====================================================================
- *  DELETE CLIENT
+ *  DELETE PRODUCT
 =========================================================================*/
 const deleteProduct = async(req, res = response) => {
 
@@ -344,7 +398,7 @@ const deleteProduct = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  DELETE CLIENT
+ *  DELETE PRODUCT
 =========================================================================*/
 
 

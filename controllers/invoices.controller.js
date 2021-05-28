@@ -320,6 +320,7 @@ const updateInvoice = async(req, res = response) => {
 =========================================================================*/
 const returnInvoice = async(req, res = response) => {
 
+    const user = req.uid;
 
     try {
 
@@ -345,7 +346,7 @@ const returnInvoice = async(req, res = response) => {
 
         const invoiceUpdate = await Invoice.findByIdAndUpdate(id, invoice, { new: true, useFindAndModify: false });
 
-        returnStock(invoice.products);
+        returnStock(invoice.products, invoice.invoice, user);
 
         res.json({
             ok: true,
@@ -374,8 +375,8 @@ const returnInvoice = async(req, res = response) => {
 const deleteProductInvoice = async(req, res = response) => {
 
         const _id = req.params.id;
-
         const factura = req.params.factura;
+        const user = req.uid;
 
         try {
 
@@ -400,7 +401,7 @@ const deleteProductInvoice = async(req, res = response) => {
                 return record.id === _id;
             })
 
-            returnStock(tempArr);
+            returnStock(tempArr, invoiceDB.invoice, user);
 
             let index = invoiceDB.products.indexOf(tempArr[0]);
 
@@ -447,6 +448,7 @@ const updateProductQty = async(req, res = response) => {
     const factura = req.params.factura;
 
     const qty = req.params.qty;
+    const user = req.uid;
 
     try {
 
@@ -486,7 +488,7 @@ const updateProductQty = async(req, res = response) => {
         proDev = tempArr;
         proDev[0].qty = qty;
 
-        returnStock(proDev);
+        returnStock(proDev, invoiceDB.invoice, user);
 
         res.json({
             ok: true,

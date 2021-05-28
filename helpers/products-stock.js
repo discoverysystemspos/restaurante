@@ -123,11 +123,13 @@ const soldProduct = async(products, invoice, user) => {
 /** =====================================================================
  *  RETURN STOCK
 =========================================================================*/
-const returnStock = async(products) => {
+const returnStock = async(products, invoice, user) => {
 
         if (!products) {
             return false;
         }
+
+        let factura = `Factura #${invoice}`
 
         for (let i = 0; i < products.length; i++) {
 
@@ -166,6 +168,23 @@ const returnStock = async(products) => {
 
                 // ACTUALIZAMOS
                 const productUpdate = await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
+
+                let habia = stock - products[i].qty;
+
+                let log = {
+                    code: product.code,
+                    name: product.name,
+                    description: factura,
+                    type: 'Devolución',
+                    befored: habia,
+                    qty: products[i].qty,
+                    stock: stock,
+                    cajero: user
+                }
+
+                const logProducts = new LogProducts(log);
+
+                await logProducts.save();
 
             } else {
 

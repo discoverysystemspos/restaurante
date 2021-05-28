@@ -1,11 +1,11 @@
 const { response } = require('express');
 
-const serialPort = require('serialport');
+// const serialPort = require('serialport');
 
 let peso = '';
 
 // const port = new serialPort(
-//     'COM1', { baudRate: 9600 }
+//     'COM9', { baudRate: 9600 }
 // );
 
 // const parser = new serialPort.parsers.Readline();
