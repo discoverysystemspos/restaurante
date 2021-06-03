@@ -1,33 +1,54 @@
 const { response } = require('express');
-
-// const serialPort = require('serialport');
-
-let peso = '';
-
-// const port = new serialPort(
-//     'COM9', { baudRate: 9600 }
-// );
-
-// const parser = new serialPort.parsers.Readline();
-
-// port.pipe(parser);
-
-// parser.on('data', (w) => {
-//     peso = w;
-// });
-
+const fs = require('fs');
+const path = require('path');
 
 /** =====================================================================
  *  GET PESO
 =========================================================================*/
 const getPeso = async(req, res = response) => {
 
-    let pesos = peso.split(' ');
+    try {
+        const init = Number(req.query.init);
+        const end = Number(req.query.end);
 
-    res.json({
-        ok: true,
-        pesos: parseFloat(pesos[2])
-    });
+        let data = fs.readFileSync(path.join(__dirname, '../bascula') + '/peso.txt', 'utf8');
+
+        let peso = data.toString();
+
+        if (peso.length > 17) {
+            res.json({
+                ok: true,
+                pesos: 0
+            });
+        } else {
+
+            // let pesos = peso.split(' ');
+
+            // res.json({
+            //     ok: true,
+            //     pesos: parseFloat(pesos[2])
+            // });
+
+            let w = peso.slice(init, end);
+
+            res.json({
+                ok: true,
+                pesos: parseFloat(w),
+                init,
+                end
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+
+
 
 }
 

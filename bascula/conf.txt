@@ -1,0 +1,10 @@
+- Port,
+"COM10",
+- BaudRate,
+9600,
+- Parity,
+"Parity.None",
+- DataBits,
+8,
+- Stop:",
+"StopBits.One"
