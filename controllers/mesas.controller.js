@@ -136,7 +136,10 @@ const updateMesa = async(req, res = response) => {
         }
 
         // UPDATE
-        const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false });
+        const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
+            .populate('carrito.product', 'name cost')
+            .populate('cliente', 'name cedula phone email address city cid')
+            .populate('mesero', 'name');
 
         res.json({
             ok: true,
