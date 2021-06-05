@@ -209,13 +209,13 @@ const returnStock = async(products, invoice, user) => {
                     // COMPROBAR SI EL PRODUCTO SE AGOTA
                     const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
 
-                    let habia = stock + products[i].qty;
+                    let habia = stock - products[i].qty;
 
                     let log = {
                         code: product.code,
                         name: product.name,
                         description: factura,
-                        type: 'Salida',
+                        type: 'Devolución',
                         befored: habia,
                         qty: products[i].qty,
                         stock: stock,
@@ -233,12 +233,12 @@ const returnStock = async(products, invoice, user) => {
                         const productKit = await Product.findById(id);
 
                         // SI NO SE HA VENDIDO
-                        if (!productKit.sold) {
-                            productKit.sold = 0;
+                        if (!productKit.returned) {
+                            productKit.returned = 0;
                         }
 
                         // ACTUALIZAMOS
-                        productKit.sold += log.qty * kits[i].qty;
+                        productKit.returned += log.qty * kits[i].qty;
                         const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
 
                     }
@@ -246,27 +246,27 @@ const returnStock = async(products, invoice, user) => {
 
                     // --------------------------------------------------------------------------
 
-                    const kits = product.kit
+                    // const kits = product.kit
 
-                    product.returned += products[i].qty;
+                    // product.returned += products[i].qty;
 
-                    for (let i = 0; i < kits.length; i++) {
+                    // for (let i = 0; i < kits.length; i++) {
 
-                        let id = kits[i].product;
+                    //     let id = kits[i].product;
 
-                        const productKit = await Product.findById(id);
+                    //     const productKit = await Product.findById(id);
 
-                        // SI NO SE HA VENDIDO
-                        if (!productKit.returned) {
-                            productKit.returned = 0;
-                        }
+                    //     // SI NO SE HA VENDIDO
+                    //     if (!productKit.returned) {
+                    //         productKit.returned = 0;
+                    //     }
 
-                        // ACTUALIZAMOS
-                        productKit.returned += products[i].qty * kits[i].qty;
+                    //     // ACTUALIZAMOS
+                    //     productKit.returned += products[i].qty * kits[i].qty;
 
-                        const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
+                    //     const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
 
-                    }
+                    // }
 
                 }
 
