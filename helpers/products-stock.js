@@ -243,31 +243,6 @@ const returnStock = async(products, invoice, user) => {
 
                     }
 
-
-                    // --------------------------------------------------------------------------
-
-                    // const kits = product.kit
-
-                    // product.returned += products[i].qty;
-
-                    // for (let i = 0; i < kits.length; i++) {
-
-                    //     let id = kits[i].product;
-
-                    //     const productKit = await Product.findById(id);
-
-                    //     // SI NO SE HA VENDIDO
-                    //     if (!productKit.returned) {
-                    //         productKit.returned = 0;
-                    //     }
-
-                    //     // ACTUALIZAMOS
-                    //     productKit.returned += products[i].qty * kits[i].qty;
-
-                    //     const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
-
-                    // }
-
                 }
 
             }
@@ -278,8 +253,6 @@ const returnStock = async(products, invoice, user) => {
                 msg: 'Error inesperado, porfavor intente nuevamente'
             });
         }
-
-
     }
     /** =====================================================================
      *  RETURN STOCK
