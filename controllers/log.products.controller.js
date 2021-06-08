@@ -9,9 +9,15 @@ const getLogProducts = async(req, res = response) => {
 
     try {
 
+        const desde = Number(req.query.desde) || 0;
+        const limite = Number(req.query.limite) || 10;
+
         const [products, total] = await Promise.all([
             LogProducts.find()
-            .populate('cajero', 'name'),
+            .populate('cajero', 'name')
+            .skip(desde)
+            .limit(limite)
+            .sort({ 'fecha': -1 }),
             LogProducts.countDocuments()
         ]);
 
