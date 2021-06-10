@@ -29,8 +29,6 @@ const createDatos = async(req, res = response) => {
 
         const validarDatos = await Datos.find();
 
-        console.log(validarDatos.length);
-
         if (validarDatos.length !== 0) {
             return res.status(400).json({
                 ok: false,
@@ -83,7 +81,7 @@ const updateDatos = async(req, res = response) => {
         const campos = req.body;
 
         // UPDATE
-        const datosUpdate = await Datos.findByIdAndUpdate(eid, campos, { new: true });
+        const datosUpdate = await Datos.findByIdAndUpdate(eid, campos, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,

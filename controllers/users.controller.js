@@ -101,7 +101,7 @@ const updateUser = async(req, res = response) => {
         // VALIDATE USER
         const { password, usuario, ...campos } = req.body;
         if (userDB.usuario !== usuario) {
-            const validarUsuario = await findOne({ usuario });
+            const validarUsuario = await User.findOne({ usuario });
             if (validarUsuario) {
                 return res.status(400).json({
                     ok: false,
@@ -120,7 +120,7 @@ const updateUser = async(req, res = response) => {
 
         // UPDATE
         campos.usuario = usuario;
-        const userUpdate = await User.findByIdAndUpdate(uid, campos, { new: true });
+        const userUpdate = await User.findByIdAndUpdate(uid, campos, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
