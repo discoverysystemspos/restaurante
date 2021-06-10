@@ -30,6 +30,14 @@ const UserSchema = Schema({
         type: Boolean,
         default: false
     },
+    turn: {
+        type: Boolean,
+        default: false
+    },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turno'
+    },
     status: {
         type: Boolean,
         default: true
