@@ -7,41 +7,51 @@ const UserSchema = Schema({
         require: true,
         unique: true
     },
+
     name: {
         type: String,
         require: true
     },
+
     password: {
         type: String,
         require: true
     },
+
     role: {
         type: String,
         default: 'STAFF',
         require: true
     },
+
     address: {
         type: String
     },
+
     img: {
         type: String
     },
+
     mesero: {
         type: Boolean,
         default: false
     },
+
     turn: {
         type: Boolean,
         default: false
     },
+
     turno: {
         type: Schema.Types.ObjectId,
         ref: 'Turno'
     },
+
     status: {
         type: Boolean,
         default: true
     },
+
     fecha: {
         type: Date,
         default: Date.now
