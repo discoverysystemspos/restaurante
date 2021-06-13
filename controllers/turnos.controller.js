@@ -1,6 +1,7 @@
 const { response } = require('express');
 const Caja = require('../models/cajas.model');
 const Turno = require('../models/turnos.model');
+const User = require('../models/users.model');
 
 /** =====================================================================
  *  GET TURNOS
@@ -119,6 +120,7 @@ const getTurnoId = async(req, res = response) => {
 =========================================================================*/
 const createTurno = async(req, res = response) => {
 
+    const uid = req.uid;
     const caid = req.body.caja;
 
     try {
@@ -143,6 +145,19 @@ const createTurno = async(req, res = response) => {
         cajaDB.turno = turno._id;
         cajaDB.cajero = req.uid;
         const cajaUpdate = await Caja.findByIdAndUpdate(caid, cajaDB, { new: true, useFindAndModify: true });
+
+        // UPDATE TURN USER
+        const userDB = await User.findById(uid);
+        if (!userDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Error, el usuario no existe!'
+            });
+        }
+
+        userDB.cerrada = false;
+        userDB.turno = turno._id;
+        const userUpdate = await User.findByIdAndUpdate(uid, userDB, { new: true, useFindAndModify: true});
 
         res.json({
             ok: true,

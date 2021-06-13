@@ -37,9 +37,9 @@ const UserSchema = Schema({
         default: false
     },
 
-    turn: {
+    cerrada: {
         type: Boolean,
-        default: false
+        default: true
     },
 
     turno: {
