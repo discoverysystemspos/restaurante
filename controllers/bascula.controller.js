@@ -47,9 +47,6 @@ const getPeso = async(req, res = response) => {
         });
     }
 
-
-
-
 }
 
 

@@ -97,6 +97,13 @@ const ProductSchema = Schema({
         type: Boolean,
         default: true
     },
+    comanda: {
+        type: Boolean,
+        default: false
+    },
+    tipo: {
+        type: String
+    },
     fecha: {
         type: Date,
         default: Date.now
