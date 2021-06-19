@@ -41,7 +41,7 @@ const getMesaId = async(req, res = response) => {
     try {
 
         const mesa = await Mesas.findById(id)
-            .populate('carrito.product', 'name cost')
+            .populate('carrito.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
 
@@ -137,7 +137,7 @@ const updateMesa = async(req, res = response) => {
 
         // UPDATE
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
-            .populate('carrito.product', 'name cost')
+            .populate('carrito.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
 
