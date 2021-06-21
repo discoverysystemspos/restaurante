@@ -5,7 +5,7 @@ const User = require('../models/users.model');
 const { generarJWT } = require('../helpers/jwt');
 
 /** =====================================================================
- *  LOGIN asdas
+ *  LOGIN
 =========================================================================*/
 const login = async(req, res = response) => {
 
@@ -77,7 +77,7 @@ const renewJWT = async(req, res = response) => {
     const token = await generarJWT(uid);
 
     // SEARCH USER
-    const usuario = await User.findById(uid, 'usuario name role img uid');
+    const usuario = await User.findById(uid, 'usuario name role img uid status cerrada turno');
     // SEARCH USER
 
 

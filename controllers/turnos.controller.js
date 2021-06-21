@@ -121,18 +121,18 @@ const getTurnoId = async(req, res = response) => {
 const createTurno = async(req, res = response) => {
 
     const uid = req.uid;
-    const caid = req.body.caja;
+    // const caid = req.body.caja;
 
     try {
 
         // SEARCH CAJA
-        const cajaDB = await Caja.findById({ _id: caid });
-        if (!cajaDB) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'No existe ninguna caja con este ID'
-            });
-        }
+        // const cajaDB = await Caja.findById({ _id: caid });
+        // if (!cajaDB) {
+        //     return res.status(400).json({
+        //         ok: false,
+        //         msg: 'No existe ninguna caja con este ID'
+        //     });
+        // }
         // SEARCH CAJA      
 
         // SAVE TURNO
@@ -141,10 +141,10 @@ const createTurno = async(req, res = response) => {
         await turno.save();
 
         // UPDATE CAJA
-        cajaDB.cerrada = false;
-        cajaDB.turno = turno._id;
-        cajaDB.cajero = req.uid;
-        const cajaUpdate = await Caja.findByIdAndUpdate(caid, cajaDB, { new: true, useFindAndModify: true });
+        // cajaDB.cerrada = false;
+        // cajaDB.turno = turno._id;
+        // cajaDB.cajero = req.uid;
+        // const cajaUpdate = await Caja.findByIdAndUpdate(caid, cajaDB, { new: true, useFindAndModify: true });
 
         // UPDATE TURN USER
         const userDB = await User.findById(uid);
@@ -157,7 +157,7 @@ const createTurno = async(req, res = response) => {
 
         userDB.cerrada = false;
         userDB.turno = turno._id;
-        const userUpdate = await User.findByIdAndUpdate(uid, userDB, { new: true, useFindAndModify: true});
+        const userUpdate = await User.findByIdAndUpdate(uid, userDB, { new: true, useFindAndModify: true });
 
         res.json({
             ok: true,
@@ -184,6 +184,7 @@ const createTurno = async(req, res = response) => {
 const updateTurno = async(req, res = response) => {
 
     const tid = req.params.id;
+    const uid = req.uid;
 
     try {
 
@@ -200,6 +201,19 @@ const updateTurno = async(req, res = response) => {
         // UPDATE
         const {...campos } = req.body;
         const turnoUpdate = await Turno.findByIdAndUpdate(tid, campos, { new: true, useFindAndModify: false });
+
+        // UPDATE TURN USER
+        const userDB = await User.findById(uid);
+        if (!userDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Error, el usuario no existe!'
+            });
+        }
+
+        userDB.cerrada = campos.cerrado;
+        const userUpdate = await User.findByIdAndUpdate(uid, userDB, { new: true, useFindAndModify: true });
+
 
         res.json({
             ok: true,

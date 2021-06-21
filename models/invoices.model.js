@@ -47,6 +47,11 @@ const InvoiceSchema = Schema({
         ref: 'Clients',
         require: true
     },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos',
+        require: true
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',

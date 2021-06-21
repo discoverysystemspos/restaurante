@@ -40,13 +40,7 @@ router.get('/:id', validarJWT, getTurnoId);
 /** =====================================================================
  *  CREATE TURNO
 =========================================================================*/
-router.post('/', [
-        validarJWT,
-        check('caja', 'Debes de seleccionar una caja').not().isEmpty(),
-        validarCampos
-    ],
-    createTurno
-);
+router.post('/', validarJWT, createTurno);
 /** =====================================================================
  *  CREATE TURNO
 =========================================================================*/
