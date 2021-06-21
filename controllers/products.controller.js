@@ -8,10 +8,11 @@ const LogProducts = require('../models/log.products.model');
 =========================================================================*/
 const getProducts = async(req, res = response) => {
 
-
     try {
 
         const desde = Number(req.query.desde) || 0;
+        const tipo = req.query.tipo || 'none';
+        const valor = req.query.valor || 'false';
 
         const [products, total] = await Promise.all([
 

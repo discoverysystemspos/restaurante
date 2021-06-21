@@ -81,6 +81,10 @@ const ProductSchema = Schema({
     expiration: {
         type: Date
     },
+    vencido: {
+        type: Boolean,
+        default: false
+    },
     low: {
         type: Boolean,
         default: false
