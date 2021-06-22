@@ -14,16 +14,57 @@ const getProducts = async(req, res = response) => {
         const tipo = req.query.tipo || 'none';
         const valor = req.query.valor || 'false';
 
-        const [products, total] = await Promise.all([
+        console.log(tipo);
+        console.log(valor);
 
-            Product.find()
-            .populate('kit.product', 'name')
-            .populate('department', 'name')
-            .skip(desde)
-            .limit(10),
+        let products;
+        switch (tipo) {
+            case 'agotados':
 
-            Product.countDocuments()
-        ]);
+                products = await Product.find()
+                    .populate('kit.product', 'name')
+                    .populate('department', 'name')
+                    .sort({ out: -1 })
+                    .skip(desde)
+                    .limit(10);
+
+                break;
+            case 'vencidos':
+
+                products = await Product.find()
+                    .populate('kit.product', 'name')
+                    .populate('department', 'name')
+                    .sort({ vencido: -1 })
+                    .skip(desde)
+                    .limit(10);
+
+                break;
+            case 'none':
+
+                products = await Product.find()
+                    .populate('kit.product', 'name')
+                    .populate('department', 'name')
+                    .skip(desde)
+                    .limit(10);
+
+                break;
+
+            default:
+                break;
+        }
+
+        // const [products, total] = await Promise.all([
+
+        //     Product.find()
+        //     .populate('kit.product', 'name')
+        //     .populate('department', 'name')
+        //     .skip(desde)
+        //     .limit(10),
+
+        //     Product.countDocuments()
+        // ]);
+
+        const total = await Product.countDocuments();
 
         res.json({
             ok: true,
@@ -46,7 +87,6 @@ const getProducts = async(req, res = response) => {
  *  GET TOTAL COST PRODUCTS   
 =========================================================================*/
 const getCostProducts = async(req, res = response) => {
-
 
     try {
 
