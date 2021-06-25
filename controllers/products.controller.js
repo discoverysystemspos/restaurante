@@ -2,6 +2,7 @@ const { response } = require('express');
 
 const Product = require('../models/products.model');
 const LogProducts = require('../models/log.products.model');
+const { expirateProduct } = require('../helpers/products-stock');
 
 /** =====================================================================
  *  GET PRODUCTS
@@ -13,30 +14,54 @@ const getProducts = async(req, res = response) => {
         const desde = Number(req.query.desde) || 0;
         const tipo = req.query.tipo || 'none';
         const valor = req.query.valor || 'false';
-
-        console.log(tipo);
-        console.log(valor);
+        const initial = req.query.initial || '01/01/2001';
+        const end = req.query.end || new Date();
+        const limite = Number(req.query.limite) || 10;
 
         let products;
         switch (tipo) {
             case 'agotados':
 
-                products = await Product.find()
+                products = await Product.find({ out: valor })
                     .populate('kit.product', 'name')
                     .populate('department', 'name')
                     .sort({ out: -1 })
                     .skip(desde)
-                    .limit(10);
+                    .limit(limite);
 
                 break;
             case 'vencidos':
 
+                products = await Product.find({
+                        $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }],
+                    })
+                    .populate('kit.product', 'name')
+                    .populate('department', 'name')
+                    .skip(desde)
+                    .limit(limite);
+
+                // products = expirateProduct(productos);
+
+                for (let i = 0; i < products.length; i++) {
+
+                    if (!products[i].vencido) {
+
+                        products[i].vencido = true;
+
+                        // ACTUALIZAMOS
+                        const productUpdate = await Product.findByIdAndUpdate(products[i]._id, products[i], { new: true, useFindAndModify: false });
+
+                    }
+                }
+
+                break;
+            case 'top':
                 products = await Product.find()
                     .populate('kit.product', 'name')
                     .populate('department', 'name')
-                    .sort({ vencido: -1 })
+                    .sort({ sold: -1 })
                     .skip(desde)
-                    .limit(10);
+                    .limit(limite);
 
                 break;
             case 'none':
@@ -45,24 +70,13 @@ const getProducts = async(req, res = response) => {
                     .populate('kit.product', 'name')
                     .populate('department', 'name')
                     .skip(desde)
-                    .limit(10);
+                    .limit(limite);
 
                 break;
 
             default:
                 break;
         }
-
-        // const [products, total] = await Promise.all([
-
-        //     Product.find()
-        //     .populate('kit.product', 'name')
-        //     .populate('department', 'name')
-        //     .skip(desde)
-        //     .limit(10),
-
-        //     Product.countDocuments()
-        // ]);
 
         const total = await Product.countDocuments();
 
@@ -307,6 +321,13 @@ const updateProduct = async(req, res = response) => {
                     ok: false,
                     msg: 'Ya existe un producto con este nombre'
                 });
+            }
+        }
+
+        // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
+        if (campos.expiration) {
+            if (Date.parse(campos.expiration) > Date.parse(productDB.expiration)) {
+                campos.vencido = false;
             }
         }
 
