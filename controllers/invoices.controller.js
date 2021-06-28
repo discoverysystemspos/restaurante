@@ -52,6 +52,116 @@ const getInvoices = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  GET INVOICE TURN
+=========================================================================*/
+const getInvoicesTurn = async(req, res = response) => {
+
+    try {
+
+        const turno = req.query.turno;
+        const credito = req.query.credito || false;
+        const status = req.query.status || true;
+        const creditos = req.query.creditos || false;
+
+        let invoices;
+
+        if (creditos) {
+            invoices = await Invoice.find({ turno, status, credito })
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name')
+                .populate('user', 'name')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name');
+        } else {
+            invoices = await Invoice.find({ turno, status })
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name')
+                .populate('user', 'name')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name');
+        }
+
+
+        let total = 0;
+        let montos = 0;
+        let costos = 0;
+        let efectivo = 0;
+        let tarjeta = 0;
+        let credit = 0;
+        let vales = 0;
+        let transferencia = 0;
+        let payments = [];
+
+        if (invoices.length === 0 || invoices === null) {
+            return res.status(200).json({
+                ok: true,
+                invoices,
+                total,
+                montos,
+                costos,
+                efectivo,
+                tarjeta,
+                credit,
+                vales,
+                transferencia
+            });
+
+        }
+
+        invoices.forEach(invoice => {
+
+            montos += invoice.amount;
+            costos += invoice.cost;
+
+            payments = invoice.payments;
+
+            for (let i = 0; i < payments.length; i++) {
+
+                if (payments[i].type === 'efectivo') {
+                    efectivo += payments[i].amount;
+                } else if (payments[i].type === 'transferencia') {
+                    transferencia += payments[i].amount;
+                } else if (payments[i].type === 'tarjeta') {
+                    tarjeta += payments[i].amount;
+                } else if (payments[i].type === 'credito') {
+                    credit += payments[i].amount;
+                } else if (payments[i].type === 'vales') {
+                    vales += payments[i].amount;
+                }
+
+            }
+
+        });
+
+        res.json({
+            ok: true,
+            invoices,
+            total: invoices.length,
+            montos,
+            costos,
+            efectivo,
+            tarjeta,
+            transferencia,
+            credit,
+            vales
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  GET INVOICE TURN
+=========================================================================*/
+
+/** =====================================================================
  *  GET INVOICE DATE INITIAL AND DATE END
 =========================================================================*/
 const getInvoicesAll = async(req, res = response) => {
@@ -522,5 +632,6 @@ module.exports = {
     updateInvoice,
     deleteProductInvoice,
     getInvoicesAll,
-    updateProductQty
+    updateProductQty,
+    getInvoicesTurn
 };

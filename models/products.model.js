@@ -24,6 +24,9 @@ const ProductSchema = Schema({
         require: true,
         unique: true
     },
+    description: {
+        type: String,
+    },
     type: {
         type: String,
         require: true
