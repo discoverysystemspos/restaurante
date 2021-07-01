@@ -25,6 +25,10 @@ const LogProductSchema = Schema({
     stock: {
         type: Number,
     },
+    invoice: {
+        type: Schema.Types.ObjectId,
+        ref: 'Invoice'
+    },
     cajero: {
         type: Schema.Types.ObjectId,
         ref: 'User'

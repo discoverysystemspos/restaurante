@@ -5,7 +5,7 @@ const LogProducts = require('../models/log.products.model');
 /** =====================================================================
  *  UPDATE STOCK 
 =========================================================================*/
-const soldProduct = async(products, invoice, user) => {
+const soldProduct = async(products, invoice, user, invoices) => {
 
     try {
 
@@ -63,7 +63,8 @@ const soldProduct = async(products, invoice, user) => {
                     befored: habia,
                     qty: products[i].qty,
                     stock: stock,
-                    cajero: user
+                    cajero: user,
+                    invoice: invoices
                 }
 
                 const logProducts = new LogProducts(log);
@@ -90,7 +91,8 @@ const soldProduct = async(products, invoice, user) => {
                     befored: habia,
                     qty: products[i].qty,
                     stock: stock,
-                    cajero: user
+                    cajero: user,
+                    invoice: invoices
                 }
 
                 const logProducts = new LogProducts(log);

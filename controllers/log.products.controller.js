@@ -15,6 +15,7 @@ const getLogProducts = async(req, res = response) => {
         const [products, total] = await Promise.all([
             LogProducts.find()
             .populate('cajero', 'name')
+            .populate('invoice')
             .skip(desde)
             .limit(limite)
             .sort({ 'fecha': -1 }),

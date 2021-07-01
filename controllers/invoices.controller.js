@@ -361,7 +361,7 @@ const createInvoice = async(req, res = response) => {
 
         await invoice.save();
 
-        soldProduct(invoice.products, invoice.invoice, user);
+        soldProduct(invoice.products, invoice.invoice, user, invoice);
 
         const invoiceNew = await Invoice.findById(invoice._id)
             .populate('client', 'name cedula phone email address city tip')
