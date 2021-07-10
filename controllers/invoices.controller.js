@@ -395,6 +395,7 @@ const createInvoice = async(req, res = response) => {
 const updateInvoice = async(req, res = response) => {
 
     const id = req.params.id;
+    const abono = req.query.abono;
 
     try {
 
