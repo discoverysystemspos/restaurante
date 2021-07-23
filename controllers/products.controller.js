@@ -11,11 +11,11 @@ const getProducts = async(req, res = response) => {
 
     try {
 
-        const desde = Number(req.query.desde) || 0;
         const tipo = req.query.tipo || 'none';
         const valor = req.query.valor || 'false';
         const initial = req.query.initial || '01/01/2001';
         const end = req.query.end || new Date();
+        const desde = Number(req.query.desde) || 0;
         const limite = Number(req.query.limite) || 10;
 
         let products;
@@ -170,6 +170,8 @@ const oneProduct = async(req, res = response) => {
 =========================================================================*/
 const codeProduct = async(req, res = response) => {
 
+
+
     try {
 
         const code = req.params.code;
@@ -200,6 +202,8 @@ const codeProduct = async(req, res = response) => {
 const departmentProduct = async(req, res = response) => {
 
     const department = req.params.department;
+    const desde = Number(req.query.desde) || 0;
+    const hasta = Number(req.query.hasta) || 10;
 
     try {
 
@@ -207,7 +211,9 @@ const departmentProduct = async(req, res = response) => {
         [products, total] = await Promise.all([
             Product.find({ department: department })
             .populate('kit.product', 'name')
-            .populate('department', 'name'),
+            .populate('department', 'name')
+            .skip(desde)
+            .limit(hasta),
             Product.countDocuments()
         ]);
 

@@ -2,7 +2,10 @@ const { response } = require('express');
 const bcrypt = require('bcryptjs');
 
 const User = require('../models/users.model');
+const Client = require('../models/clients.model');
+
 const { generarJWT } = require('../helpers/jwt');
+const { googleVerify } = require('../helpers/google-verify');
 
 /** =====================================================================
  *  LOGIN
@@ -66,6 +69,60 @@ const login = async(req, res = response) => {
 /** =====================================================================
  *  LOGIN
 =========================================================================*/
+
+/** =====================================================================
+ *  LOGIN GOOGLE
+=========================================================================*/
+const googleSignIn = async(req, res = response) => {
+
+    const googleToken = req.body.token;
+
+    try {
+
+        const { name, email, picture } = await googleVerify(googleToken);
+
+        const clientDB = await Client.findOne({ email });
+        let client;
+
+        if (!clientDB) {
+            // si no existe el usuario
+            client = new Client({
+                name,
+                email,
+                img: picture,
+                google: true
+            });
+        } else {
+            // existe usuario
+            client = clientDB;
+            client.google = true;
+        }
+
+        // Guardar en DB
+        await client.save();
+
+        // Generar el TOKEN - JWT
+        const token = await generarJWT(client._id);
+
+        res.json({
+            ok: true,
+            token
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Token no es correcto',
+        });
+    }
+
+}
+
+/** =====================================================================
+ *  LOGIN GOOGLE
+=========================================================================*/
+
 /** =====================================================================
  *  RENEW TOKEN
 ======================================================================*/
@@ -96,5 +153,6 @@ const renewJWT = async(req, res = response) => {
 
 module.exports = {
     login,
-    renewJWT
+    renewJWT,
+    googleSignIn
 };

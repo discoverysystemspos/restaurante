@@ -64,6 +64,7 @@ const search = async(req, res = response) => {
                     $or: [
                         { code: regex },
                         { name: regex },
+                        { description: regex },
                         { type: regex }
                     ]
                 }),
@@ -125,8 +126,70 @@ const search = async(req, res = response) => {
  *  SEARCH FOR TABLE
 =========================================================================*/
 
+/** =====================================================================
+ *  SEARCH FRONTEND CLIENT
+=========================================================================*/
+const buscador = async(req, res = response) => {
+
+    const termino = req.params.termino;
+    const tipo = req.params.tipo;
+    const regex = new RegExp(termino, 'i');
+
+    const desde = Number(req.query.desde) || 0;
+    const hasta = Number(req.query.hasta) || 10;
+
+    let data = [];
+    let total;
+
+    switch (tipo) {
+        case 'producto':
+
+            data = await Product.find({
+                    status: true,
+                    out: false,
+                    $or: [
+                        { code: regex },
+                        { name: regex },
+                        { description: regex },
+                        { type: regex }
+                    ]
+                })
+                .populate('department', 'name')
+                .skip(desde)
+                .limit(hasta);
+            break;
+
+        case 'departamento':
+
+            data = await Product.find({ department: termino, status: true, out: false })
+                .populate('department', 'name')
+                .skip(desde)
+                .limit(hasta);
+            break;
+
+        default:
+            res.status(400).json({
+                ok: false,
+                msg: 'Error en los parametros de la busquedad'
+            });
+            break;
+
+    }
+
+    res.json({
+        ok: true,
+        resultados: data,
+        total
+    });
+
+};
+/** =====================================================================
+ *  SEARCH FRONTEND CLIENT
+=========================================================================*/
+
 
 // EXPORTS
 module.exports = {
-    search
+    search,
+    buscador
 };

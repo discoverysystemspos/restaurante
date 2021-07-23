@@ -8,7 +8,6 @@ const ClientSchema = Schema({
     },
     cedula: {
         type: String,
-        require: true,
         unique: true
     },
     phone: {
@@ -32,6 +31,13 @@ const ClientSchema = Schema({
     status: {
         type: Boolean,
         default: true
+    },
+    google: {
+        type: Boolean,
+        default: true
+    },
+    img: {
+        type: String
     },
     fecha: {
         type: Date,

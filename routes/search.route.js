@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLERS
-const { search } = require('../controllers/search.controller');
+const { search, buscador } = require('../controllers/search.controller');
 
 const router = Router();
 
@@ -17,6 +17,14 @@ const router = Router();
  *  SEARCH FOR TABLE
 =========================================================================*/
 router.get('/:tabla/:busqueda', search);
+/** =====================================================================
+ *  SEARCH FOR TABLE
+=========================================================================*/
+
+/** =====================================================================
+ *  SEARCH FOR TABLE
+=========================================================================*/
+router.get('/query/:tipo/:termino', buscador);
 /** =====================================================================
  *  SEARCH FOR TABLE
 =========================================================================*/
