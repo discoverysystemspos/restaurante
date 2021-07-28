@@ -12,6 +12,7 @@ const getProducts = async(req, res = response) => {
     try {
 
         const tipo = req.query.tipo || 'none';
+        const department = req.query.departamento || 'none';
         const valor = req.query.valor || 'false';
         const initial = req.query.initial || '01/01/2001';
         const end = req.query.end || new Date();
@@ -22,26 +23,52 @@ const getProducts = async(req, res = response) => {
         switch (tipo) {
             case 'agotados':
 
-                products = await Product.find({ out: valor })
-                    .populate('kit.product', 'name')
-                    .populate('department', 'name')
-                    .sort({ out: -1 })
-                    .skip(desde)
-                    .limit(limite);
+                if (department !== 'none') {
+
+                    products = await Product.find({ department: department, out: valor })
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .sort({ out: -1 })
+                        .skip(desde)
+                        .limit(limite);
+
+                } else {
+
+                    products = await Product.find({ out: valor })
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .sort({ out: -1 })
+                        .skip(desde)
+                        .limit(limite);
+                }
+
 
                 break;
             case 'vencidos':
 
-                products = await Product.find({
-                        $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }],
-                    })
-                    .populate('kit.product', 'name')
-                    .populate('department', 'name')
-                    .skip(desde)
-                    .limit(limite);
+                if (department !== 'none') {
+
+                    products = await Product.find({
+                            department: department,
+                            $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }]
+                        })
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .skip(desde)
+                        .limit(limite);
+
+                } else {
+
+                    products = await Product.find({
+                            $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }],
+                        })
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .skip(desde)
+                        .limit(limite);
+                }
 
                 // products = expirateProduct(productos);
-
                 for (let i = 0; i < products.length; i++) {
 
                     if (!products[i].vencido) {
@@ -56,21 +83,46 @@ const getProducts = async(req, res = response) => {
 
                 break;
             case 'top':
-                products = await Product.find()
-                    .populate('kit.product', 'name')
-                    .populate('department', 'name')
-                    .sort({ sold: -1 })
-                    .skip(desde)
-                    .limit(limite);
+
+                if (department !== 'none') {
+
+                    products = await Product.find({ department: department, out: valor })
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .sort({ sold: -1 })
+                        .skip(desde)
+                        .limit(limite);
+
+                } else {
+
+                    products = await Product.find()
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .sort({ sold: -1 })
+                        .skip(desde)
+                        .limit(limite);
+                }
 
                 break;
             case 'none':
 
-                products = await Product.find()
-                    .populate('kit.product', 'name')
-                    .populate('department', 'name')
-                    .skip(desde)
-                    .limit(limite);
+                if (department !== 'none') {
+
+                    products = await Product.find({ department: department })
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .skip(desde)
+                        .limit(limite);
+
+                } else {
+
+                    products = await Product.find()
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .skip(desde)
+                        .limit(limite);
+                }
+
 
                 break;
 

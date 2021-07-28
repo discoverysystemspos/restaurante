@@ -6,10 +6,10 @@ const { check } = require('express-validator');
 
 // HELPERS
 const { validarCampos } = require('../middlewares/validar-campos');
-const { validarJWT } = require('../middlewares/validar-jwt');
+const { validarJWT, validarClientJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLERS
-const { login, renewJWT, loginGoogle, googleSignIn } = require('../controllers/auth.controller');
+const { login, renewJWT, googleSignIn, renewClientJWT } = require('../controllers/auth.controller');
 
 const router = Router();
 
@@ -47,6 +47,15 @@ router.get('/renew', validarJWT, renewJWT);
 /** =====================================================================
 *  RENEW TOKEN
 =========================================================================*/
+
+/** =====================================================================
+ *  RENEW TOKEN CLIENT
+=========================================================================*/
+router.get('/renew/client', validarClientJWT, renewClientJWT);
+/** =====================================================================
+*  RENEW TOKEN CLIENT
+=========================================================================*/
+
 
 // EXPORT
 module.exports = router;

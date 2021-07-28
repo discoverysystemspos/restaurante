@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/users.model');
 const Client = require('../models/clients.model');
 
-const { generarJWT } = require('../helpers/jwt');
+const { generarJWT, generarClientJWT } = require('../helpers/jwt');
 const { googleVerify } = require('../helpers/google-verify');
 
 /** =====================================================================
@@ -102,7 +102,7 @@ const googleSignIn = async(req, res = response) => {
         await client.save();
 
         // Generar el TOKEN - JWT
-        const token = await generarJWT(client._id);
+        const token = await generarClientJWT(client._id);
 
         res.json({
             ok: true,
@@ -149,10 +149,48 @@ const renewJWT = async(req, res = response) => {
  *  RENEW TOKEN
 =========================================================================*/
 
+/** =====================================================================
+ *  RENEW TOKEN CLIENT
+======================================================================*/
+const renewClientJWT = async(req, res = response) => {
+
+    try {
+
+        const cid = req.cid;
+
+        // GENERAR TOKEN - JWT  
+        const token = await generarClientJWT(cid);
+
+        // SEARCH USER
+        const client = await Client.findById(cid, 'name img cid status');
+        // SEARCH USER
+
+        res.status(200).json({
+            ok: true,
+            token,
+            client
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error en el token',
+        });
+    }
+
+
+
+};
+/** =====================================================================
+ *  RENEW TOKEN CLIENT
+=========================================================================*/
+
 
 
 module.exports = {
     login,
     renewJWT,
-    googleSignIn
+    googleSignIn,
+    renewClientJWT
 };
