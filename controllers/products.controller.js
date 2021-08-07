@@ -163,11 +163,13 @@ const getCostProducts = async(req, res = response) => {
 
         for (let i = 0; i < product.length; i++) {
 
-            const stock = ((product[i].stock + product[i].returned + product[i].bought) - (product[i].sold + product[i].damaged));
+            if (product[i].type !== 'Paquete') {
 
-            costo += (stock * product[i].cost);
-            precio += (stock * product[i].price);
+                const stock = ((product[i].stock + product[i].returned + product[i].bought) - (product[i].sold + product[i].damaged));
 
+                costo += (stock * product[i].cost);
+                precio += (stock * product[i].price);
+            }
         }
 
         res.json({
