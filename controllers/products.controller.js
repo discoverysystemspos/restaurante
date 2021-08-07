@@ -170,6 +170,7 @@ const getCostProducts = async(req, res = response) => {
                 costo += (stock * product[i].cost);
                 precio += (stock * product[i].price);
             }
+
         }
 
         res.json({
@@ -223,8 +224,6 @@ const oneProduct = async(req, res = response) => {
  *  GET PRODUCTS BY CODE
 =========================================================================*/
 const codeProduct = async(req, res = response) => {
-
-
 
     try {
 
@@ -406,6 +405,11 @@ const updateProduct = async(req, res = response) => {
 
         } else {
             campos.out = true;
+        }
+
+        if (productDB.type === 'Paquete') {
+            campos.out = false;
+            campos.low = false;
         }
         // COMPROBAR SI EL PRODUCTO SE AGOTA
 
