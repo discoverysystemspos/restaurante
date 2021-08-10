@@ -47,6 +47,51 @@ const getPedidos = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  GET PEDIDO CLIENT
+=========================================================================*/
+const getPedidosClient = async(req, res = response) => {
+
+    try {
+
+        const client = req.cid;
+
+        const desde = Number(req.query.desde) || 0;
+
+        const [pedidos, total] = await Promise.all([
+
+            Pedido.find(client)
+            .populate('client', 'name cedula phone email address city tip')
+            .populate('products.product', 'name')
+            .populate('user', 'name')
+            .sort({ pedido: -1 })
+            .skip(desde)
+            .limit(50),
+
+            Pedido.countDocuments()
+        ]);
+
+        res.json({
+            ok: true,
+            pedidos,
+            total
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  GET PEDIDO CLIENT
+=========================================================================*/
+
+/** =====================================================================
  *  POST PEDIDO
 =========================================================================*/
 const postPedidos = async(req, res = response) => {
@@ -93,5 +138,6 @@ const postPedidos = async(req, res = response) => {
 // MODULE EXPORTS
 module.exports = {
     getPedidos,
-    postPedidos
+    postPedidos,
+    getPedidosClient
 }

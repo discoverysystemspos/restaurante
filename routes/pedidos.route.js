@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT, validarClientJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getPedidos, postPedidos } = require('../controllers/pedidos.controller');
+const { getPedidos, postPedidos, getPedidosClient } = require('../controllers/pedidos.controller');
 
 const router = Router();
 
@@ -22,11 +22,18 @@ router.get('/', validarJWT, getPedidos);
 =========================================================================*/
 
 /** =====================================================================
+ *  GET PEDIDOS CLIENT
+=========================================================================*/
+router.get('/client', validarJWT, getPedidosClient);
+/** =====================================================================
+ *  GET PEDIDOS CLIENT
+=========================================================================*/
+
+/** =====================================================================
  *  CREATE PEDIDOS
 =========================================================================*/
 router.post('/', [
         validarClientJWT,
-        check('client', 'EL ID del cliente debe ser correcto').isMongoId(),
         check('products', 'No ha seleccionado ningun producto').not().isEmpty(),
         validarCampos
     ],

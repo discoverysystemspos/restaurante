@@ -41,6 +41,7 @@ app.use('/api/caja', require('./routes/cajas.route'));
 app.use('/api/turno', require('./routes/turnos.route'));
 app.use('/api/mesas', require('./routes/mesas.route'));
 app.use('/api/bascula', require('./routes/bascula.route'));
+app.use('/api/pedidos', require('./routes/pedidos.route'));
 
 // LOGS
 app.use('/api/log/products', require('./routes/log.products.route'));

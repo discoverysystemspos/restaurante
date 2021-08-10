@@ -50,21 +50,31 @@ const PedidoSchema = Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        require: true
     },
     products: [ProductosSchema],
     amount: {
         type: Number,
         require: true
     },
-    cost: {
-        type: Number,
-        require: true
-    },
     payments: [PaymentSchema],
+    ciudad: {
+        type: String
+    },
+    departamento: {
+        type: String
+    },
+    direccion: {
+        type: String
+    },
+    telefono: {
+        type: String
+    },
+    comentario: {
+        type: String
+    },
     estado: {
-        type: Boolean,
-        default: true
+        type: String,
+        default: 'Pendiente'
     },
     status: {
         type: Boolean,
