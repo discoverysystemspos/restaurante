@@ -92,14 +92,15 @@ const googleSignIn = async(req, res = response) => {
                 img: picture,
                 google: true
             });
+
+            // Guardar en DB
+            await client.save();
+
         } else {
             // existe usuario
             client = clientDB;
             client.google = true;
         }
-
-        // Guardar en DB
-        await client.save();
 
         // Generar el TOKEN - JWT
         const token = await generarClientJWT(client._id);
@@ -137,6 +138,8 @@ const renewJWT = async(req, res = response) => {
     const usuario = await User.findById(uid, 'usuario name role img uid status cerrada turno');
     // SEARCH USER
 
+    console.log(usuario);
+
 
     res.status(200).json({
         ok: true,
@@ -162,7 +165,7 @@ const renewClientJWT = async(req, res = response) => {
         const token = await generarClientJWT(cid);
 
         // SEARCH USER
-        const client = await Client.findById(cid, 'name img cid status');
+        const client = await Client.findById(cid, 'email name cid img cedula phone city department address');
         // SEARCH USER
 
         res.status(200).json({

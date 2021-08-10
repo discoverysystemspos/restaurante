@@ -163,10 +163,13 @@ const getCostProducts = async(req, res = response) => {
 
         for (let i = 0; i < product.length; i++) {
 
-            const stock = ((product[i].stock + product[i].returned + product[i].bought) - (product[i].sold + product[i].damaged));
+            if (product[i].type !== 'Paquete') {
 
-            costo += (stock * product[i].cost);
-            precio += (stock * product[i].price);
+                const stock = ((product[i].stock + product[i].returned + product[i].bought) - (product[i].sold + product[i].damaged));
+
+                costo += (stock * product[i].cost);
+                precio += (stock * product[i].price);
+            }
 
         }
 
@@ -221,8 +224,6 @@ const oneProduct = async(req, res = response) => {
  *  GET PRODUCTS BY CODE
 =========================================================================*/
 const codeProduct = async(req, res = response) => {
-
-
 
     try {
 
@@ -404,6 +405,11 @@ const updateProduct = async(req, res = response) => {
 
         } else {
             campos.out = true;
+        }
+
+        if (productDB.type === 'Paquete') {
+            campos.out = false;
+            campos.low = false;
         }
         // COMPROBAR SI EL PRODUCTO SE AGOTA
 

@@ -8,7 +8,6 @@ const ClientSchema = Schema({
     },
     cedula: {
         type: String,
-        unique: true
     },
     phone: {
         type: String
