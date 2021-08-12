@@ -82,6 +82,7 @@ const googleSignIn = async(req, res = response) => {
         const { name, email, picture } = await googleVerify(googleToken);
 
         const clientDB = await Client.findOne({ email });
+
         let client;
 
         if (!clientDB) {
@@ -94,13 +95,14 @@ const googleSignIn = async(req, res = response) => {
             });
 
             // Guardar en DB
-            await client.save();
 
         } else {
             // existe usuario
             client = clientDB;
             client.google = true;
         }
+
+        await client.save();
 
         // Generar el TOKEN - JWT
         const token = await generarClientJWT(client._id);
@@ -188,9 +190,6 @@ const renewClientJWT = async(req, res = response) => {
 /** =====================================================================
  *  RENEW TOKEN CLIENT
 =========================================================================*/
-
-
-
 module.exports = {
     login,
     renewJWT,
