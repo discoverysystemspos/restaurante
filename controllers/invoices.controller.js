@@ -110,7 +110,7 @@ const getInvoicesTurn = async(req, res = response) => {
 
         invoices.forEach(invoice => {
 
-            montos += invoice.amount;
+            montos += invoice.base;
             costos += invoice.cost;
 
             payments = invoice.payments;
@@ -209,7 +209,7 @@ const getInvoicesAll = async(req, res = response) => {
             let costos = 0;
 
             invoices.forEach(invoice => {
-                montos += invoice.amount;
+                montos += invoice.base;
                 costos += invoice.cost;
             });
 
@@ -312,7 +312,7 @@ const getInvoiceId = async(req, res = response) => {
 
         const invoice = await Invoice.findById(id)
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name code type')
+            .populate('products.product', 'name code type tax impuesto')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');

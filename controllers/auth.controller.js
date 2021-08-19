@@ -140,9 +140,6 @@ const renewJWT = async(req, res = response) => {
     const usuario = await User.findById(uid, 'usuario name role img uid status cerrada turno');
     // SEARCH USER
 
-    console.log(usuario);
-
-
     res.status(200).json({
         ok: true,
         token,
