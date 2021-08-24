@@ -76,6 +76,17 @@ const PedidoSchema = Schema({
         type: String,
         default: 'Pendiente'
     },
+    paystatus: {
+        type: String
+    },
+    referencia: {
+        type: String,
+        unique: true
+    },
+    transaccion: {
+        type: String,
+        unique: true
+    },
     status: {
         type: Boolean,
         default: true
