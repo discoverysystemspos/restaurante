@@ -12,6 +12,18 @@ const kitsSchema = Schema({
     }
 });
 
+const impuestoSchema = Schema({
+
+    name: {
+        type: String,
+    },
+
+    valor: {
+        type: Number,
+        require: true
+    }
+});
+
 const ProductSchema = Schema({
 
     code: {
@@ -35,6 +47,15 @@ const ProductSchema = Schema({
     cost: {
         type: Number,
         require: true
+    },
+    tax: {
+        type: Boolean,
+        default: false
+    },
+    impuesto: [impuestoSchema],
+    inventario: {
+        type: Number,
+        default: 0
     },
     gain: {
         type: Number

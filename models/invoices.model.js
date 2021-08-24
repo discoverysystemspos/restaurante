@@ -74,6 +74,14 @@ const InvoiceSchema = Schema({
         type: Number,
         require: true
     },
+    base: {
+        type: Number,
+        require: true
+    },
+    iva: {
+        type: Number,
+        require: true
+    },
     cost: {
         type: Number,
         require: true

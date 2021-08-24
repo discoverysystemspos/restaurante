@@ -6,6 +6,11 @@ const carritoSchema = Schema({
         ref: 'Product',
         require: true
     },
+    iva: {
+        type: Number,
+        require: true,
+        default: 0
+    },
     qty: {
         type: Number,
         require: true
