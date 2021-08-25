@@ -7,6 +7,7 @@ const Product = require('../models/products.model');
 const Caja = require('../models/cajas.model');
 const Mesa = require('../models/mesas.model');
 const Invoice = require('../models/invoices.model');
+const LogProducts = require('../models/log.products.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -16,6 +17,8 @@ const search = async(req, res = response) => {
     const busqueda = req.params.busqueda;
     const tabla = req.params.tabla;
     const regex = new RegExp(busqueda, 'i');
+    const desde = req.query.desde;
+    const hasta = req.query.hasta;
 
     let data = [];
     let total;
@@ -103,6 +106,23 @@ const search = async(req, res = response) => {
                     ]
                 }),
                 Mesa.countDocuments()
+            ]);
+            break;
+
+        case 'log':
+
+            [data, total] = await Promise.all([
+                LogProducts.find({
+                    $or: [
+                        { code: regex },
+                        { name: regex },
+                        { type: regex },
+                        { department: regex }
+                    ]
+                })
+                .populate('cajero', 'name')
+                .populate('invoice'),
+                LogProducts.countDocuments()
             ]);
             break;
 
