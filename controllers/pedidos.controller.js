@@ -102,7 +102,18 @@ const postPedidos = async(req, res = response) => {
 
         const pedido = new Pedido(req.body);
 
+        const referencia = req.body.referencia;
+
         pedido.client = client;
+
+        // VALIDATE CODE
+        const validateReference = await Pedido.findOne({ referencia });
+        if (validateReference) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Ya existe un pedido con esta referencia de pago'
+            });
+        }
 
         await pedido.save();
 
@@ -132,8 +143,6 @@ const postPedidos = async(req, res = response) => {
 /** =====================================================================
  *  POST PEDIDO
 =========================================================================*/
-
-
 
 // MODULE EXPORTS
 module.exports = {
