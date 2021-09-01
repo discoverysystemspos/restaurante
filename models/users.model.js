@@ -47,6 +47,11 @@ const UserSchema = Schema({
         ref: 'Turno'
     },
 
+    valid: {
+        type: Boolean,
+        default: false
+    },
+
     status: {
         type: Boolean,
         default: true

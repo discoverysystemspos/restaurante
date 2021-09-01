@@ -35,6 +35,10 @@ const ClientSchema = Schema({
         type: Boolean,
         default: true
     },
+    valid: {
+        type: Boolean,
+        default: false
+    },
     img: {
         type: String
     },

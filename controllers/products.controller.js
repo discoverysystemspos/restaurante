@@ -112,7 +112,7 @@ const getProducts = async(req, res = response) => {
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .skip(desde)
-                        .limit(limite);
+                        .limit(1000);
 
                 } else {
 
@@ -256,7 +256,7 @@ const departmentProduct = async(req, res = response) => {
 
     const department = req.params.department;
     const desde = Number(req.query.desde) || 0;
-    const hasta = Number(req.query.hasta) || 100;
+    const hasta = Number(req.query.hasta) || 1000;
 
     try {
 
