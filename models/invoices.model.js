@@ -90,6 +90,12 @@ const InvoiceSchema = Schema({
         type: Number,
         require: true
     },
+    pago: {
+        type: Number
+    },
+    vueltos: {
+        type: Number
+    },
     payments: [PaymentSchema],
     credito: {
         type: Boolean,

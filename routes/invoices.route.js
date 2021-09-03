@@ -9,7 +9,19 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getInvoices, createInvoice, getInvoiceId, getInvoicesDate, returnInvoice, updateInvoice, deleteProductInvoice, getInvoicesAll, updateProductQty, getInvoicesTurn } = require('../controllers/invoices.controller');
+const {
+    getInvoices,
+    createInvoice,
+    getInvoiceId,
+    getInvoicesDate,
+    returnInvoice,
+    updateInvoice,
+    deleteProductInvoice,
+    getInvoicesAll,
+    updateProductQty,
+    getInvoicesTurn,
+    getInvoiceCreditClient
+} = require('../controllers/invoices.controller');
 
 const router = Router();
 
@@ -51,6 +63,14 @@ router.get('/date/:fecha', validarJWT, getInvoicesDate);
 router.get('/:id', validarJWT, getInvoiceId);
 /** =====================================================================
  *  GET INVOICES ID
+=========================================================================*/
+
+/** =====================================================================
+ *  GET INVOICES CREDI FOR CLIENT
+=========================================================================*/
+router.get('/:client/:credito', validarJWT, getInvoiceCreditClient);
+/** =====================================================================
+ *  GET INVOICES CREDI FOR CLIENT
 =========================================================================*/
 
 /** =====================================================================

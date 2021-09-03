@@ -346,6 +346,51 @@ const getInvoiceId = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  GET INVOICE CREDIT CLIENT
+=========================================================================*/
+const getInvoiceCreditClient = async(req, res = response) => {
+
+    const client = req.params.client;
+    const credito = req.params.credito;
+
+    try {
+
+        const invoice = await Invoice.find({ client, credito })
+            .populate('client', 'name cedula phone email address city tip')
+            .populate('products.product', 'name code type tax impuesto')
+            .populate('mesero', 'name')
+            .populate('mesa', 'name')
+            .populate('user', 'name');
+
+        if (!invoice) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ninguna factura con este ID'
+            });
+        }
+
+        res.json({
+            ok: true,
+            invoice
+        });
+
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  GET INVOICE CREDIT CLIENT
+=========================================================================*/
+
+/** =====================================================================
  *  CREATE INVOICE
 =========================================================================*/
 const createInvoice = async(req, res = response) => {
@@ -641,5 +686,6 @@ module.exports = {
     deleteProductInvoice,
     getInvoicesAll,
     updateProductQty,
-    getInvoicesTurn
+    getInvoicesTurn,
+    getInvoiceCreditClient
 };
