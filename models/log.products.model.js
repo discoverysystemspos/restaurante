@@ -33,7 +33,15 @@ const LogProductSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turno'
+    },
     department: {
+        type: Schema.Types.ObjectId,
+        ref: 'Department'
+    },
+    departamento: {
         type: String,
     },
     fecha: {

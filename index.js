@@ -42,6 +42,7 @@ app.use('/api/turno', require('./routes/turnos.route'));
 app.use('/api/mesas', require('./routes/mesas.route'));
 app.use('/api/bascula', require('./routes/bascula.route'));
 app.use('/api/pedidos', require('./routes/pedidos.route'));
+app.use('/api/categorias', require('./routes/categorias.route'));
 
 // LOGS
 app.use('/api/log/products', require('./routes/log.products.route'));

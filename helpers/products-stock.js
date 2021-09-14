@@ -20,7 +20,8 @@ const soldProduct = async(products, invoice, user, invoices) => {
 
             let id = products[i].product;
 
-            const product = await Product.findById(id);
+            const product = await Product.findById(id)
+                .populate('department', 'name');
 
             // SI ES DIFERENTE A UN KIT
             if (product.type !== 'Paquete') {
@@ -64,7 +65,10 @@ const soldProduct = async(products, invoice, user, invoices) => {
                     qty: products[i].qty,
                     stock: stock,
                     cajero: user,
-                    invoice: invoices
+                    invoice: invoices,
+                    turno: invoices.turno,
+                    department: product.department._id,
+                    departamento: product.department.name
                 }
 
                 const logProducts = new LogProducts(log);
@@ -92,7 +96,10 @@ const soldProduct = async(products, invoice, user, invoices) => {
                     qty: products[i].qty,
                     stock: stock,
                     cajero: user,
-                    invoice: invoices
+                    invoice: invoices,
+                    turno: invoices.turno,
+                    department: product.department._id,
+                    departamento: product.department.name
                 }
 
                 const logProducts = new LogProducts(log);
@@ -194,7 +201,9 @@ const returnStock = async(products, invoice, user) => {
                         befored: habia,
                         qty: products[i].qty,
                         stock: stock,
-                        cajero: user
+                        cajero: user,
+                        department: product.department._id,
+                        departamento: product.department.name
                     }
 
                     const logProducts = new LogProducts(log);
@@ -221,7 +230,9 @@ const returnStock = async(products, invoice, user) => {
                         befored: habia,
                         qty: products[i].qty,
                         stock: stock,
-                        cajero: user
+                        cajero: user,
+                        department: product.department._id,
+                        departamento: product.department.name
                     }
 
                     const logProducts = new LogProducts(log);

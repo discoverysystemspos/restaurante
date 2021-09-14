@@ -8,6 +8,7 @@ const Caja = require('../models/cajas.model');
 const Mesa = require('../models/mesas.model');
 const Invoice = require('../models/invoices.model');
 const LogProducts = require('../models/log.products.model');
+const Categoria = require('../models/categorias.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -83,6 +84,15 @@ const search = async(req, res = response) => {
                 Department.countDocuments()
             ]);
             break;
+        case 'categorias':
+
+            // data = await Department.find({ name: regex });
+            [data, total] = await Promise.all([
+                Categoria.find({ name: regex })
+                .populate('department', 'name did'),
+                Categoria.countDocuments()
+            ]);
+            break;
 
         case 'caja':
 
@@ -117,11 +127,12 @@ const search = async(req, res = response) => {
                         { code: regex },
                         { name: regex },
                         { type: regex },
-                        { department: regex }
+                        { departamento: regex }
                     ]
                 })
                 .populate('cajero', 'name')
-                .populate('invoice'),
+                .populate('invoice')
+                .sort({ 'fecha': -1 }),
                 LogProducts.countDocuments()
             ]);
             break;
