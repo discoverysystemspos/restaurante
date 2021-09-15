@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 
+// CAJAS MODEL
+
 const CajaSchema = Schema({
 
     name: {
