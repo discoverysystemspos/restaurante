@@ -57,9 +57,11 @@ const getPedidosClient = async(req, res = response) => {
 
         const desde = Number(req.query.desde) || 0;
 
+        console.log(client);
+
         const [pedidos, total] = await Promise.all([
 
-            Pedido.find(client)
+            Pedido.find({ client })
             .populate('client', 'name cedula phone email address city tip')
             .populate('products.product', 'name')
             .populate('user', 'name')

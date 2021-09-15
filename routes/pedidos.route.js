@@ -24,7 +24,7 @@ router.get('/', validarJWT, getPedidos);
 /** =====================================================================
  *  GET PEDIDOS CLIENT
 =========================================================================*/
-router.get('/client', validarJWT, getPedidosClient);
+router.get('/client', validarClientJWT, getPedidosClient);
 /** =====================================================================
  *  GET PEDIDOS CLIENT
 =========================================================================*/
