@@ -1,23 +1,23 @@
 const { response } = require('express');
 
-const Categoria = require('../models/categorias.model');
+const Bodega = require('../models/bodega.model');
 
 /** =====================================================================
- *  GET CATEGORIAS
+ *  GET BODEGAS
 =========================================================================*/
-const getCategorias = async(req, res = response) => {
+const getBodega = async(req, res = response) => {
 
     try {
 
-        const [categorias, total] = await Promise.all([
-            Categoria.find()
+        const [bodegas, total] = await Promise.all([
+            Bodega.find()
             .populate('department.department', 'name did'),
-            Categoria.countDocuments()
+            Bodega.countDocuments()
         ]);
 
         res.json({
             ok: true,
-            categorias,
+            bodegas,
             total
         });
 
@@ -31,34 +31,34 @@ const getCategorias = async(req, res = response) => {
 
 };
 /** =====================================================================
- *  GET CATEGORIAS
+ *  GET BODEGAS
 =========================================================================*/
 
 /** =====================================================================
- *  CREATE CATEGORIAS
+ *  CREATE BODEGA
 =========================================================================*/
-const createCategoria = async(req, res = response) => {
+const createBodega = async(req, res = response) => {
 
     const name = req.body.name;
 
     try {
 
-        // VALIDATE CATEGORIA
-        const validateCategoria = await Categoria.findOne({ name });
-        if (validateCategoria) {
+        // VALIDATE BODEGA
+        const validateBodega = await Bodega.findOne({ name });
+        if (validateBodega) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Ya existe una categoria con este nombre'
+                msg: 'Ya existe una bodega con este nombre'
             });
         }
 
-        // SAVE CATEGORIA
-        const categoria = new Categoria(req.body);
-        await categoria.save();
+        // SAVE BODEGA
+        const bodega = new Bodega(req.body);
+        await bodega.save();
 
         res.json({
             ok: true,
-            categoria
+            bodega
         });
 
 
@@ -73,47 +73,47 @@ const createCategoria = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  CREATE CATEGORIA
+ *  CREATE BODEGA
 =========================================================================*/
 /** =====================================================================
- *  UPDATE CATEGORIA
+ *  UPDATE BODEGA
 =========================================================================*/
-const updateCategoria = async(req, res = response) => {
+const updateBodega = async(req, res = response) => {
 
-    const catid = req.params.id;
+    const bid = req.params.id;
 
     try {
 
-        // SEARCH CATEGORIA
-        const categoriaDB = await Categoria.findById({ _id: catid });
-        if (!categoriaDB) {
+        // SEARCH BODEGA
+        const bodegaDB = await Bodega.findById({ _id: bid });
+        if (!bodegaDB) {
             return res.status(400).json({
                 ok: false,
-                msg: 'No existe ninguna categoria con este ID'
+                msg: 'No existe ninguna bodega con este ID'
             });
         }
-        // SEARCH CATEGORIA
+        // SEARCH BODEGA
 
-        // VALIDATE CATEGORIA
+        // VALIDATE BODEGA
         const { name, ...campos } = req.body;
-        if (categoriaDB.name !== name) {
+        if (bodegaDB.name !== name) {
 
-            const validateCategoria = await Categoria.findOne({ name });
-            if (validateCategoria) {
+            const validateBodega = await Bodega.findOne({ name });
+            if (validateBodega) {
                 return res.status(400).json({
                     ok: false,
-                    msg: 'Ya existe una categoria con este nombre'
+                    msg: 'Ya existe una bodega con este nombre'
                 });
             }
         }
 
         // UPDATE
         campos.name = name;
-        const categoriaUpdate = await Categoria.findByIdAndUpdate(catid, campos, { new: true, useFindAndModify: false });
+        const bodegaUpdate = await Bodega.findByIdAndUpdate(bid, campos, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            categoria: categoriaUpdate
+            bodega: bodegaUpdate
         });
 
     } catch (error) {
@@ -126,41 +126,41 @@ const updateCategoria = async(req, res = response) => {
 
 };
 /** =====================================================================
- *  UPDATE CATEGORIA
+ *  UPDATE BODEGA
 =========================================================================*/
 
 /** =====================================================================
- *  DELETE CATEGORIA
+ *  DELETE BODEGA
 =========================================================================*/
-const deleteCategoria = async(req, res = response) => {
+const deleteBodega = async(req, res = response) => {
 
-    const catid = req.params.id;
+    const bid = req.params.id;
 
     try {
 
-        // SEARCH CATEGORIA
-        const categoriaDB = await Categoria.findById({ _id: catid });
-        if (!categoriaDB) {
+        // SEARCH BODEGA
+        const bodegaDB = await Bodega.findById({ _id: bid });
+        if (!bodegaDB) {
             return res.status(400).json({
                 ok: false,
-                msg: 'No existe ninguna categoria con este ID'
+                msg: 'No existe ninguna bodega con este ID'
             });
         }
-        // SEARCH CATEGORIA
+        // SEARCH BODEGA
 
         // CHANGE STATUS
-        if (categoriaDB.status === true) {
-            categoriaDB.status = false;
+        if (bodegaDB.status === true) {
+            bodegaDB.status = false;
         } else {
-            categoriaDB.status = true;
+            bodegaDB.status = true;
         }
         // CHANGE STATUS
 
-        const categoriaUpdate = await Categoria.findByIdAndUpdate(catid, categoriaDB, { new: true, useFindAndModify: false });
+        const bodegaUpdate = await Bodega.findByIdAndUpdate(bid, bodegaDB, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            categoria: categoriaUpdate
+            bodega: bodegaUpdate
         });
 
     } catch (error) {
@@ -174,13 +174,13 @@ const deleteCategoria = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  DELETE CATEGORIA
+ *  DELETE DEPARTMENT
 =========================================================================*/
 
 // EXPORTS
 module.exports = {
-    getCategorias,
-    createCategoria,
-    updateCategoria,
-    deleteCategoria
+    getBodega,
+    createBodega,
+    updateBodega,
+    deleteBodega
 };

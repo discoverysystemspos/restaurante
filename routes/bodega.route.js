@@ -1,5 +1,5 @@
 /** =====================================================================
- *  CATEGORIAS ROUTER
+ *  BODEGAS ROUTER
 =========================================================================*/
 const { Router } = require('express');
 const { check } = require('express-validator');
@@ -9,20 +9,19 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getCategorias, createCategoria, updateCategoria, deleteCategoria } = require('../controllers/categorias.controller');
 
 const router = Router();
 
 /** =====================================================================
- *  GET CATEGORIAS
+ *  GET BODEGAS
 =========================================================================*/
 router.get('/', getCategorias);
 /** =====================================================================
- *  GET CATEGORIAS
+ *  GET BODEGAS
 =========================================================================*/
 
 /** =====================================================================
- *  CREATE CATEGORIAS
+ *  CREATE BODEGAS
 =========================================================================*/
 router.post('/', [
         validarJWT,
@@ -32,11 +31,11 @@ router.post('/', [
     createCategoria
 );
 /** =====================================================================
- *  CREATE CATEGORIAS
+ *  CREATE BODEGAS
 =========================================================================*/
 
 /** =====================================================================
- *  UPDATE CATEGORIAS
+ *  UPDATE BODEGAS
 =========================================================================*/
 router.put('/:id', [
         validarJWT,
@@ -46,15 +45,15 @@ router.put('/:id', [
     updateCategoria
 );
 /** =====================================================================
- *  UPDATE CATEGORIAS
+ *  UPDATE BODEGAS
 =========================================================================*/
 
 /** =====================================================================
- *  DELETE CATEGORIAS
+ *  DELETE BODEGAS
 =========================================================================*/
 router.delete('/:id', validarJWT, deleteCategoria);
 /** =====================================================================
- *  DELETE CATEGORIAS
+ *  DELETE BODEGAS
 =========================================================================*/
 
 // EXPORTS
