@@ -9,13 +9,14 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
+const { getBodega, createBodega, updateBodega, deleteBodega } = require('../controllers/bodega.controller');
 
 const router = Router();
 
 /** =====================================================================
  *  GET BODEGAS
 =========================================================================*/
-router.get('/', getCategorias);
+router.get('/', getBodega);
 /** =====================================================================
  *  GET BODEGAS
 =========================================================================*/
@@ -28,7 +29,7 @@ router.post('/', [
         check('name', 'El nombre es obligatorio').not().isEmpty(),
         validarCampos
     ],
-    createCategoria
+    createBodega
 );
 /** =====================================================================
  *  CREATE BODEGAS
@@ -42,7 +43,7 @@ router.put('/:id', [
         check('name', 'El nombre es obligatorio').not().isEmpty(),
         validarCampos
     ],
-    updateCategoria
+    updateBodega
 );
 /** =====================================================================
  *  UPDATE BODEGAS
@@ -51,7 +52,7 @@ router.put('/:id', [
 /** =====================================================================
  *  DELETE BODEGAS
 =========================================================================*/
-router.delete('/:id', validarJWT, deleteCategoria);
+router.delete('/:id', validarJWT, deleteBodega);
 /** =====================================================================
  *  DELETE BODEGAS
 =========================================================================*/
