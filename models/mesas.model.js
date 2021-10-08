@@ -35,7 +35,8 @@ const MesasSchema = Schema({
     },
     mesero: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        require: true
     },
     cliente: {
         type: Schema.Types.ObjectId,
