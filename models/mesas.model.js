@@ -17,6 +17,10 @@ const carritoSchema = Schema({
     },
     price: {
         type: Number
+    },
+    estado: {
+        type: String,
+        default: 'Pendiente'
     }
 });
 
@@ -41,6 +45,9 @@ const MesasSchema = Schema({
     cliente: {
         type: Schema.Types.ObjectId,
         ref: 'Clients'
+    },
+    nota: {
+        type: String
     },
     status: {
         type: Boolean,

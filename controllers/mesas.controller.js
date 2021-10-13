@@ -33,6 +33,40 @@ const getMesas = async(req, res = response) => {
 };
 
 /** =====================================================================
+ *  GET MESA COMANDA
+=========================================================================*/
+const getMesasComanda = async(req, res = response) => {
+
+    try {
+
+        const mid = req.params.mid;
+
+        const [mesas, total] = await Promise.all([
+            Mesas.find({ disponible: false })
+            .populate('mesero', 'name')
+            .populate('cliente', 'name')
+            .populate('carrito.product', 'name cost comanda tipo')
+            .sort({ fecha: -1 }),
+            Mesas.countDocuments()
+        ]);
+
+        res.json({
+            ok: true,
+            mesas,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  GET MESA ID
 =========================================================================*/
 const getMesaId = async(req, res = response) => {
@@ -136,6 +170,10 @@ const updateMesa = async(req, res = response) => {
             }
         }
 
+        // FECHAS
+        inicial = new Date();
+        campos.fecha = new Date(inicial.getTime() - 1000 * 60 * 60 * 5);
+
         // UPDATE
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
             .populate('carrito.product', 'name cost comanda tipo')
@@ -214,5 +252,6 @@ module.exports = {
     getMesas,
     createMesas,
     getMesaId,
-    updateMesa
+    updateMesa,
+    getMesasComanda
 };
