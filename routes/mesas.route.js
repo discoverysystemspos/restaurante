@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getMesas, createMesas, getMesaId, updateMesa, getMesasComanda } = require('../controllers/mesas.controller');
+const { getMesas, createMesas, getMesaId, updateMesa, getMesasComanda, updateNota } = require('../controllers/mesas.controller');
 
 
 const router = Router();
@@ -59,6 +59,14 @@ router.post('/', [
 router.put('/:id', validarJWT, updateMesa);
 /** =====================================================================
  *  UPDATE MESAS
+=========================================================================*/
+
+/** =====================================================================
+ *  UPDATE NOTAS MESAS
+=========================================================================*/
+router.put('/notas/:id', validarJWT, updateNota);
+/** =====================================================================
+ *  UPDATE NOTAS MESAS
 =========================================================================*/
 
 // /** =====================================================================

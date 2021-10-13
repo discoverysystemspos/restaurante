@@ -197,6 +197,57 @@ const updateMesa = async(req, res = response) => {
 /** =====================================================================
  *  UPDATE MESA
 =========================================================================*/
+/** =====================================================================
+ *  UPDATE NOTA MESA
+=========================================================================*/
+const updateNota = async(req, res = response) => {
+
+        try {
+
+            const mid = req.params.id;
+
+            // SEARCH MESA
+            const mesaDB = await Mesas.findById({ _id: mid });
+            if (!mesaDB) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'No existe ninguna mesa con este ID'
+                });
+            }
+            // SEARCH MESA
+
+            // AGREGAR NOTA
+            const {...campos } = req.body;
+
+            mesaDB.nota.push({
+                nota: campos.nota,
+                date: campos.date
+            });
+
+            // UPDATE
+            const mesaUpdate = await Mesas.findByIdAndUpdate(mid, mesaDB, { new: true, useFindAndModify: false })
+                .populate('carrito.product', 'name cost comanda tipo')
+                .populate('cliente', 'name cedula phone email address city cid')
+                .populate('mesero', 'name');
+
+            res.json({
+                ok: true,
+                mesa: mesaUpdate
+            });
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                ok: false,
+                msg: 'Error inesperado, porfavor intente nuevamente'
+            });
+        }
+
+
+    }
+    /** =====================================================================
+     *  UPDATE NOTA MESA
+    =========================================================================*/
 
 
 // /** =====================================================================
@@ -253,5 +304,6 @@ module.exports = {
     createMesas,
     getMesaId,
     updateMesa,
-    getMesasComanda
+    getMesasComanda,
+    updateNota
 };

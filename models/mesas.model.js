@@ -1,5 +1,15 @@
 const { Schema, model } = require('mongoose');
 
+const notaSchema = Schema({
+    nota: {
+        type: String
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 const carritoSchema = Schema({
     product: {
         type: Schema.Types.ObjectId,
@@ -46,9 +56,7 @@ const MesasSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Clients'
     },
-    nota: {
-        type: String
-    },
+    nota: [notaSchema],
     status: {
         type: Boolean,
         default: true
