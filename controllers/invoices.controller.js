@@ -81,7 +81,6 @@ const getInvoicesTurn = async(req, res = response) => {
                 .populate('mesa', 'name');
         }
 
-
         let total = 0;
         let montos = 0;
         let costos = 0;
@@ -110,8 +109,14 @@ const getInvoicesTurn = async(req, res = response) => {
 
         invoices.forEach(invoice => {
 
-            montos += invoice.base;
-            costos += invoice.cost;
+            if (invoice.base) {
+                montos += invoice.base;
+                costos += invoice.cost;
+            } else {
+                montos += invoice.amount;
+                costos += invoice.cost;
+            }
+
 
             payments = invoice.payments;
 
