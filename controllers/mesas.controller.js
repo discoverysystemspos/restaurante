@@ -203,9 +203,7 @@ const updateMesa = async(req, res = response) => {
 const updateNota = async(req, res = response) => {
 
         try {
-
             const mid = req.params.id;
-
             // SEARCH MESA
             const mesaDB = await Mesas.findById({ _id: mid });
             if (!mesaDB) {
@@ -215,26 +213,21 @@ const updateNota = async(req, res = response) => {
                 });
             }
             // SEARCH MESA
-
             // AGREGAR NOTA
             const {...campos } = req.body;
-
             mesaDB.nota.push({
                 nota: campos.nota,
                 date: campos.date
             });
-
             // UPDATE
             const mesaUpdate = await Mesas.findByIdAndUpdate(mid, mesaDB, { new: true, useFindAndModify: false })
                 .populate('carrito.product', 'name cost comanda tipo')
                 .populate('cliente', 'name cedula phone email address city cid')
                 .populate('mesero', 'name');
-
             res.json({
                 ok: true,
                 mesa: mesaUpdate
             });
-
         } catch (error) {
             console.log(error);
             return res.status(500).json({
@@ -242,8 +235,6 @@ const updateNota = async(req, res = response) => {
                 msg: 'Error inesperado, porfavor intente nuevamente'
             });
         }
-
-
     }
     /** =====================================================================
      *  UPDATE NOTA MESA
