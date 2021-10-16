@@ -172,7 +172,7 @@ const updateMesa = async(req, res = response) => {
 
         // FECHAS
         inicial = new Date();
-        campos.fecha = new Date(inicial.getTime() - 1000 * 60 * 60 * 5);
+        campos.fecha = new Date();
 
         // UPDATE
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
