@@ -18,7 +18,7 @@ const getPedidos = async(req, res = response) => {
 
             Pedido.find({ status })
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name')
+            .populate('products.product', 'name code')
             .populate('user', 'name')
             .sort({ pedido: -1 })
             .skip(desde)
@@ -65,7 +65,7 @@ const getPedidosClient = async(req, res = response) => {
 
             Pedido.find({ client })
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name')
+            .populate('products.product', 'name code')
             .populate('user', 'name')
             .sort({ pedido: -1 })
             .skip(desde)
@@ -106,7 +106,7 @@ const getPedidoOne = async(req, res = response) => {
 
         const pedido = await Pedido.findById(id)
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name')
+            .populate('products.product', 'name code')
             .populate('user', 'name');
 
         res.json({
@@ -176,10 +176,54 @@ const postPedidos = async(req, res = response) => {
     }
 
 
-}
+};
 
 /** =====================================================================
  *  POST PEDIDO
+=========================================================================*/
+/** =====================================================================
+ *  PUT PEDIDO
+=========================================================================*/
+const UpdateStatusPedido = async(req, res = response) => {
+
+    try {
+
+        const id = req.params.id;
+
+        // SEARCH PEDIDO
+        const pedidoDB = await Pedido.findById(id);
+        if (!pedidoDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe ningun pedido con este ID'
+            });
+        }
+        // SEARCH PEDIDO
+
+        const {...campos } = req.body;
+        const pedidoUpdate = await Pedido.findByIdAndUpdate(id, campos, { new: true, useFindAndModify: false })
+            .populate('client', 'name cedula phone email address city tip')
+            .populate('products.product', 'name code')
+            .populate('user', 'name');
+
+        res.json({
+            ok: true,
+            pedido: pedidoUpdate
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  PUT PEDIDO
 =========================================================================*/
 
 // MODULE EXPORTS
@@ -187,5 +231,6 @@ module.exports = {
     getPedidos,
     postPedidos,
     getPedidosClient,
-    getPedidoOne
+    getPedidoOne,
+    UpdateStatusPedido
 }
