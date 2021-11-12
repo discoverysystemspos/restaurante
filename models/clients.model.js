@@ -35,6 +35,10 @@ const ClientSchema = Schema({
         type: Boolean,
         default: true
     },
+    credit: {
+        type: Boolean,
+        default: false
+    },
     valid: {
         type: Boolean,
         default: false
