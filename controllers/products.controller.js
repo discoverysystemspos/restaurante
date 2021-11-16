@@ -160,6 +160,7 @@ const getCostProducts = async(req, res = response) => {
 
         let costo = 0;
         let precio = 0;
+        let inventario = 0;
 
         for (let i = 0; i < product.length; i++) {
 
@@ -167,6 +168,7 @@ const getCostProducts = async(req, res = response) => {
 
                 const stock = ((product[i].stock + product[i].returned + product[i].bought) - (product[i].sold + product[i].damaged));
 
+                inventario += stock;
                 costo += (stock * product[i].cost);
                 precio += (stock * product[i].price);
             }
@@ -176,7 +178,8 @@ const getCostProducts = async(req, res = response) => {
         res.json({
             ok: true,
             costo,
-            precio
+            precio,
+            inventario
 
         });
 

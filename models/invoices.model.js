@@ -42,6 +42,9 @@ const InvoiceSchema = Schema({
     invoice: {
         type: Number
     },
+    nota: {
+        type: String
+    },
     client: {
         type: Schema.Types.ObjectId,
         ref: 'Clients',
