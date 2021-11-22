@@ -192,10 +192,20 @@ const buscador = async(req, res = response) => {
 
         case 'departamento':
 
-            data = await Product.find({ department: termino, status: true, out: false })
-                .populate('department', 'name')
-                .skip(desde)
-                .limit(hasta);
+            if (termino === 'none') {
+                data = await Product.find({ status: true, out: false })
+                    .populate('department', 'name')
+                    .skip(desde)
+                    .limit(hasta)
+                    .sort({ sold: -1 });
+            } else {
+
+                data = await Product.find({ department: termino, status: true, out: false })
+                    .populate('department', 'name')
+                    .skip(desde)
+                    .limit(hasta);
+            }
+
             break;
 
         default:
