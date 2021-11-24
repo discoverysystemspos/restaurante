@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 //Conection DB
 const { dbConection } = require('./database/config');
 
-// Crear el servidor
+// Crear el servidor express
 const app = express();
 
 // CORS
