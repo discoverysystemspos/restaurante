@@ -291,6 +291,45 @@ const departmentProduct = async(req, res = response) => {
 }
 
 /** =====================================================================
+ *  GET PRODUCTS EXCEL
+=========================================================================*/
+const productsExcel = async(req, res = response) => {
+
+    try {
+
+        const products = await Product.find({}, 'code name type cost inventario gain price wholesale department stock bought sold returned damaged fecha');
+
+
+        for (let i = 0; i < products.length; i++) {
+
+            let stock = 0;
+            if (products.type !== 'Paquete') {
+                stock = ((products[i].stock + products[i].returned + products[i].bought) - (products[i].sold + products[i].damaged));
+            } else {
+                stock = 0;
+            }
+            products[i].inventario = stock
+
+
+        }
+
+        res.json({
+            ok: true,
+            products
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+
+}
+
+/** =====================================================================
  *  CREATE PRODUCT
 =========================================================================*/
 const createProduct = async(req, res = response) => {
@@ -541,5 +580,6 @@ module.exports = {
     oneProduct,
     codeProduct,
     departmentProduct,
-    getCostProducts
+    getCostProducts,
+    productsExcel
 };

@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getProducts, createProduct, updateProduct, deleteProduct, oneProduct, codeProduct, departmentProduct, getCostProducts } = require('../controllers/products.controller');
+const { getProducts, createProduct, updateProduct, deleteProduct, oneProduct, codeProduct, departmentProduct, getCostProducts, productsExcel } = require('../controllers/products.controller');
 
 const router = Router();
 
@@ -19,6 +19,14 @@ const router = Router();
 router.get('/', getProducts);
 /** =====================================================================
  *  GET PRODUCTS 
+=========================================================================*/
+
+/** =====================================================================
+ *  GET PRODUCT EXCEL
+=========================================================================*/
+router.get('/excel/', productsExcel);
+/** =====================================================================
+ *  GET PRODUCT EXCEL
 =========================================================================*/
 
 /** =====================================================================
@@ -52,6 +60,8 @@ router.get('/code/:code', codeProduct);
 /** =====================================================================
  *  GET CODE PRODUCT
 =========================================================================*/
+
+
 
 /** =====================================================================
  *  CREATE PRODUCTS
