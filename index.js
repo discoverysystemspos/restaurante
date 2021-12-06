@@ -28,23 +28,24 @@ dbConection();
 app.use(express.static('public'));
 
 // RUTAS
-app.use('/api/datos', require('./routes/datos.route'));
-app.use('/api/users', require('./routes/users.route'));
-app.use('/api/login', require('./routes/auth.route'));
-app.use('/api/clients', require('./routes/clients.route'));
-app.use('/api/departments', require('./routes/departments.route'));
-app.use('/api/products', require('./routes/products.route'));
-app.use('/api/uploads', require('./routes/uploads.route'));
-app.use('/api/search', require('./routes/search.route'));
-app.use('/api/invoice', require('./routes/invoices.route'));
-app.use('/api/caja', require('./routes/cajas.route'));
-app.use('/api/turno', require('./routes/turnos.route'));
-app.use('/api/mesas', require('./routes/mesas.route'));
 app.use('/api/bascula', require('./routes/bascula.route'));
-app.use('/api/pedidos', require('./routes/pedidos.route'));
+app.use('/api/bodega', require('./routes/bodega.route'));
+app.use('/api/caja', require('./routes/cajas.route'));
 app.use('/api/categorias', require('./routes/categorias.route'));
 app.use('/api/calendario', require('./routes/calendario.route'));
-app.use('/api/bodega', require('./routes/bodega.route'));
+app.use('/api/clients', require('./routes/clients.route'));
+app.use('/api/datos', require('./routes/datos.route'));
+app.use('/api/departments', require('./routes/departments.route'));
+app.use('/api/invoice', require('./routes/invoices.route'));
+app.use('/api/login', require('./routes/auth.route'));
+app.use('/api/mesas', require('./routes/mesas.route'));
+app.use('/api/users', require('./routes/users.route'));
+app.use('/api/pedidos', require('./routes/pedidos.route'));
+app.use('/api/products', require('./routes/products.route'));
+app.use('/api/proveedores', require('./routes/proveedores.route'));
+app.use('/api/search', require('./routes/search.route'));
+app.use('/api/turno', require('./routes/turnos.route'));
+app.use('/api/uploads', require('./routes/uploads.route'));
 
 // LOGS
 app.use('/api/log/products', require('./routes/log.products.route'));
