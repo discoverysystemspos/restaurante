@@ -143,6 +143,7 @@ const postPedidos = async(req, res = response) => {
 
         pedido.client = client;
 
+        // ACTUALIZAR INVENTARIO
         soldProduct(pedido.products, pedido.pedido, client, pedido, true)
 
         // VALIDATE CODE
