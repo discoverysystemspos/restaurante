@@ -39,6 +39,10 @@ const ClientSchema = Schema({
         type: Boolean,
         default: false
     },
+    mayoreo: {
+        type: Boolean,
+        default: false
+    },
     valid: {
         type: Boolean,
         default: false

@@ -5,7 +5,7 @@ const LogProducts = require('../models/log.products.model');
 /** =====================================================================
  *  UPDATE STOCK 
 =========================================================================*/
-const soldProduct = async(products, invoice, user, invoices) => {
+const soldProduct = async(products, invoice, user, invoices, pedido = false) => {
 
     try {
 
@@ -56,24 +56,28 @@ const soldProduct = async(products, invoice, user, invoices) => {
 
                 let habia = stock + products[i].qty;
 
-                let log = {
-                    code: product.code,
-                    name: product.name,
-                    description: factura,
-                    type: 'Salida',
-                    befored: habia,
-                    qty: products[i].qty,
-                    stock: stock,
-                    cajero: user,
-                    invoice: invoices,
-                    turno: invoices.turno,
-                    department: product.department._id,
-                    departamento: product.department.name
+                if (!pedido) {
+
+                    let log = {
+                        code: product.code,
+                        name: product.name,
+                        description: factura,
+                        type: 'Salida',
+                        befored: habia,
+                        qty: products[i].qty,
+                        stock: stock,
+                        cajero: user,
+                        invoice: invoices,
+                        turno: invoices.turno,
+                        department: product.department._id,
+                        departamento: product.department.name
+                    }
+
+                    const logProducts = new LogProducts(log);
+
+                    await logProducts.save();
                 }
 
-                const logProducts = new LogProducts(log);
-
-                await logProducts.save();
 
             } else {
 

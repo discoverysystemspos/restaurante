@@ -1,4 +1,5 @@
 const { response } = require('express');
+const { soldProduct } = require('../helpers/products-stock');
 
 // MODELS
 const Pedido = require('../models/pedidos.model');
@@ -141,6 +142,8 @@ const postPedidos = async(req, res = response) => {
         const referencia = req.body.referencia;
 
         pedido.client = client;
+
+        soldProduct(pedido.products, pedido.pedido, client, pedido, true)
 
         // VALIDATE CODE
         const validateReference = await Pedido.findOne({ referencia });
