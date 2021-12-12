@@ -230,9 +230,13 @@ const codeProduct = async(req, res = response) => {
 
     try {
 
-        const code = req.params.code;
+        const code = new RegExp(req.params.code, 'i');
 
-        const product = await Product.findOne({ code })
+        const product = await Product.findOne({
+                $or: [
+                    { code: code }
+                ]
+            })
             .populate('kit.product', 'name')
             .populate('department', 'name');
 
