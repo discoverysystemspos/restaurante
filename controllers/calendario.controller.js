@@ -69,7 +69,7 @@ const createCalendario = async(req, res = response) => {
  *  CREATE CALENDARIO
 =========================================================================*/
 /** =====================================================================
- *  UPDATE CALENDARIO
+ *  UPDATE CALENDARIO declinado
 =========================================================================*/
 // const updateCategoria = async(req, res = response) => {
 
