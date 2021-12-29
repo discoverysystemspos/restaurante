@@ -153,11 +153,20 @@ const deleteClient = async(req, res = response) => {
             });
         }
         // SEARCH CLIENT
-        await Client.findByIdAndDelete({ _id: cid });
+        
+        // CHANGE STATUS
+        if (clientDB.status === true) {
+            clientDB.status = false;
+        } else {
+            clientDB.status = true;
+        }
+        // CHANGE STATUS
+
+        const clientUpdate = await Client.findByIdAndUpdate(cid, clientDB, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            msg: 'Cliente eliminado con exito'
+            client: clientUpdate
         });
 
     } catch (error) {

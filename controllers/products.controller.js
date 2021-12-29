@@ -18,6 +18,7 @@ const getProducts = async(req, res = response) => {
         const end = req.query.end || new Date();
         const desde = Number(req.query.desde) || 0;
         const limite = Number(req.query.limite) || 10;
+        const status = req.query.status || false;
 
         let products;
         switch (tipo) {
@@ -106,6 +107,8 @@ const getProducts = async(req, res = response) => {
                 break;
             case 'none':
 
+            console.log(status);
+
                 if (department !== 'none') {
 
                     products = await Product.find({ department: department })
@@ -116,11 +119,25 @@ const getProducts = async(req, res = response) => {
 
                 } else {
 
-                    products = await Product.find()
+                    if (status !== 'false') {                        
+
+                        products = await Product.find({ status: true })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .skip(desde)
                         .limit(limite);
+                        
+                    }else{
+
+                        products = await Product.find()
+                        .populate('kit.product', 'name')
+                        .populate('department', 'name')
+                        .skip(desde)
+                        .limit(limite);
+
+                    }
+
+                    
                 }
 
 
@@ -194,7 +211,6 @@ const getCostProducts = async(req, res = response) => {
 /** =====================================================================
  *  GET TOTAL COST PRODUCTS
 =========================================================================*/
-
 const oneProduct = async(req, res = response) => {
 
     const id = req.params.id;
@@ -235,7 +251,8 @@ const codeProduct = async(req, res = response) => {
         const product = await Product.findOne({
                 $or: [
                     { code: code }
-                ]
+                ],
+                status: true
             })
             .populate('kit.product', 'name')
             .populate('department', 'name');
@@ -269,7 +286,7 @@ const departmentProduct = async(req, res = response) => {
 
         // data = await User.find({ name: regex });
         [products, total] = await Promise.all([
-            Product.find({ department: department })
+            Product.find({ department: department, status: true })
             .populate('kit.product', 'name')
             .populate('department', 'name')
             .skip(desde)
@@ -552,11 +569,20 @@ const deleteProduct = async(req, res = response) => {
             });
         }
         // SEARCH PRODUCT
-        await Product.findByIdAndDelete({ _id });
+
+        // CHANGE STATUS
+        if (productDB.status === true) {
+            productDB.status = false;
+        } else {
+            productDB.status = true;
+        }
+        // CHANGE STATUS
+
+        const productUpdate = await Product.findByIdAndUpdate(_id, productDB, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            msg: 'Product eliminado con exito'
+            product: productUpdate
         });
 
     } catch (error) {

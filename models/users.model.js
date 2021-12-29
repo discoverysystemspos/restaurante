@@ -1,5 +1,14 @@
 const { Schema, model } = require('mongoose');
 
+const privSchema = Schema({
+
+    cierre: {
+        type: Boolean,
+        default: true
+    }
+
+});
+
 const UserSchema = Schema({
 
     usuario: {
@@ -17,6 +26,8 @@ const UserSchema = Schema({
         type: String,
         require: true
     },
+
+    privilegios: [privSchema],
 
     role: {
         type: String,
