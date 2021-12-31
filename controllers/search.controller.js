@@ -20,12 +20,9 @@ const search = async(req, res = response) => {
     const regex = new RegExp(busqueda, 'i');
     const desde = req.query.desde;
     const hasta = req.query.hasta;
-    let status = req.query.status || false;
 
     let data = [];
     let total;
-
-    console.log(status);
 
     switch (tabla) {
 
@@ -66,38 +63,17 @@ const search = async(req, res = response) => {
         case 'products':
 
             // data = await Client.find({ name: regex });
-                        
-            if (!status) {                        
-                
-                [data, total] = await Promise.all([
-                    Product.find({
-                        $or: [
-                            { code: regex },
-                            { name: regex },
-                            { description: regex },
-                            { type: regex }
-                        ]
-                    }),
-                    Product.countDocuments()
-                ]);
-                
-            }else{
-
-                [data, total] = await Promise.all([
-                    Product.find({
-                        $or: [
-                            { code: regex },
-                            { name: regex },
-                            { description: regex },
-                            { type: regex }
-                        ]
-                    }),
-                    Product.countDocuments()
-                ]);
-
-            }
-
-            
+            [data, total] = await Promise.all([
+                Product.find({
+                    $or: [
+                        { code: regex },
+                        { name: regex },
+                        { description: regex },
+                        { type: regex }
+                    ]
+                }),
+                Product.countDocuments()
+            ]);
             break;
 
         case 'departments':
