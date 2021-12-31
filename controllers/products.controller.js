@@ -107,8 +107,6 @@ const getProducts = async(req, res = response) => {
                 break;
             case 'none':
 
-            console.log(status);
-
                 if (department !== 'none') {
 
                     products = await Product.find({ department: department })
