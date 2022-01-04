@@ -50,15 +50,17 @@ const InvoiceSchema = Schema({
         ref: 'Clients',
         require: true
     },
+    pedido:{
+        type: Schema.Types.ObjectId,
+        ref: 'Pedidos'
+    },
     turno: {
         type: Schema.Types.ObjectId,
-        ref: 'Turnos',
-        require: true
+        ref: 'Turnos'
     },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
-        require: true
+        ref: 'User'
     },
     mesero: {
         type: Schema.Types.ObjectId,
@@ -72,6 +74,10 @@ const InvoiceSchema = Schema({
     type: {
         type: String,
         require: true
+    },
+    venta: {
+        type: String,
+        default: 'Local'
     },
     amount: {
         type: Number,

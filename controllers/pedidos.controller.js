@@ -1,5 +1,11 @@
 const { response } = require('express');
-const { soldProduct } = require('../helpers/products-stock');
+
+// HERLPERS
+const { soldProduct, returnStock } = require('../helpers/products-stock');
+const { createInvoiceOnline } = require('../helpers/venta-online');
+
+// MODELS
+const Invoice = require('../models/invoices.model');
 
 // MODELS
 const Pedido = require('../models/pedidos.model');
@@ -138,13 +144,12 @@ const postPedidos = async(req, res = response) => {
         const client = req.cid;
 
         const pedido = new Pedido(req.body);
-
         const referencia = req.body.referencia;
 
         pedido.client = client;
 
         // ACTUALIZAR INVENTARIO
-        soldProduct(pedido.products, pedido.pedido, client, pedido, true)
+        // soldProduct(pedido.products, pedido.pedido, client, pedido, true);
 
         // VALIDATE CODE
         const validateReference = await Pedido.findOne({ referencia });
@@ -155,12 +160,22 @@ const postPedidos = async(req, res = response) => {
             });
         }
 
-        await pedido.save();
+        await pedido.save();        
 
         const pedidoNew = await Pedido.findById(pedido._id)
             .populate('client', 'name cedula phone email address city tip')
             .populate('products.product', 'name code type')
             .populate('user', 'name');
+
+
+        // ======================================
+        //  CREAR FACTURAR
+        // ======================================
+        createInvoiceOnline(pedidoNew);
+        
+        // ======================================
+        //  CREAR FACTURAR
+        // ======================================
 
         res.json({
             ok: true,
