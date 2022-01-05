@@ -207,7 +207,7 @@ const getCostProducts = async(req, res = response) => {
     }
 };
 /** =====================================================================
- *  GET TOTAL COST PRODUCTS
+ *  GET PRODUTS FOR ID
 =========================================================================*/
 const oneProduct = async(req, res = response) => {
 
