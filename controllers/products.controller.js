@@ -117,23 +117,11 @@ const getProducts = async(req, res = response) => {
 
                 } else {
 
-                    if (status !== 'false') {                        
-
-                        products = await Product.find({ status: true })
+                    products = await Product.find()
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .skip(desde)
                         .limit(limite);
-                        
-                    }else{
-
-                        products = await Product.find()
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .skip(desde)
-                        .limit(limite);
-
-                    }
 
                     
                 }
