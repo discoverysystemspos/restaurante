@@ -68,6 +68,10 @@ const DatoSchema = Schema({
     logo: {
         type: String
     },
+    comandas: {
+        type: Boolean,
+        default: false
+    },
     status: {
         type: Boolean,
         default: true
