@@ -34,6 +34,32 @@ const carritoSchema = Schema({
     }
 });
 
+const ingredientesSchema = Schema({
+    name: {
+        type: String
+    }
+});
+
+const comandaSchema = Schema({
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+        require: true
+    },
+    ingredientes: [ingredientesSchema],
+    qty: {
+        type: Number,
+        require: true
+    },
+    nota: {
+        type: String
+    },
+    estado: {
+        type: String,
+        default: 'Pendiente'
+    }
+});
+
 const MesasSchema = Schema({
 
     name: {
@@ -57,6 +83,7 @@ const MesasSchema = Schema({
         ref: 'Clients'
     },
     nota: [notaSchema],
+    comanda: [comandaSchema],
     status: {
         type: Boolean,
         default: true
