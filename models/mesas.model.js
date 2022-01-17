@@ -37,6 +37,9 @@ const carritoSchema = Schema({
 const ingredientesSchema = Schema({
     name: {
         type: String
+    },
+    qty: {
+        type: Number
     }
 });
 
