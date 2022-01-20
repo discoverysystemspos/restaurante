@@ -46,6 +46,7 @@ const getMesasComanda = async(req, res = response) => {
             .populate('mesero', 'name')
             .populate('cliente', 'name')
             .populate('carrito.product', 'name cost comanda tipo')
+            .populate('comanda.product', 'name cost comanda tipo')
             .sort({ fecha: -1 }),
             Mesas.countDocuments()
         ]);
@@ -77,6 +78,7 @@ const getMesaId = async(req, res = response) => {
 
         const mesa = await Mesas.findById(id)
             .populate('carrito.product', 'name cost comanda tipo')
+            .populate('comanda.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
 
@@ -175,6 +177,7 @@ const updateMesa = async(req, res = response) => {
         // UPDATE
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
             .populate('carrito.product', 'name cost comanda tipo')
+            .populate('comanda.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
 
@@ -239,49 +242,62 @@ const updateNota = async(req, res = response) => {
     =========================================================================*/
 
 
-// /** =====================================================================
-//  *  DELETE DEPARTMENT
-// =========================================================================*/
-// const deleteDepartment = async(req, res = response) => {
+/** =====================================================================
+ *  DELETE DEPARTMENT
+=========================================================================*/
+const deleteIngrediente = async(req, res = response) => {
 
-//     const did = req.params.id;
+    const mid = req.params.id;
+    const comanda = req.params.comanda;
+    const ingID = req.params.ingrediente;
 
-//     try {
+    console.log(mid);
+    console.log(ingID);
+    console.log(comanda);
 
-//         // SEARCH DEPARTMENT
-//         const departmentDB = await Department.findById({ _id: did });
-//         if (!departmentDB) {
-//             return res.status(400).json({
-//                 ok: false,
-//                 msg: 'No existe ningun usuario con este ID'
-//             });
-//         }
-//         // SEARCH DEPARTMENT
+    try {
 
-//         // CHANGE STATUS
-//         if (departmentDB.status === true) {
-//             departmentDB.status = false;
-//         } else {
-//             departmentDB.status = true;
-//         }
-//         // CHANGE STATUS
+        // const mesaUpdate = await Mesas.findOneAndUpdate( mid, 
+        //     { comanda: 
+        //         { ingredientes: 
+        //             { $pull: 
+        //                 { _id: { $gte: ingID } }
+        //             }
+        //         } 
+        //     });
 
-//         const departmentUpdate = await Department.findByIdAndUpdate(did, departmentDB, { new: true, useFindAndModify: false });
+        // { ingredientes: { $pull: { _id: { $gte: ingID } }}}
 
-//         res.json({
-//             ok: true,
-//             department: departmentUpdate
-//         });
+        const mesaUpdate = await Mesas.findOneAndUpdate( mid, 
 
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).json({
-//             ok: false,
-//             msg: 'Error inesperado, porfavor intente nuevamente'
-//         });
-//     }
+            { $pull:
+                
+                { comanda: 
+                    
+                    { ingredientes:                  
+                        
+                        {  _id : { $lte :ingID } }      
+                        
+                    }
+                }
+            },
 
-// };
+            { new: true});
+                        
+        res.json({
+            ok: true,
+            mesa: mesaUpdate
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
 
 /** =====================================================================
  *  DELETE DEPARTMENT
@@ -294,5 +310,6 @@ module.exports = {
     getMesaId,
     updateMesa,
     getMesasComanda,
-    updateNota
+    updateNota,
+    deleteIngrediente
 };

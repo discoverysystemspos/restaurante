@@ -16,10 +16,16 @@ const getPeso = async(req, res = response) => {
         let peso = data.toString();
 
         if (peso.length > 17) {
+
+            let w = peso.slice(2, -2);
+
             res.json({
                 ok: true,
-                pesos: 0
+                pesos: parseFloat(w),
+                init,
+                end
             });
+
         } else {
 
             // let pesos = peso.split(' ');
