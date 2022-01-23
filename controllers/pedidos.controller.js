@@ -141,6 +141,8 @@ const postPedidos = async(req, res = response) => {
 
     try {
 
+        const user = req.uid;
+
         const client = req.cid;
 
         const pedido = new Pedido(req.body);
@@ -171,8 +173,7 @@ const postPedidos = async(req, res = response) => {
         // ======================================
         //  CREAR FACTURAR
         // ======================================
-        createInvoiceOnline(pedidoNew);
-        
+        createInvoiceOnline(pedidoNew, user);        
         // ======================================
         //  CREAR FACTURAR
         // ======================================

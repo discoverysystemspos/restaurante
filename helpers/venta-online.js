@@ -10,9 +10,15 @@ const Product = require('../models/products.model');
 /** =====================================================================
  *  CREATE INVOICE ONLINE
 =========================================================================*/
-const createInvoiceOnline = async(pedido) => {
+const createInvoiceOnline = async(pedido, vendedor) => {
 
     try {
+
+        let usuario = '';
+
+        if (vendedor === '' || vendedor === null ) {
+            vendedor = usuario
+        }
 
         let factura = [];        
 
@@ -29,7 +35,7 @@ const createInvoiceOnline = async(pedido) => {
             
         }        
                 
-        factura.user = '60da36c1f6beed066c105b3b';
+        factura.user = usuario;
         factura.venta = 'Online';
         factura.pedido = pedido._id;
         factura.type = 'credito';
@@ -42,7 +48,7 @@ const createInvoiceOnline = async(pedido) => {
         factura.base = pedido.amount;
         factura.credito = true;
         factura.mesa = '61d5469da90ac6e7973167a3';
-        factura.mesero = '60da36c1f6beed066c105b3b';
+        factura.mesero = vendedor;
 
         console.log('factura: ', factura);
 
