@@ -141,13 +141,27 @@ const postPedidos = async(req, res = response) => {
 
     try {
 
-        const user = req.uid;
+        const local = req.query.local || false;
+        const mesa = req.query.mesa || false;
 
-        const client = req.cid;
+        const user = req.uid;
+        const mid = req.query.mid || '';
+
+        let client;
+        
+        if (local === 'true') {
+            client = req.query.cid;
+            
+        }else{
+            client = req.cid;
+        }
+
+        
+
 
         const pedido = new Pedido(req.body);
         const referencia = req.body.referencia;
-
+        
         pedido.client = client;
 
         // ACTUALIZAR INVENTARIO
@@ -173,7 +187,7 @@ const postPedidos = async(req, res = response) => {
         // ======================================
         //  CREAR FACTURAR
         // ======================================
-        createInvoiceOnline(pedidoNew, user);        
+        createInvoiceOnline(pedidoNew, user, mid);        
         // ======================================
         //  CREAR FACTURAR
         // ======================================

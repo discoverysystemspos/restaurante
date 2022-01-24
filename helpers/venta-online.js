@@ -6,16 +6,24 @@ const { soldProduct, returnStock } = require('./products-stock');
 // MODELS
 const Invoice = require('../models/invoices.model');
 const Product = require('../models/products.model');
+const Turno = require('../models/turnos.model');
 
 /** =====================================================================
  *  CREATE INVOICE ONLINE
 =========================================================================*/
-const createInvoiceOnline = async(pedido, vendedor) => {
+const createInvoiceOnline = async(pedido, vendedor, mid) => {
 
     try {
 
-        let usuario = '';
+        let usuario = '606f22c91d266d0308d74964';
 
+        const turnoDB = await Turno.findOne({ cajero: usuario })
+            .sort({'fecha' : -1})
+            .populate('cajero', 'name')
+            .populate('caja', 'name')
+            .populate('sales.facturas', 'amount payments status type products cost');
+        
+        
         if (vendedor === '' || vendedor === null ) {
             vendedor = usuario
         }
@@ -42,15 +50,21 @@ const createInvoiceOnline = async(pedido, vendedor) => {
         factura.cost = cost;
         factura.iva = iva;
         factura.products = pedido.products;
-        factura.client = pedido.client._id;
+        factura.client = pedido.client;
         factura.amount = pedido.amount;
         factura.nota = pedido.comentario;
         factura.base = pedido.amount;
         factura.credito = true;
-        factura.mesa = '61d5469da90ac6e7973167a3';
+        factura.mesa = '607067801d266d0308d74975';
         factura.mesero = vendedor;
 
-        console.log('factura: ', factura);
+        if (mid !== '') {
+            factura.mesa = mid;
+        }
+
+        if (turnoDB.cerrado === false) {
+            factura.turno = turnoDB._id;            
+        }
 
         const invoice = new Invoice(factura);
 
@@ -63,11 +77,6 @@ const createInvoiceOnline = async(pedido, vendedor) => {
     } catch (error) {
 
         console.log(error);
-        return res.status(500).json({
-            ok: false,
-            msg: 'Error inesperado, porfavor intente nuevamente Venta online'
-        });
-
     }
 
 };
