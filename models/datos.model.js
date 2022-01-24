@@ -83,6 +83,7 @@ const DatoSchema = Schema({
 
 });
 
+//SECHENA
 DatoSchema.method('toJSON', function() {
 
     const { __v, _id, ...object } = this.toObject();
