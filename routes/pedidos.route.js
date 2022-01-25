@@ -42,6 +42,7 @@ router.get('/one/:id', validarJWT, getPedidoOne);
 =========================================================================*/
 router.post('/', [
         validarClientJWT,
+        validarJWT,
         check('products', 'No ha seleccionado ningun producto').not().isEmpty(),
         validarCampos
     ],
