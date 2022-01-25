@@ -214,6 +214,11 @@ const getInvoicesAll = async(req, res = response) => {
             let costos = 0;
 
             invoices.forEach(invoice => {
+
+                if (!invoice.base) {
+                    invoice.base = invoice.amount;
+                }
+
                 montos += invoice.base;
                 costos += invoice.cost;
             });
