@@ -31,7 +31,7 @@ const getProducts = async(req, res = response) => {
                         .populate('department', 'name')
                         .sort({ out: -1 })
                         .skip(desde)
-                        .limit(limite);
+                        .limit(1000);
 
                 } else {
 
@@ -40,7 +40,7 @@ const getProducts = async(req, res = response) => {
                         .populate('department', 'name')
                         .sort({ out: -1 })
                         .skip(desde)
-                        .limit(limite);
+                        .limit(1000);
                 }
 
 
@@ -394,6 +394,7 @@ const updateProduct = async(req, res = response) => {
     const pid = req.params.id;
 
     const user = req.uid;
+    const inventario = req.query.inventario || false;
 
     try {
 
