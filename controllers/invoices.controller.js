@@ -173,8 +173,8 @@ const getInvoicesAll = async(req, res = response) => {
 
         const initial = req.query.initial;
         const end = req.query.end;
-        const mesa = req.query.user || 'none';
         const status = req.query.status || true;
+        const mesa = req.query.user || 'none';
         const credito = req.query.credito || false;
 
         try {

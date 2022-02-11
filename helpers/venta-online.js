@@ -58,6 +58,9 @@ const createInvoiceOnline = async(pedido, vendedor, mid) => {
         factura.mesa = '607067801d266d0308d74975';
         factura.mesero = vendedor;
 
+        console.log(pedido);
+        console.log(factura);
+
         if (mid !== '') {
             factura.mesa = mid;
         }
