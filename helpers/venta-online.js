@@ -15,7 +15,7 @@ const createInvoiceOnline = async(pedido, vendedor, mid) => {
 
     try {
 
-        let usuario = '606f22c91d266d0308d74964';
+        let usuario = '60da36c1f6beed066c105b3b';
 
         const turnoDB = await Turno.findOne({ cajero: usuario })
             .sort({'fecha' : -1})
@@ -55,7 +55,7 @@ const createInvoiceOnline = async(pedido, vendedor, mid) => {
         factura.nota = pedido.comentario;
         factura.base = pedido.amount;
         factura.credito = true;
-        factura.mesa = '607067801d266d0308d74975';
+        factura.mesa = '61d5469da90ac6e7973167a3';
         factura.mesero = vendedor;
 
         if (mid !== '') {
