@@ -19,6 +19,9 @@ const ProductosSchema = Schema({
     price: {
         type: Number,
         require: true
+    },
+    department: {
+        type: String
     }
 
 });
