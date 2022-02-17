@@ -136,6 +136,19 @@ const search = async(req, res = response) => {
                 LogProducts.countDocuments()
             ]);
             break;
+            case 'invoice':
+
+                // data = await Client.find({ name: regex });
+                [data, total] = await Promise.all([
+                    Invoice.find({ client: busqueda })
+                    .populate('client', 'name cedula phone email address city tip')
+                    .populate('products.product', 'name code type tax impuesto')
+                    .populate('mesero', 'name')
+                    .populate('mesa', 'name')
+                    .populate('user', 'name'),
+                    Invoice.countDocuments()
+                ]);
+                break;
 
         default:
             res.status(400).json({
