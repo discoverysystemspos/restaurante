@@ -68,14 +68,14 @@ const getInvoicesTurn = async(req, res = response) => {
         if (creditos) {
             invoices = await Invoice.find({ turno, status, credito })
                 .populate('client', 'name cedula phone email address city tip')
-                .populate('products.product', 'name')
+                .populate('products.product', 'name department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name');
         } else {
             invoices = await Invoice.find({ turno, status })
                 .populate('client', 'name cedula phone email address city tip')
-                .populate('products.product', 'name')
+                .populate('products.product', 'name department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name');

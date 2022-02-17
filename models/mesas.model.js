@@ -31,9 +31,6 @@ const carritoSchema = Schema({
     estado: {
         type: String,
         default: 'Pendiente'
-    },
-    department: {
-        type: String
     }
 });
 
