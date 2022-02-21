@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 
+// SCHEMA CALENDARIO
 const CalendarioSchema = Schema({
 
     user: {
