@@ -1,5 +1,5 @@
 /** =====================================================================
- *  USER ROUTER
+ *  USER ROUTER 
 =========================================================================*/
 const { Router } = require('express');
 const { check } = require('express-validator');
