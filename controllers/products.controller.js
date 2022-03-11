@@ -355,13 +355,13 @@ const createProduct = async(req, res = response) => {
         }
 
         // VALIDATE NAME
-        const validateName = await Product.findOne({ name });
-        if (validateName) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Ya existe un producto con este nombre'
-            });
-        }
+        // const validateName = await Product.findOne({ name });
+        // if (validateName) {
+        //     return res.status(400).json({
+        //         ok: false,
+        //         msg: 'Ya existe un producto con este nombre'
+        //     });
+        // }
 
         // SAVE PRODUCT
         const product = new Product(req.body);

@@ -33,8 +33,7 @@ const ProductSchema = Schema({
     },
     name: {
         type: String,
-        require: true,
-        unique: true
+        require: true
     },
     description: {
         type: String,

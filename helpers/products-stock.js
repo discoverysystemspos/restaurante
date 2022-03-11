@@ -20,8 +20,9 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 
             let id = products[i].product;
 
+            
             const product = await Product.findById(id)
-                .populate('department', 'name');
+            .populate('department', 'name');
 
             // SI ES DIFERENTE A UN KIT
             if (product.type !== 'Paquete') {
@@ -69,7 +70,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                         cajero: user,
                         invoice: invoices,
                         turno: invoices.turno,
-                        department: product.department._id,
+                        // department: product.department._id,
                         departamento: product.department.name
                     }
 
@@ -130,12 +131,12 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
             }
 
         }
+
+        return true;
     } catch (error) {
+
         console.log(error);
-        return res.status(500).json({
-            ok: false,
-            msg: 'Error inesperado, porfavor intente nuevamente'
-        });
+        return false;
     }
 
 

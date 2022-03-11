@@ -416,7 +416,16 @@ const createInvoice = async(req, res = response) => {
 
         await invoice.save();
 
-        soldProduct(invoice.products, invoice.invoice, user, invoice);
+        const sold = await soldProduct(invoice.products, invoice.invoice, user, invoice);
+
+        if (!sold) {
+
+            return res.status(500).json({
+                ok: false,
+                msg: 'Este producto no tiene asigando un departamento'
+            });
+        
+        }
 
         const invoiceNew = await Invoice.findById(invoice._id)
             .populate('client', 'name cedula phone email address city tip')
