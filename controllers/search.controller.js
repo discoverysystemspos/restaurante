@@ -71,7 +71,8 @@ const search = async(req, res = response) => {
                         { description: regex },
                         { type: regex }
                     ]
-                }),
+                })
+                .populate('kit.product', 'name'),
                 Product.countDocuments()
             ]);
             break;
