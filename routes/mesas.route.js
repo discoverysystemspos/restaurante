@@ -11,13 +11,12 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 // CONTROLLER
 const { getMesas, createMesas, getMesaId, updateMesa, getMesasComanda, updateNota, deleteIngrediente } = require('../controllers/mesas.controller');
 
-
 const router = Router();
 
 /** =====================================================================
  *  GET MESAS
 =========================================================================*/
-router.get('/', validarJWT, getMesas);
+router.get('/', getMesas);
 /** =====================================================================
  *  GET MESAS 
 =========================================================================*/
@@ -33,7 +32,7 @@ router.get('/comandas/', validarJWT, getMesasComanda);
 /** =====================================================================
  *  GET MESA ID
 =========================================================================*/
-router.get('/:id', validarJWT, getMesaId);
+router.get('/:id', getMesaId);
 /** =====================================================================
  *  GET MESA ID
 =========================================================================*/
@@ -56,7 +55,7 @@ router.post('/', [
 /** =====================================================================
  *  UPDATE MESAS
 =========================================================================*/
-router.put('/:id', validarJWT, updateMesa);
+router.put('/:id', updateMesa);
 /** =====================================================================
  *  UPDATE MESAS
 =========================================================================*/
@@ -72,7 +71,7 @@ router.put('/notas/:id', validarJWT, updateNota);
 /** =====================================================================
  *  DELETE INGREDIENTE
 =========================================================================*/
-router.delete('/:id/comanda/:comanda/ingrediente/:ingrediente', validarJWT, deleteIngrediente);
+router.delete('/:id/comanda/:comanda/ingrediente/:ingrediente', deleteIngrediente);
 /** =====================================================================
  *  DELETE INGREDIENTE
 =========================================================================*/
