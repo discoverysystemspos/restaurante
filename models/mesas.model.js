@@ -91,6 +91,10 @@ const MesasSchema = Schema({
         type: Boolean,
         default: true
     },
+    menu: {
+        type: Boolean,
+        default: false
+    },
     carrito: [carritoSchema],
     fecha: {
         type: Date,

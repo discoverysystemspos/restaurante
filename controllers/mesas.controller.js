@@ -205,6 +205,8 @@ const updateNota = async(req, res = response) => {
 
     try {
         const mid = req.params.id;
+        const add = req.body.add | true;
+
         // SEARCH MESA
         const mesaDB = await Mesas.findById({ _id: mid });
         if (!mesaDB) {
@@ -214,21 +216,47 @@ const updateNota = async(req, res = response) => {
             });
         }
         // SEARCH MESA
+
         // AGREGAR NOTA
-        const {...campos } = req.body;
-        mesaDB.nota.push({
-            nota: campos.nota,
-            date: campos.date
-        });
+
+        if (add === true) {
+            const {...campos } = req.body;
+            mesaDB.nota.push({
+                nota: campos.nota,
+                date: campos.date
+            });
+
+            const mesaUpdate = await Mesas.findByIdAndUpdate(mid, mesaDB, { new: true, useFindAndModify: false })
+                .populate('carrito.product', 'name cost comanda tipo')
+                .populate('cliente', 'name cedula phone email address city cid')
+                .populate('mesero', 'name');
+
+            res.json({
+                ok: true,
+                mesa: mesaUpdate
+
+            });
+
+        } else {
+
+            const nota = req.body.nota;
+
+            const mesaUpdate = await Mesas.findByIdAndUpdate(mid, { nota }, { new: true, useFindAndModify: false })
+                .populate('carrito.product', 'name cost comanda tipo')
+                .populate('cliente', 'name cedula phone email address city cid')
+                .populate('mesero', 'name');
+
+            res.json({
+                ok: true,
+                mesa: mesaUpdate
+
+            });
+
+        }
+
         // UPDATE
-        const mesaUpdate = await Mesas.findByIdAndUpdate(mid, mesaDB, { new: true, useFindAndModify: false })
-            .populate('carrito.product', 'name cost comanda tipo')
-            .populate('cliente', 'name cedula phone email address city cid')
-            .populate('mesero', 'name');
-        res.json({
-            ok: true,
-            mesa: mesaUpdate
-        });
+
+
     } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -239,6 +267,53 @@ const updateNota = async(req, res = response) => {
 };
 /** =====================================================================
  *  UPDATE NOTA MESA
+=========================================================================*/
+/** =====================================================================
+ *  UPDATE MENU
+=========================================================================*/
+const updateMenu = async(req, res = response) => {
+
+    try {
+
+        const mid = req.params.id;
+        const menu = req.params.menu;
+
+        const mesaDB = await Mesas.findById({ _id: mid });
+        if (!mesaDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ninguna mesa con este ID'
+            });
+        }
+
+        // ACTUALIZAMOS
+        const mesaUpdate = await Mesas.findByIdAndUpdate(mid, { menu }, { new: true, useFindAndModify: false })
+            .populate('carrito.product', 'name cost comanda tipo')
+            .populate('cliente', 'name cedula phone email address city cid')
+            .populate('mesero', 'name');
+
+
+
+        res.json({
+            ok: true,
+            mesa: mesaUpdate
+        });
+
+
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  UPDATE MENU
 =========================================================================*/
 
 
@@ -268,22 +343,25 @@ const deleteIngrediente = async(req, res = response) => {
 
         // { ingredientes: { $pull: { _id: { $gte: ingID } }}}
 
-        const mesaUpdate = await Mesas.findOneAndUpdate( mid, 
+        const mesaUpdate = await Mesas.findOneAndUpdate(mid,
 
-            { $pull:
-                
-                { comanda: 
-                    
-                    { ingredientes:                  
-                        
-                        {  _id : { $lte :ingID } }      
-                        
+            {
+                $pull:
+
+                {
+                    comanda:
+
+                    {
+                        ingredientes:
+
+                        { _id: { $lte: ingID } }
+
                     }
                 }
             },
 
-            { new: true});
-                        
+            { new: true });
+
         res.json({
             ok: true,
             mesa: mesaUpdate
@@ -311,5 +389,6 @@ module.exports = {
     updateMesa,
     getMesasComanda,
     updateNota,
-    deleteIngrediente
+    deleteIngrediente,
+    updateMenu
 };
