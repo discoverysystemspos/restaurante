@@ -205,7 +205,7 @@ const updateNota = async(req, res = response) => {
 
     try {
         const mid = req.params.id;
-        const add = req.body.add | true;
+        const add = req.body.add || true;
 
         // SEARCH MESA
         const mesaDB = await Mesas.findById({ _id: mid });

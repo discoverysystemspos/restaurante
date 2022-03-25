@@ -40,6 +40,9 @@ const ingredientesSchema = Schema({
     },
     qty: {
         type: Number
+    },
+    status: {
+        type: Boolean
     }
 });
 
