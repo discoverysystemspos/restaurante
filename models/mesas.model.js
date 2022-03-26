@@ -42,7 +42,8 @@ const ingredientesSchema = Schema({
         type: Number
     },
     status: {
-        type: Boolean
+        type: Boolean,
+        default: true
     }
 });
 

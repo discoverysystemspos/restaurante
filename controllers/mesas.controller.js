@@ -205,7 +205,9 @@ const updateNota = async(req, res = response) => {
 
     try {
         const mid = req.params.id;
-        const add = req.body.add || true;
+        const add = req.query.add;
+
+        console.log('Estado: ', add);
 
         // SEARCH MESA
         const mesaDB = await Mesas.findById({ _id: mid });
@@ -219,7 +221,7 @@ const updateNota = async(req, res = response) => {
 
         // AGREGAR NOTA
 
-        if (add === true) {
+        if (add === 'true') {
             const {...campos } = req.body;
             mesaDB.nota.push({
                 nota: campos.nota,
