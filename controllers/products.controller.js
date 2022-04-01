@@ -123,7 +123,7 @@ const getProducts = async(req, res = response) => {
                         .skip(desde)
                         .limit(limite);
 
-                    
+
                 }
 
 
@@ -365,6 +365,8 @@ const createProduct = async(req, res = response) => {
 
         // SAVE PRODUCT
         const product = new Product(req.body);
+        product.inventario = product.stock;
+
         await product.save();
 
         res.json({

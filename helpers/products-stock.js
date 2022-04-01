@@ -20,9 +20,9 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 
             let id = products[i].product;
 
-            
+
             const product = await Product.findById(id)
-            .populate('department', 'name');
+                .populate('department', 'name');
 
             // SI ES DIFERENTE A UN KIT
             if (product.type !== 'Paquete') {
@@ -34,6 +34,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 
                 // ACTUALIZAMOS
                 product.sold += products[i].qty;
+                product.inventario -= products[i].qty;
 
                 // COMPROBAR SI EL PRODUCTO SE AGOTA
                 const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
@@ -124,6 +125,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 
                     // ACTUALIZAMOS
                     productKit.sold += log.qty * kits[i].qty;
+                    productKit.inventario -= log.qty * kits[i].qty;
                     const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
 
                 }
@@ -173,6 +175,7 @@ const returnStock = async(products, invoice, user) => {
                     }
 
                     product.returned += products[i].qty;
+                    product.inventario += products[i].qty;
 
                     // COMPROBAR SI EL PRODUCTO SE AGOTA
                     const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
@@ -257,6 +260,7 @@ const returnStock = async(products, invoice, user) => {
 
                         // ACTUALIZAMOS
                         productKit.returned += log.qty * kits[i].qty;
+                        productKit.inventario += log.qty * kits[i].qty;
                         const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
 
                     }
