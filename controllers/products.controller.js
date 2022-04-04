@@ -169,7 +169,7 @@ const getCostProducts = async(req, res = response) => {
 
             if (product[i].type !== 'Paquete') {
 
-                const stock = ((product[i].stock + product[i].returned + product[i].bought) - (product[i].sold + product[i].damaged));
+                const stock = product[i].inventario;
 
                 inventario += stock;
                 costo += (stock * product[i].cost);
@@ -306,20 +306,6 @@ const productsExcel = async(req, res = response) => {
 
         const products = await Product.find({}, 'code name type cost inventario gain price wholesale department stock bought sold returned damaged fecha');
 
-
-        for (let i = 0; i < products.length; i++) {
-
-            let stock = 0;
-            if (products.type !== 'Paquete') {
-                stock = ((products[i].stock + products[i].returned + products[i].bought) - (products[i].sold + products[i].damaged));
-            } else {
-                stock = 0;
-            }
-            products[i].inventario = stock
-
-
-        }
-
         res.json({
             ok: true,
             products
@@ -396,7 +382,6 @@ const updateProduct = async(req, res = response) => {
     const pid = req.params.id;
 
     const user = req.uid;
-    const inventario = req.query.inventario || false;
 
     try {
 
@@ -442,23 +427,6 @@ const updateProduct = async(req, res = response) => {
             }
         }
 
-        // COMPROBAR SI EL PRODUCTO SE AGOTA//
-        const stock = (productDB.stock + (campos.returned || 0) + (campos.bought || 0)) - ((campos.sold || 0) + (campos.damaged || 0));
-
-        if (stock > 0) {
-
-            campos.out = false;
-
-            if (stock < campos.min) {
-                campos.low = true;
-            } else {
-                campos.low = false;
-            }
-
-        } else {
-            campos.out = true;
-        }
-
         if (productDB.type === 'Paquete') {
             campos.out = false;
             campos.low = false;
@@ -469,58 +437,6 @@ const updateProduct = async(req, res = response) => {
         campos.code = code;
         campos.name = name;
         const productUpdate = await Product.findByIdAndUpdate(pid, campos, { new: true, useFindAndModify: false });
-
-        // COMPROBAR SI ES UNA COMPRA O RETORNO
-        if (campos.bought || campos.damaged) {
-
-            if (campos.bought !== productDB.bought) {
-
-                let change = campos.bought - productDB.bought;
-
-                let habia = stock - change;
-
-                let description = 'Compra';
-
-                let log = {
-                    code: productDB.code,
-                    name: productDB.name,
-                    description,
-                    type: 'Agrego',
-                    befored: habia,
-                    qty: change,
-                    stock: stock,
-                    cajero: user
-                }
-
-                let logProducts = new LogProducts(log);
-
-                await logProducts.save();
-
-            } else if (campos.damaged !== productDB.damaged) {
-
-                let change = campos.damaged - productDB.damaged;
-
-                let habia = stock + change;
-
-                let description = 'Dañados o Perdidos';
-
-                let log = {
-                    code: productDB.code,
-                    name: productDB.name,
-                    description,
-                    type: 'Elimino',
-                    befored: habia,
-                    qty: change,
-                    stock: stock,
-                    cajero: user
-                }
-
-                let logProducts = new LogProducts(log);
-
-                await logProducts.save();
-
-            }
-        }
 
         res.json({
             ok: true,
@@ -539,6 +455,153 @@ const updateProduct = async(req, res = response) => {
 };
 /** =====================================================================
  *  UPDATE PRODUCT
+=========================================================================*/
+/** =====================================================================
+ *  AJUSTAR INVENTARIO
+=========================================================================*/
+const ajustarInventario = async(req, res = response) => {
+
+    try {
+
+        const pid = req.params.id;
+        const user = req.uid;
+
+        const { cantidad, bought, damaged, type } = req.body;
+
+        const productDB = await Product.findById({ _id: pid });
+
+        if (!productDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun producto con este ID'
+            });
+        }
+
+        // COMPROBAR SI ES UNA COMPRA O RETORNO 
+        let habia = 0;
+        let description = '';
+
+        if (type === 'Agrego') {
+
+            habia = productDB.inventario;
+            description = 'Compra';
+            productDB.bought += bought;
+            productDB.inventario += cantidad;
+
+        } else if (type === 'Elimino') {
+
+            habia = productDB.inventario;
+            description = 'Dañados o Perdidos';
+            productDB.damaged += damaged;
+            productDB.inventario -= cantidad;
+        }
+
+        // GUARDAR EN EL LOG
+        let log = {
+            code: productDB.code,
+            name: productDB.name,
+            description,
+            type,
+            befored: habia,
+            qty: cantidad,
+            stock: productDB.inventario,
+            cajero: user
+        }
+
+        let logProducts = new LogProducts(log);
+        await logProducts.save();
+        // GUARDAR EN EL LOG
+
+        // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
+        if (productDB.inventario > 0) {
+            productDB.out = false;
+
+            if (productDB.inventario > productDB.min) {
+                productDB.low = false;
+            } else {
+                productDB.low = true;
+            }
+
+        } else {
+            productDB.out = true;
+            productDB.low = false;
+        }
+
+        // AJUSTAMOS EL PRODUCTO
+        const productUpdate = await Product.findByIdAndUpdate(pid, productDB, { new: true, useFindAndModify: false });
+
+
+
+        res.json({
+            ok: true,
+            product: productUpdate
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  AJUSTAR INVENTARIO
+=========================================================================*/
+/** =====================================================================
+ *  REPAIR INVENTARIO
+=========================================================================*/
+const repairInventario = async(req, res = response) => {
+
+    try {
+
+        const products = await Product.find();
+        let cantidad = 0;
+        for (const product of products) {
+
+            let inventario = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
+
+            product.inventario = inventario;
+
+            // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
+            if (inventario > 0) {
+                product.out = false;
+
+                if (inventario > product.min) {
+                    product.low = false;
+                } else {
+                    product.low = true;
+                }
+
+            } else {
+                product.out = true;
+                product.low = false;
+            }
+
+            // ACTUALIZAMOS EL PRODUCTO
+            await Product.findByIdAndUpdate(product._id, product, { new: true, useFindAndModify: false });
+            cantidad++;
+
+        };
+
+        res.json({
+            ok: true,
+            products: cantidad
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  REPAIR INVENTARIO
 =========================================================================*/
 /** =====================================================================
  *  DELETE PRODUCT
@@ -600,5 +663,7 @@ module.exports = {
     codeProduct,
     departmentProduct,
     getCostProducts,
-    productsExcel
+    productsExcel,
+    repairInventario,
+    ajustarInventario
 };
