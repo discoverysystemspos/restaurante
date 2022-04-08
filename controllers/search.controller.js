@@ -9,6 +9,7 @@ const Mesa = require('../models/mesas.model');
 const Invoice = require('../models/invoices.model');
 const LogProducts = require('../models/log.products.model');
 const Categoria = require('../models/categorias.model');
+const Pedido = require('../models/pedidos.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -18,11 +19,12 @@ const search = async(req, res = response) => {
     const busqueda = req.params.busqueda;
     const tabla = req.params.tabla;
     const regex = new RegExp(busqueda, 'i');
-    const desde = req.query.desde;
-    const hasta = req.query.hasta;
+    const desde = Number(req.query.desde) || 0;
+    const hasta = Number(req.query.hasta) || 50;
 
     let data = [];
     let total;
+    let numeroPedido;
 
     switch (tabla) {
 
@@ -38,6 +40,30 @@ const search = async(req, res = response) => {
                         { address: regex }
                     ]
                 }),
+                User.countDocuments()
+            ]);
+            break;
+
+        case 'pedidos':
+
+            // data = await User.find({ name: regex });
+            [data, total] = await Promise.all([
+                Pedido.find({
+                    $or: [
+                        { ciudad: regex },
+                        { departamento: regex },
+                        { direccion: regex },
+                        { telefono: regex },
+                        { estado: regex },
+                        { referencia: regex },
+                        { transaccion: regex },
+                    ]
+                })
+                .skip(desde)
+                .limit(hasta)
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name code')
+                .populate('user', 'name'),
                 User.countDocuments()
             ]);
             break;
@@ -137,19 +163,19 @@ const search = async(req, res = response) => {
                 LogProducts.countDocuments()
             ]);
             break;
-            case 'invoice':
+        case 'invoice':
 
-                // data = await Client.find({ name: regex });
-                [data, total] = await Promise.all([
-                    Invoice.find({ client: busqueda })
-                    .populate('client', 'name cedula phone email address city tip')
-                    .populate('products.product', 'name code type tax impuesto')
-                    .populate('mesero', 'name')
-                    .populate('mesa', 'name')
-                    .populate('user', 'name'),
-                    Invoice.countDocuments()
-                ]);
-                break;
+            // data = await Client.find({ name: regex });
+            [data, total] = await Promise.all([
+                Invoice.find({ client: busqueda })
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name code type tax impuesto')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .populate('user', 'name'),
+                Invoice.countDocuments()
+            ]);
+            break;
 
         default:
             res.status(400).json({

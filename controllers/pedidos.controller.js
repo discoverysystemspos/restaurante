@@ -23,7 +23,7 @@ const getPedidos = async(req, res = response) => {
 
         const [pedidos, total] = await Promise.all([
 
-            Pedido.find({ status })
+            Pedido.find()
             .populate('client', 'name cedula phone email address city tip')
             .populate('products.product', 'name code')
             .populate('user', 'name')
@@ -148,20 +148,20 @@ const postPedidos = async(req, res = response) => {
         const mid = req.query.mid || '';
 
         let client;
-        
+
         if (local === 'true') {
             client = req.query.cid;
-            
-        }else{
+
+        } else {
             client = req.cid;
         }
 
-        
+
 
 
         const pedido = new Pedido(req.body);
         const referencia = req.body.referencia;
-        
+
         pedido.client = client;
 
         // ACTUALIZAR INVENTARIO
@@ -176,7 +176,7 @@ const postPedidos = async(req, res = response) => {
             });
         }
 
-        await pedido.save();        
+        await pedido.save();
 
         const pedidoNew = await Pedido.findById(pedido._id)
             .populate('client', 'name cedula phone email address city tip')
@@ -187,7 +187,7 @@ const postPedidos = async(req, res = response) => {
         // ======================================
         //  CREAR FACTURAR
         // ======================================
-        createInvoiceOnline(pedidoNew, user, mid);        
+        createInvoiceOnline(pedidoNew, user, mid);
         // ======================================
         //  CREAR FACTURAR
         // ======================================
