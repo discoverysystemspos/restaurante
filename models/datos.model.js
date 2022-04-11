@@ -1,5 +1,18 @@
 const { Schema, model } = require('mongoose');
 
+const ComisionesSchema = Schema({
+    activo: {
+        type: Boolean,
+        default: true
+    },
+    monto: {
+        type: Number
+    },
+    comision: {
+        type: Number
+    }
+});
+
 const DatoSchema = Schema({
 
     name: {
@@ -35,6 +48,11 @@ const DatoSchema = Schema({
         type: Number,
         default: 0
     },
+    commissions: {
+        type: Boolean,
+        default: false
+    },
+    comisiones: [ComisionesSchema],
     tip: {
         type: Boolean,
         default: false

@@ -43,6 +43,10 @@ const ClientSchema = Schema({
         type: Boolean,
         default: false
     },
+    contratista: {
+        type: Boolean,
+        default: false
+    },
     valid: {
         type: Boolean,
         default: false
