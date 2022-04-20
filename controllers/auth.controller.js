@@ -164,7 +164,7 @@ const renewClientJWT = async(req, res = response) => {
         const token = await generarClientJWT(cid);
 
         // SEARCH USER
-        const client = await Client.findById(cid, 'email name cid img cedula phone city department address valid credit mayoreo');
+        const client = await Client.findById(cid, 'email name cid img cedula phone city department address valid credit mayoreo contratista');
         // SEARCH USER
 
         res.status(200).json({
