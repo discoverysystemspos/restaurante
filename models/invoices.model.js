@@ -50,7 +50,7 @@ const InvoiceSchema = Schema({
         ref: 'Clients',
         require: true
     },
-    pedido:{
+    pedido: {
         type: Schema.Types.ObjectId,
         ref: 'Pedidos'
     },
@@ -107,6 +107,10 @@ const InvoiceSchema = Schema({
     },
     payments: [PaymentSchema],
     credito: {
+        type: Boolean,
+        default: false
+    },
+    apartado: {
         type: Boolean,
         default: false
     },

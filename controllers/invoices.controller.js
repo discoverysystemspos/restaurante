@@ -424,7 +424,7 @@ const createInvoice = async(req, res = response) => {
                 ok: false,
                 msg: 'Este producto no tiene asigando un departamento'
             });
-        
+
         }
 
         const invoiceNew = await Invoice.findById(invoice._id)
