@@ -123,9 +123,7 @@ const getProducts = async(req, res = response) => {
                         .skip(desde)
                         .limit(limite);
 
-
                 }
-
 
                 break;
 
