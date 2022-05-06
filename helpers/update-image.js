@@ -25,7 +25,7 @@ const deleteImage = (path) => {
 
 
 /** =====================================================================
- *  UPDATE IMAGE 
+ *  UPDATE IMAGE --
 =========================================================================*/
 const updateImage = async(tipo, id, nameFile) => {
 
@@ -88,7 +88,7 @@ const updateImage = async(tipo, id, nameFile) => {
             return true;
 
             break;
-        
+
         case 'department':
 
             // SEARCH USER BY ID
