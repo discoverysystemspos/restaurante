@@ -1,1 +1,4 @@
-S 01.215kgf
+ ST,GS,+ 00.510  kg
+ ST,GS,+ 00.510  kg
+ ST,GS,+ 00.510  kg
+ ST,GS,+ 00.510  kg
