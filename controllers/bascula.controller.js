@@ -17,7 +17,18 @@ const getPeso = async(req, res = response) => {
 
         if (peso.length > 17) {
 
-            let w = peso.slice(2, -2);
+            const basc = ['ST'];
+            let w;
+
+            if (peso.includes(basc)) {
+
+                let pesos = peso.split(' ');
+                w = pesos[2];
+
+            } else {
+                w = peso.slice(2, -2);
+            }
+
 
             res.json({
                 ok: true,
