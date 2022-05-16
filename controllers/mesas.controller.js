@@ -207,8 +207,6 @@ const updateNota = async(req, res = response) => {
         const mid = req.params.id;
         const add = req.query.add;
 
-        console.log('Estado: ', add);
-
         // SEARCH MESA
         const mesaDB = await Mesas.findById({ _id: mid });
         if (!mesaDB) {
