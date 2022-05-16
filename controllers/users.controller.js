@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/users.model');
 
 /** ======================================================================
- *  GET USERS
+ *  GET USERss
 =========================================================================*/
 const getUsers = async(req, res) => {
 
