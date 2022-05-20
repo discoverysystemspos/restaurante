@@ -230,7 +230,7 @@ const codeProduct = async(req, res = response) => {
 
     try {
 
-        const code = new RegExp(req.params.code, 'i');
+        const code = req.params.code;
 
         // const product = await Product.findOne({
         //         $or: [
