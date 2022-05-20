@@ -232,12 +232,16 @@ const codeProduct = async(req, res = response) => {
 
         const code = new RegExp(req.params.code, 'i');
 
-        const product = await Product.findOne({
-                $or: [
-                    { code: code }
-                ],
-                status: true
-            })
+        // const product = await Product.findOne({
+        //         $or: [
+        //             { code: code }
+        //         ],
+        //         status: true
+        //     })
+        //     .populate('kit.product', 'name')
+        //     .populate('department', 'name');
+
+        const product = await Product.findOne({ code, status: true })
             .populate('kit.product', 'name')
             .populate('department', 'name');
 
