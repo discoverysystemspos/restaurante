@@ -72,6 +72,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                         invoice: invoices,
                         turno: invoices.turno,
                         // department: product.department._id,
+                        monto: products[i].price,
                         departamento: product.department.name
                     }
 
@@ -100,6 +101,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                     type: 'Salida',
                     befored: habia,
                     qty: products[i].qty,
+                    monto: products[i].price,
                     stock: stock,
                     cajero: user,
                     invoice: invoices,

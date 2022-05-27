@@ -44,6 +44,9 @@ const LogProductSchema = Schema({
     departamento: {
         type: String,
     },
+    monto: {
+        type: Number
+    },
     fecha: {
         type: Date,
         default: Date.now
