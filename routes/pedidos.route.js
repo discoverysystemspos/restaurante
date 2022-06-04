@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT, validarClientJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getPedidos, postPedidos, getPedidosClient, getPedidoOne, UpdateStatusPedido } = require('../controllers/pedidos.controller');
+const { getPedidos, postPedidos, getPedidosClient, getPedidoOne, UpdateStatusPedido, postFeedBack } = require('../controllers/pedidos.controller');
 
 const router = Router();
 
@@ -49,6 +49,16 @@ router.post('/', [
     postPedidos);
 /** =====================================================================
 *  CREATE PEDIDOS
+=========================================================================*/
+
+/** =====================================================================
+*  CREATE FEEDBACK
+=========================================================================*/
+router.post('/feedback/:id', [
+    validarClientJWT
+], postFeedBack);
+/** =====================================================================
+*  CREATE FEEDBACK
 =========================================================================*/
 
 /** =====================================================================

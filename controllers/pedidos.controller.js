@@ -213,6 +213,50 @@ const postPedidos = async(req, res = response) => {
 /** =====================================================================
  *  POST PEDIDO
 =========================================================================*/
+
+/** =====================================================================
+ *  POST FEEDBACK
+=========================================================================*/
+const postFeedBack = async(req, res = response) => {
+
+    try {
+
+        const id = req.params.id;
+        const feedback = req.body;
+
+        // SEARCH PEDIDO
+        const pedidoDB = await Pedido.findById(id);
+        if (!pedidoDB) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe ningun pedido con este ID'
+            });
+        }
+        // SEARCH PEDIDO
+
+        const pedidoUpdate = await Pedido.findByIdAndUpdate(id, { feedback: feedback, confirmado: true }, { new: true, useFindAndModify: false })
+            .populate('client', 'name cedula phone email address city tip')
+            .populate('products.product', 'name code')
+            .populate('user', 'name');
+
+        res.json({
+            ok: true,
+            pedido: pedidoUpdate
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  POST FEEDBACK
+=========================================================================*/
+
 /** =====================================================================
  *  PUT PEDIDO
 =========================================================================*/
@@ -264,5 +308,6 @@ module.exports = {
     postPedidos,
     getPedidosClient,
     getPedidoOne,
-    UpdateStatusPedido
+    UpdateStatusPedido,
+    postFeedBack
 }

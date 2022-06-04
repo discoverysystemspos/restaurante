@@ -23,6 +23,23 @@ const ProductosSchema = Schema({
 
 });
 
+const FeedbackSchema = Schema({
+
+    date: {
+        type: Date
+    },
+
+    recibido: {
+        type: Boolean,
+        default: false
+    },
+
+    nota: {
+        type: String
+    }
+
+});
+
 // Payment SCHEMA
 const PaymentSchema = Schema({
     type: {
@@ -87,6 +104,11 @@ const PedidoSchema = Schema({
         type: String,
         unique: true
     },
+    confirmado: {
+        type: Boolean,
+        default: false
+    },
+    feedback: FeedbackSchema,
     status: {
         type: Boolean,
         default: true
