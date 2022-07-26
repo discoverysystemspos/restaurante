@@ -7,6 +7,7 @@ const path = require('path');
 ==========================================================================*/
 const getPeso = async(req, res = response) => {
 
+
     try {
         const init = Number(req.query.init);
         const end = Number(req.query.end);
@@ -14,6 +15,7 @@ const getPeso = async(req, res = response) => {
         let data = fs.readFileSync(path.join(__dirname, '../bascula') + '/peso.txt', 'utf8');
 
         let peso = data.toString();
+
 
         if (peso.length > 17) {
 
@@ -28,7 +30,6 @@ const getPeso = async(req, res = response) => {
             } else {
                 w = peso.slice(2, -2);
             }
-
 
             res.json({
                 ok: true,
