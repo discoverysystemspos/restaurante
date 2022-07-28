@@ -77,6 +77,10 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+    fruver: {
+        type: Boolean,
+        default: false
+    },
     resolucion: {
         type: String
     },
