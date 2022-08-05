@@ -39,6 +39,7 @@ app.use('/api/departments', require('./routes/departments.route'));
 app.use('/api/invoice', require('./routes/invoices.route'));
 app.use('/api/login', require('./routes/auth.route'));
 app.use('/api/mesas', require('./routes/mesas.route'));
+app.use('/api/movimientos', require('./routes/movimiento.route'));
 app.use('/api/users', require('./routes/users.route'));
 app.use('/api/pedidos', require('./routes/pedidos.route'));
 app.use('/api/products', require('./routes/products.route'));
