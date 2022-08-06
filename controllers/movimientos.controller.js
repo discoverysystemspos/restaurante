@@ -87,7 +87,7 @@ const createMovimiento = async(req, res = response) => {
 
         const uid = req.uid;
 
-        const movimiento = new Turno(req.body);
+        const movimiento = new Movimiento(req.body);
         movimiento.user = uid;
 
         await movimiento.save();
