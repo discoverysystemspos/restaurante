@@ -121,6 +121,13 @@ const InvoiceSchema = Schema({
         type: Boolean,
         default: true
     },
+    descuento: {
+        type: Boolean,
+        default: false
+    },
+    porcentaje: {
+        type: Number,
+    },
     fecha: {
         type: Date,
         default: Date.now

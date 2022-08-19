@@ -99,6 +99,13 @@ const MesasSchema = Schema({
         type: Boolean,
         default: false
     },
+    descuento: {
+        type: Boolean,
+        default: false
+    },
+    porcentaje: {
+        type: Number,
+    },
     carrito: [carritoSchema],
     fecha: {
         type: Date,

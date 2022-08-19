@@ -110,7 +110,14 @@ const getInvoicesTurn = async(req, res = response) => {
         invoices.forEach(invoice => {
 
             if (invoice.base) {
-                montos += invoice.base;
+
+                if (invoice.descuento) {
+                    let des = invoice.porcentaje / 100;
+                    montos += invoice.base - (invoice.base * des);
+                } else {
+                    montos += invoice.base;
+                }
+
                 costos += invoice.cost;
             } else {
                 montos += invoice.amount;
