@@ -27,7 +27,7 @@ dbConection();
 // DIRECTORIO PUBLICO
 app.use(express.static('public'));
 
-// RUTAS
+// RUTASs
 app.use('/api/bascula', require('./routes/bascula.route'));
 app.use('/api/bodega', require('./routes/bodega.route'));
 app.use('/api/caja', require('./routes/cajas.route'));
