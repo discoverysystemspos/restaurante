@@ -553,6 +553,51 @@ const ajustarInventario = async(req, res = response) => {
  *  AJUSTAR INVENTARIO
 =========================================================================*/
 /** =====================================================================
+ *  AGREGAR IVA A TODOS
+=========================================================================*/
+const ivaAllProducts = async(req, res = response) => {
+
+    try {
+
+        const { name, valor, tax } = req.body;
+        const products = await Product.find();
+
+        let total = 0;
+
+        let impuesto = {
+            name,
+            valor
+        }
+
+        for (const product of products) {
+
+            product.impuesto[0] = impuesto;
+            product.tax = tax;
+
+            await Product.findByIdAndUpdate(product._id, product, { new: true, useFindAndModify: false });
+            total++;
+        }
+
+        res.json({
+            ok: true,
+            total
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
+ *  AGREGAR IVA A TODOS
+=========================================================================*/
+/** =====================================================================
  *  REPAIR INVENTARIO
 =========================================================================*/
 const repairInventario = async(req, res = response) => {
@@ -667,5 +712,6 @@ module.exports = {
     getCostProducts,
     productsExcel,
     repairInventario,
-    ajustarInventario
+    ajustarInventario,
+    ivaAllProducts
 };
