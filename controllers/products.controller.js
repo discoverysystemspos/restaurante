@@ -232,15 +232,6 @@ const codeProduct = async(req, res = response) => {
 
         const code = req.params.code;
 
-        // const product = await Product.findOne({
-        //         $or: [
-        //             { code: code }
-        //         ],
-        //         status: true
-        //     })
-        //     .populate('kit.product', 'name')
-        //     .populate('department', 'name');
-
         const product = await Product.findOne({ code, status: true })
             .populate('kit.product', 'name')
             .populate('department', 'name');
@@ -458,6 +449,101 @@ const updateProduct = async(req, res = response) => {
 /** =====================================================================
  *  UPDATE PRODUCT
 =========================================================================*/
+/** =====================================================================
+ *  PUT EXCEL PRODUCT CODE
+=========================================================================*/
+const codeProductUpdate = async(req, res = response) => {
+
+    try {
+
+        const user = req.uid;
+
+        const { agregar, code, ...campos } = req.body;
+
+        const productDB = await Product.findOne({ code })
+            .populate('department', 'name');
+        if (!productDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun producto con este ID'
+            });
+        }
+
+        // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
+        if (campos.expiration) {
+            if (Date.parse(campos.expiration) > Date.parse(productDB.expiration)) {
+                campos.vencido = false;
+            }
+        }
+
+        // COMPROBAR SI EL PRODUCTO SE AGOTA
+        if (agregar > 0) {
+            campos.inventario = agregar + productDB.inventario;
+            campos.bought = agregar + productDB.bought;
+
+            // COMPROBAR SI ES UNA COMPRA O RETORNO 
+            let habia = 0;
+            let description = '';
+
+            habia = productDB.inventario;
+            description = 'Compra';
+
+            // GUARDAR EN EL LOG
+            let log = {
+                code: productDB.code,
+                name: productDB.name,
+                description,
+                type: 'Agrego',
+                departamento: productDB.department.name,
+                befored: habia,
+                qty: agregar,
+                stock: campos.inventario,
+                cajero: user
+            }
+
+            let logProducts = new LogProducts(log);
+            await logProducts.save();
+            // GUARDAR EN EL LOG
+
+            // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
+            if (campos.inventario > 0) {
+                campos.out = false;
+
+                if (campos.inventario > productDB.min) {
+                    campos.low = false;
+                } else {
+                    campos.low = true;
+                }
+
+            } else {
+                campos.out = true;
+                campos.low = false;
+            }
+
+            if (productDB.type === 'Paquete') {
+                campos.out = false;
+                campos.low = false;
+            }
+
+        }
+
+        const productUpdate = await Product.findByIdAndUpdate(productDB._id, campos, { new: true, useFindAndModify: false });
+
+        res.json({
+            ok: true,
+            product: productUpdate
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
 /** =====================================================================
  *  AJUSTAR INVENTARIO
 =========================================================================*/
@@ -708,6 +794,7 @@ module.exports = {
     deleteProduct,
     oneProduct,
     codeProduct,
+    codeProductUpdate,
     departmentProduct,
     getCostProducts,
     productsExcel,
