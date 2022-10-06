@@ -46,6 +46,7 @@ app.use('/api/products', require('./routes/products.route'));
 app.use('/api/proveedores', require('./routes/proveedores.route'));
 app.use('/api/search', require('./routes/search.route'));
 app.use('/api/turno', require('./routes/turnos.route'));
+app.use('/api/tax', require('./routes/tax.route'));
 app.use('/api/uploads', require('./routes/uploads.route'));
 
 // LOGS
