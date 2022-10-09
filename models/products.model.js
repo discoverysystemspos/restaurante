@@ -51,6 +51,10 @@ const ProductSchema = Schema({
         type: Boolean,
         default: false
     },
+    taxid: {
+        type: Schema.Types.ObjectId,
+        ref: 'Tax',
+    },
     impuesto: [impuestoSchema],
     inventario: {
         type: Number,
