@@ -320,7 +320,7 @@ const productsExcel = async(req, res = response) => {
 =========================================================================*/
 const createProduct = async(req, res = response) => {
 
-    const { code, name } = req.body;
+    const { code, taxid, ...newProduct } = req.body;
 
     try {
 
@@ -333,18 +333,14 @@ const createProduct = async(req, res = response) => {
             });
         }
 
-        // VALIDATE NAME
-        // const validateName = await Product.findOne({ name });
-        // if (validateName) {
-        //     return res.status(400).json({
-        //         ok: false,
-        //         msg: 'Ya existe un producto con este nombre'
-        //     });
-        // }
-
         // SAVE PRODUCT
-        const product = new Product(req.body);
+        const product = new Product(newProduct);
         product.inventario = product.stock;
+        product.code = code;
+
+        if (taxid !== '') {
+            product.taxid = taxid;
+        }
 
         await product.save();
 
@@ -645,19 +641,14 @@ const ivaAllProducts = async(req, res = response) => {
 
     try {
 
-        const { name, valor, tax } = req.body;
+        const { taxid, tax } = req.body;
         const products = await Product.find();
 
         let total = 0;
 
-        let impuesto = {
-            name,
-            valor
-        }
-
         for (const product of products) {
 
-            product.impuesto[0] = impuesto;
+            product.taxid = taxid;
             product.tax = tax;
 
             await Product.findByIdAndUpdate(product._id, product, { new: true, useFindAndModify: false });

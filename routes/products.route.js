@@ -121,7 +121,12 @@ router.put('/repair/inventario', validarJWT, repairInventario);
 /** =====================================================================
  *  AGREGAR O QUITAR IVA A TODOS LOS PRODUCTOS
  =========================================================================*/
-router.put('/iva/all', validarJWT, ivaAllProducts);
+router.put('/iva/all', [
+        validarJWT,
+        check('taxid', 'No existe ningun impuesto con este ID').isMongoId(),
+        validarCampos
+    ],
+    ivaAllProducts);
 /** =====================================================================
  *  AGREGAR O QUITAR IVA A TODOS LOS PRODUCTOS
  =========================================================================*/
