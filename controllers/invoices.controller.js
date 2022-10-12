@@ -19,7 +19,7 @@ const getInvoices = async(req, res = response) => {
 
             Invoice.find()
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name')
+            .populate('products.product', 'name taxid')
             .populate('user', 'name')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
@@ -68,14 +68,14 @@ const getInvoicesTurn = async(req, res = response) => {
         if (creditos) {
             invoices = await Invoice.find({ turno, status, credito })
                 .populate('client', 'name cedula phone email address city tip')
-                .populate('products.product', 'name department')
+                .populate('products.product', 'name taxid department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name');
         } else {
             invoices = await Invoice.find({ turno, status })
                 .populate('client', 'name cedula phone email address city tip')
-                .populate('products.product', 'name department')
+                .populate('products.product', 'name taxid department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name');
@@ -196,7 +196,7 @@ const getInvoicesAll = async(req, res = response) => {
                         credito
                     })
                     .populate('client', 'name cedula phone email address city tip')
-                    .populate('products.product', 'name')
+                    .populate('products.product', 'name taxid')
                     .populate('user', 'name')
                     .populate('mesero', 'name')
                     .populate('mesa', 'name')
@@ -210,7 +210,7 @@ const getInvoicesAll = async(req, res = response) => {
                         mesa
                     })
                     .populate('client', 'name cedula phone email address city tip')
-                    .populate('products.product', 'name')
+                    .populate('products.product', 'name taxid')
                     .populate('user', 'name')
                     .populate('mesero', 'name')
                     .populate('mesa', 'name')
@@ -329,7 +329,7 @@ const getInvoiceId = async(req, res = response) => {
 
         const invoice = await Invoice.findById(id)
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name code type tax impuesto')
+            .populate('products.product', 'name taxid code type tax impuesto')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
@@ -374,7 +374,7 @@ const getInvoiceCreditClient = async(req, res = response) => {
 
         const invoice = await Invoice.find({ client, credito })
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name code type tax impuesto')
+            .populate('products.product', 'name taxid code type tax impuesto')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
@@ -436,7 +436,7 @@ const createInvoice = async(req, res = response) => {
 
         const invoiceNew = await Invoice.findById(invoice._id)
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name code type')
+            .populate('products.product', 'name taxid code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
@@ -602,7 +602,7 @@ const deleteProductInvoice = async(req, res = response) => {
 
             const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
                 .populate('client', 'name cedula phone email address city tip')
-                .populate('products.product', 'name code type')
+                .populate('products.product', 'name taxid code type')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')
                 .populate('user', 'name');
@@ -668,7 +668,7 @@ const updateProductQty = async(req, res = response) => {
 
         const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name code type')
+            .populate('products.product', 'name taxid code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');

@@ -29,6 +29,7 @@ const getProducts = async(req, res = response) => {
                     products = await Product.find({ department: department, out: valor })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .sort({ out: -1 })
                         .skip(desde)
                         .limit(1000);
@@ -38,6 +39,7 @@ const getProducts = async(req, res = response) => {
                     products = await Product.find({ out: valor })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .sort({ out: -1 })
                         .skip(desde)
                         .limit(1000);
@@ -55,6 +57,7 @@ const getProducts = async(req, res = response) => {
                         })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .skip(desde)
                         .limit(limite);
 
@@ -65,6 +68,7 @@ const getProducts = async(req, res = response) => {
                         })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .skip(desde)
                         .limit(limite);
                 }
@@ -90,6 +94,7 @@ const getProducts = async(req, res = response) => {
                     products = await Product.find({ department: department, out: valor })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .sort({ sold: -1 })
                         .skip(desde)
                         .limit(limite);
@@ -99,6 +104,7 @@ const getProducts = async(req, res = response) => {
                     products = await Product.find()
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .sort({ sold: -1 })
                         .skip(desde)
                         .limit(limite);
@@ -112,6 +118,7 @@ const getProducts = async(req, res = response) => {
                     products = await Product.find({ department: department })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .skip(desde)
                         .limit(1000);
 
@@ -120,6 +127,7 @@ const getProducts = async(req, res = response) => {
                     products = await Product.find()
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
+                        .populate('taxid', 'name valor')
                         .skip(desde)
                         .limit(limite);
 
@@ -203,7 +211,7 @@ const oneProduct = async(req, res = response) => {
 
         const product = await Product.findById(id)
             .populate('kit.product', 'name')
-            .populate('department', 'name');
+            .populate('taxid', 'name valor');
 
         res.json({
             ok: true,
@@ -234,6 +242,7 @@ const codeProduct = async(req, res = response) => {
 
         const product = await Product.findOne({ code, status: true })
             .populate('kit.product', 'name')
+            .populate('taxid', 'name valor')
             .populate('department', 'name');
 
         res.json({
@@ -268,6 +277,7 @@ const departmentProduct = async(req, res = response) => {
             Product.find({ department: department, status: true })
             .populate('kit.product', 'name')
             .populate('department', 'name')
+            .populate('taxid', 'name valor')
             .skip(desde)
             .limit(hasta),
             Product.countDocuments()
