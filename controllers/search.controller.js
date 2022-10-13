@@ -98,7 +98,8 @@ const search = async(req, res = response) => {
                         { type: regex }
                     ]
                 })
-                .populate('kit.product', 'name'),
+                .populate('kit.product', 'name')
+                .populate('taxid', 'name valor'),
                 Product.countDocuments()
             ]);
             break;
