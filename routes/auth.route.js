@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT, validarClientJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLERS
-const { login, renewJWT, googleSignIn, renewClientJWT } = require('../controllers/auth.controller');
+const { login, renewJWT, googleSignIn, renewClientJWT, facebookSignIn } = require('../controllers/auth.controller');
 
 const router = Router();
 
@@ -38,6 +38,19 @@ router.post('/google', [
 );
 /** =====================================================================
 *  LOGIN - GOOGLE
+=========================================================================*/
+
+/** =====================================================================
+ *  LOGIN - FACEBOOK
+=========================================================================*/
+router.post('/facebook', [
+        check('token', 'El token de Facebook es obligatorio').not().isEmpty(),
+        validarCampos
+    ],
+    facebookSignIn
+);
+/** =====================================================================
+*  LOGIN - FACEBOOK
 =========================================================================*/
 
 /** =====================================================================

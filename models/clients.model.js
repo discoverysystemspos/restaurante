@@ -35,6 +35,10 @@ const ClientSchema = Schema({
         type: Boolean,
         default: true
     },
+    facebook: {
+        type: Boolean,
+        default: true
+    },
     credit: {
         type: Boolean,
         default: false

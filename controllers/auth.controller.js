@@ -91,7 +91,8 @@ const googleSignIn = async(req, res = response) => {
                 name,
                 email,
                 img: picture,
-                google: true
+                google: true,
+                facebook: false
             });
 
             // Guardar en DB
@@ -100,6 +101,7 @@ const googleSignIn = async(req, res = response) => {
             // existe usuario
             client = clientDB;
             client.google = true;
+            client.facebook = false;
         }
 
         await client.save();
@@ -187,9 +189,65 @@ const renewClientJWT = async(req, res = response) => {
 /** =====================================================================
  *  RENEW TOKEN CLIENT
 =========================================================================*/
+
+/** =====================================================================
+ *  LOGIN FACEBOOK
+=========================================================================*/
+const facebookSignIn = async(req, res = response) => {
+
+    try {
+
+        const {...data } = req.body;
+
+        const clientDB = await Client.findOne({ email: data.token.email });
+
+        let client;
+
+        if (!clientDB) {
+            // si no existe el usuario
+            client = new Client({
+                name: data.token.name,
+                email: data.token.email,
+                img: data.token.photoUrl,
+                facebook: true,
+                google: false,
+            });
+
+            // Guardar en DB
+
+        } else {
+            // existe usuario
+            client = clientDB;
+            client.facebook = true;
+            client.google = false;
+        }
+
+        await client.save();
+
+
+
+        // Generar el TOKEN - JWT
+        const token = await generarClientJWT(client._id);
+
+        res.json({
+            ok: true,
+            token
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Token no es correcto',
+        });
+    }
+
+}
+
 module.exports = {
     login,
     renewJWT,
     googleSignIn,
-    renewClientJWT
+    renewClientJWT,
+    facebookSignIn
 };
