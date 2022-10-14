@@ -395,7 +395,7 @@ const updateProduct = async(req, res = response) => {
         // SEARCH PRODUCT
 
         // VALIDATE CODE && NAME
-        const { code, name, ...campos } = req.body;
+        const { code, name, taxid, ...campos } = req.body;
 
         // CODE
         if (String(productDB.code) !== String(code)) {
@@ -431,6 +431,10 @@ const updateProduct = async(req, res = response) => {
             campos.low = false;
         }
         // COMPROBAR SI EL PRODUCTO SE AGOTA
+
+        if (taxid) {
+            campos.taxid = taxid;
+        }
 
         // UPDATE
         campos.code = code;
