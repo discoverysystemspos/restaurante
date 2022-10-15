@@ -102,6 +102,7 @@ const googleSignIn = async(req, res = response) => {
             client = clientDB;
             client.google = true;
             client.facebook = false;
+            client.img = picture;
         }
 
         await client.save();
