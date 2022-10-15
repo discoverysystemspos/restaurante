@@ -201,8 +201,6 @@ const facebookSignIn = async(req, res = response) => {
 
         const clientDB = await Client.findOne({ email: data.token.email });
 
-        console.log(data);
-
         let client;
 
         if (!clientDB) {
@@ -226,8 +224,6 @@ const facebookSignIn = async(req, res = response) => {
         }
 
         await client.save();
-
-
 
         // Generar el TOKEN - JWT
         const token = await generarClientJWT(client._id);
