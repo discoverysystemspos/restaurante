@@ -201,6 +201,8 @@ const facebookSignIn = async(req, res = response) => {
 
         const clientDB = await Client.findOne({ email: data.token.email });
 
+        console.log(data);
+
         let client;
 
         if (!clientDB) {
@@ -208,7 +210,7 @@ const facebookSignIn = async(req, res = response) => {
             client = new Client({
                 name: data.token.name,
                 email: data.token.email,
-                img: data.token.photoUrl,
+                img: data.token.response.picture.data.url,
                 facebook: true,
                 google: false,
             });
@@ -220,6 +222,7 @@ const facebookSignIn = async(req, res = response) => {
             client = clientDB;
             client.facebook = true;
             client.google = false;
+            client.img = data.token.response.picture.data.url;
         }
 
         await client.save();
