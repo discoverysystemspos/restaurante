@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose');
 
+// SCHEMA
 const TaxSchema = Schema({
     name: {
         type: String,
