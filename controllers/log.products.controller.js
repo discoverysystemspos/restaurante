@@ -63,7 +63,7 @@ const getLogDate = async(req, res = response) => {
         res.json({
             ok: true,
             products
-        })
+        });
 
 
     } catch (error) {
@@ -80,9 +80,79 @@ const getLogDate = async(req, res = response) => {
  *  GET LOG PRODUCTS DATE
 =========================================================================*/
 
+/** =====================================================================
+ *  GET LOG PRODUCT ONE
+=========================================================================*/
+const getOneProducLog = async(req, res = response) => {
+
+    try {
+
+        const initial = req.query.initial;
+        const end = req.query.end;
+        const fecha = req.query.fecha || 'false';
+
+        const desde = Number(req.query.desde) || 0;
+        const limite = Number(req.query.limite) || 10;
+        const code = req.params.code
+
+        let products;
+        let total;
+
+        switch (fecha) {
+            case 'false':
+
+                products = await LogProducts.find({ code })
+                    .populate('cajero', 'name')
+                    .populate('invoice')
+                    .sort({ 'fecha': -1 })
+                    .skip(desde)
+                    .limit(limite);
+
+                break;
+
+            case 'true':
+
+                products = await LogProducts.find({
+                        code,
+                        $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }]
+                    })
+                    .populate('cajero', 'name')
+                    .populate('invoice')
+                    .sort({ 'fecha': -1 });
+
+
+                break;
+
+            default:
+                break;
+        }
+
+        total = products.length;
+
+        res.json({
+            ok: true,
+            products,
+            total
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  GET LOG PRODUCT ONE
+=========================================================================*/
+
 
 // EXPORTS
 module.exports = {
     getLogProducts,
-    getLogDate
+    getLogDate,
+    getOneProducLog
 };
