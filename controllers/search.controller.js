@@ -99,6 +99,7 @@ const search = async(req, res = response) => {
                     ]
                 })
                 .populate('kit.product', 'name')
+                .populate('department', 'name')
                 .populate('taxid', 'name valor'),
                 Product.countDocuments()
             ]);
