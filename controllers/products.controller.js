@@ -496,7 +496,7 @@ const codeProductUpdate = async(req, res = response) => {
 
         if (department) {
 
-            let depart = await Department.findById({ id: department });
+            let depart = await Department.findById({ _id: department });
             departamento = depart.name;
             campos.department = department;
 
