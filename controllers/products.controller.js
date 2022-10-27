@@ -488,7 +488,11 @@ const codeProductUpdate = async(req, res = response) => {
         }
 
         // COMPROBAR SI VIENE DEÄRTAMENTO
-        let departamento = productDB.department.name || '';
+        let departamento = '';
+        if (productDB.department.name) {
+            departamento = productDB.department.name;
+        }
+
         if (department) {
 
             let depart = await Department.findById({ id: department });
