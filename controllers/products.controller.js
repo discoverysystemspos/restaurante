@@ -489,7 +489,8 @@ const codeProductUpdate = async(req, res = response) => {
 
         // COMPROBAR SI VIENE DEÄRTAMENTO
         let departamento = '';
-        if (productDB.department.name) {
+
+        if (productDB.department) {
             departamento = productDB.department.name;
         }
 
