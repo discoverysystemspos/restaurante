@@ -1,6 +1,7 @@
 const { response } = require('express');
 
 const Product = require('../models/products.model');
+const Department = require('../models/departments.model');
 const LogProducts = require('../models/log.products.model');
 const { expirateProduct } = require('../helpers/products-stock');
 
@@ -468,7 +469,7 @@ const codeProductUpdate = async(req, res = response) => {
 
         const user = req.uid;
 
-        const { agregar, code, ...campos } = req.body;
+        const { agregar, code, department, ...campos } = req.body;
 
         const productDB = await Product.findOne({ code })
             .populate('department', 'name');
@@ -484,6 +485,16 @@ const codeProductUpdate = async(req, res = response) => {
             if (Date.parse(campos.expiration) > Date.parse(productDB.expiration)) {
                 campos.vencido = false;
             }
+        }
+
+        // COMPROBAR SI VIENE DEÄRTAMENTO
+        let departamento = productDB.department.name || '';
+        if (department) {
+
+            let depart = await Department.findById({ id: department });
+            departamento = depart.name;
+            campos.department = department;
+
         }
 
         // COMPROBAR SI EL PRODUCTO SE AGOTA
@@ -504,7 +515,7 @@ const codeProductUpdate = async(req, res = response) => {
                 name: productDB.name,
                 description,
                 type: 'Agrego',
-                departamento: productDB.department.name,
+                departamento,
                 befored: habia,
                 qty: agregar,
                 stock: campos.inventario,
