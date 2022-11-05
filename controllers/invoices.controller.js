@@ -52,6 +52,60 @@ const getInvoices = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  GET INVOICE
+=========================================================================*/
+const getInvoicesCredito = async(req, res = response) => {
+
+    try {
+
+        const desde = Number(req.query.desde) || 0;
+
+        const [invoices, total] = await Promise.all([
+
+            Invoice.find({ credito: true, status: true })
+            .populate('client', 'name cedula phone email address city tip')
+            .populate('products.product', 'name taxid')
+            .populate('user', 'name')
+            .populate('mesero', 'name')
+            .populate('mesa', 'name')
+            .sort({ invoice: -1 })
+            .skip(desde)
+            .limit(50),
+
+            Invoice.countDocuments()
+        ]);
+
+        await invoices.map((factura) => {
+
+            if (!factura.vencida) {
+                factura.vencida = true;
+                factura.save();
+            }
+
+        });
+
+        res.json({
+            ok: true,
+            invoices,
+            total
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  GET INVOICE
+=========================================================================*/
+
+/** =====================================================================
  *  GET INVOICE TURN
 =========================================================================*/
 const getInvoicesTurn = async(req, res = response) => {
@@ -763,5 +817,6 @@ module.exports = {
     updateProductQty,
     getInvoicesTurn,
     getInvoiceCreditClient,
-    getInvoiceVenida
+    getInvoiceVenida,
+    getInvoicesCredito
 };

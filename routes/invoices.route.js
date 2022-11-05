@@ -21,7 +21,8 @@ const {
     updateProductQty,
     getInvoicesTurn,
     getInvoiceCreditClient,
-    getInvoiceVenida
+    getInvoiceVenida,
+    getInvoicesCredito
 } = require('../controllers/invoices.controller');
 
 const router = Router();
@@ -32,6 +33,14 @@ const router = Router();
 router.get('/', validarJWT, getInvoices);
 /** =====================================================================
  *  GET INVOICES
+=========================================================================*/
+
+/** =====================================================================
+ *  GET INVOICES TURNS
+=========================================================================*/
+router.get('/credito', validarJWT, getInvoicesCredito);
+/** =====================================================================
+ *  GET INVOICES TURNS
 =========================================================================*/
 
 /** =====================================================================
