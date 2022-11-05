@@ -20,7 +20,8 @@ const {
     getInvoicesAll,
     updateProductQty,
     getInvoicesTurn,
-    getInvoiceCreditClient
+    getInvoiceCreditClient,
+    getInvoiceVenida
 } = require('../controllers/invoices.controller');
 
 const router = Router();
@@ -47,6 +48,14 @@ router.get('/cierre', validarJWT, getInvoicesTurn);
 router.get('/fecha/', validarJWT, getInvoicesAll);
 /** =====================================================================
  *  GET INVOICES DATE
+=========================================================================*/
+
+/** =====================================================================
+ *  GET INVOICES VENCIDAS
+=========================================================================*/
+router.get('/vencidas/:fecha', validarJWT, getInvoiceVenida);
+/** =====================================================================
+ *  GET INVOICES VENCIDAS
 =========================================================================*/
 
 /** =====================================================================

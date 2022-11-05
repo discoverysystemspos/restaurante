@@ -178,79 +178,79 @@ const getInvoicesTurn = async(req, res = response) => {
 =========================================================================*/
 const getInvoicesAll = async(req, res = response) => {
 
-        const initial = req.query.initial;
-        const end = req.query.end;
-        const status = req.query.status || true;
-        const mesa = req.query.user || 'none';
-        const credito = req.query.credito || false;
+    const initial = req.query.initial;
+    const end = req.query.end;
+    const status = req.query.status || true;
+    const mesa = req.query.user || 'none';
+    const credito = req.query.credito || false;
 
-        try {
+    try {
 
-            let invoices;
+        let invoices;
 
-            if (mesa === 'none') {
+        if (mesa === 'none') {
 
-                invoices = await Invoice.find({
-                        $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
-                        status,
-                        credito
-                    })
-                    .populate('client', 'name cedula phone email address city tip')
-                    .populate('products.product', 'name taxid')
-                    .populate('user', 'name')
-                    .populate('mesero', 'name')
-                    .populate('mesa', 'name')
-                    .sort({ invoice: -1 });
-            } else {
+            invoices = await Invoice.find({
+                    $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
+                    status,
+                    credito
+                })
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name taxid')
+                .populate('user', 'name')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .sort({ invoice: -1 });
+        } else {
 
-                invoices = await Invoice.find({
-                        $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
-                        status,
-                        credito,
-                        mesa
-                    })
-                    .populate('client', 'name cedula phone email address city tip')
-                    .populate('products.product', 'name taxid')
-                    .populate('user', 'name')
-                    .populate('mesero', 'name')
-                    .populate('mesa', 'name')
-                    .sort({ invoice: -1 });
-            }
-
-            let montos = 0;
-            let costos = 0;
-
-            invoices.forEach(invoice => {
-
-                if (!invoice.base) {
-                    invoice.base = invoice.amount;
-                }
-
-                montos += invoice.base;
-                costos += invoice.cost;
-            });
-
-            res.json({
-                ok: true,
-                invoices,
-                montos,
-                costos
-            });
-
-        } catch (error) {
-
-            console.log(error);
-            return res.status(500).json({
-                ok: false,
-                msg: 'Error inesperado, porfavor intente nuevamente'
-            });
-
+            invoices = await Invoice.find({
+                    $and: [{ fecha: { $gte: new Date(initial), $lt: new Date(end) } }],
+                    status,
+                    credito,
+                    mesa
+                })
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name taxid')
+                .populate('user', 'name')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .sort({ invoice: -1 });
         }
 
+        let montos = 0;
+        let costos = 0;
+
+        invoices.forEach(invoice => {
+
+            if (!invoice.base) {
+                invoice.base = invoice.amount;
+            }
+
+            montos += invoice.base;
+            costos += invoice.cost;
+        });
+
+        res.json({
+            ok: true,
+            invoices,
+            montos,
+            costos
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
     }
-    /** =====================================================================
-     *  GET INVOICE DATE INITIAL AND DATE END
-    =========================================================================*/
+
+};
+/** =====================================================================
+ *  GET INVOICE DATE INITIAL AND DATE END
+=========================================================================*/
 
 /** =====================================================================
  *  GET INVOICE DATE 
@@ -405,6 +405,55 @@ const getInvoiceCreditClient = async(req, res = response) => {
 };
 /** =====================================================================
  *  GET INVOICE CREDIT CLIENT
+=========================================================================*/
+
+/** =====================================================================
+ *  GET INVOICE VENCIDAS
+=========================================================================*/
+const getInvoiceVenida = async(req, res = response) => {
+
+    try {
+
+        const fechaActual = new Date(req.params.fecha);
+
+        const invoices = await Invoice.find({
+                $and: [{ fechaCredito: { $gte: new Date('10/10/2020'), $lt: fechaActual } }],
+                credito: true
+            })
+            .populate('client', 'name cedula phone email address city tip')
+            .populate('products.product', 'name taxid')
+            .populate('user', 'name')
+            .populate('mesero', 'name')
+            .populate('mesa', 'name')
+            .sort({ invoice: -1 });
+
+        await invoices.map((factura) => {
+
+            if (!factura.vencida) {
+                factura.vencida = true;
+                factura.save();
+            }
+
+        });
+
+        res.json({
+            ok: true,
+            invoices
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
+ *  GET INVOICE VENCIDAS
 =========================================================================*/
 
 /** =====================================================================
@@ -713,5 +762,6 @@ module.exports = {
     getInvoicesAll,
     updateProductQty,
     getInvoicesTurn,
-    getInvoiceCreditClient
+    getInvoiceCreditClient,
+    getInvoiceVenida
 };

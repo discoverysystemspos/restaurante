@@ -117,6 +117,10 @@ const InvoiceSchema = Schema({
     fechaCredito: {
         type: Date
     },
+    vencida: {
+        type: Boolean,
+        default: false
+    },
     status: {
         type: Boolean,
         default: true
