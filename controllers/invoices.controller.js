@@ -75,15 +75,6 @@ const getInvoicesCredito = async(req, res = response) => {
             Invoice.countDocuments()
         ]);
 
-        await invoices.map((factura) => {
-
-            if (!factura.vencida) {
-                factura.vencida = true;
-                factura.save();
-            }
-
-        });
-
         res.json({
             ok: true,
             invoices,
