@@ -29,6 +29,7 @@ app.use(express.static('public'));
 
 // RUTASs
 app.use('/api/bascula', require('./routes/bascula.route'));
+app.use('/api/bancos', require('./routes/bancos.route'));
 app.use('/api/bodega', require('./routes/bodega.route'));
 app.use('/api/caja', require('./routes/cajas.route'));
 app.use('/api/categorias', require('./routes/categorias.route'));
