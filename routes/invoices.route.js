@@ -22,7 +22,8 @@ const {
     getInvoicesTurn,
     getInvoiceCreditClient,
     getInvoiceVenida,
-    getInvoicesCredito
+    getInvoicesCredito,
+    getInvoiceCreditCajeroMesa
 } = require('../controllers/invoices.controller');
 
 const router = Router();
@@ -84,11 +85,19 @@ router.get('/:id', validarJWT, getInvoiceId);
 =========================================================================*/
 
 /** =====================================================================
- *  GET INVOICES CREDI FOR CLIENT
+ *  GET INVOICES CREDI FOR CLIENT 
 =========================================================================*/
 router.get('/:client/:credito', validarJWT, getInvoiceCreditClient);
 /** =====================================================================
  *  GET INVOICES CREDI FOR CLIENT
+=========================================================================*/
+
+/** =====================================================================
+ *  GET INVOICES CREDI FOR CAJERO MESA 
+=========================================================================*/
+router.get('/vendedor/mesa/:mesa', validarJWT, getInvoiceCreditCajeroMesa);
+/** =====================================================================
+ *  GET INVOICES CREDI FOR CAJERO MESA
 =========================================================================*/
 
 /** =====================================================================

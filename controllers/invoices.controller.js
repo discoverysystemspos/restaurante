@@ -453,6 +453,66 @@ const getInvoiceCreditClient = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  GET INVOICE CREDIT CAJERO MESA
+=========================================================================*/
+const getInvoiceCreditCajeroMesa = async(req, res = response) => {
+
+    const mesa = req.params.mesa;
+
+    try {
+
+        let invoices;
+
+        if (mesa === 'none') {
+
+            invoices = await Invoice.find({ credito: true })
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name taxid code type tax impuesto')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .populate('user', 'name');
+
+        } else {
+
+            invoices = await Invoice.find({ mesa, credito: true })
+                .populate('client', 'name cedula phone email address city tip')
+                .populate('products.product', 'name taxid code type tax impuesto')
+                .populate('mesero', 'name')
+                .populate('mesa', 'name')
+                .populate('user', 'name');
+
+            if (!invoices) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'No existe ninguna factura con este ID'
+                });
+            }
+        }
+
+
+        res.json({
+            ok: true,
+            invoices,
+            total: invoices.length
+        });
+
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  GET INVOICE CREDIT CAJERO MESA
+=========================================================================*/
+
+/** =====================================================================
  *  GET INVOICE VENCIDAS
 =========================================================================*/
 const getInvoiceVenida = async(req, res = response) => {
@@ -809,5 +869,6 @@ module.exports = {
     getInvoicesTurn,
     getInvoiceCreditClient,
     getInvoiceVenida,
-    getInvoicesCredito
+    getInvoicesCredito,
+    getInvoiceCreditCajeroMesa
 };
