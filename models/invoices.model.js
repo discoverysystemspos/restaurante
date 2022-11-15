@@ -47,8 +47,7 @@ const InvoiceSchema = Schema({
     },
     client: {
         type: Schema.Types.ObjectId,
-        ref: 'Clients',
-        require: true
+        ref: 'Clients'
     },
     pedido: {
         type: Schema.Types.ObjectId,
