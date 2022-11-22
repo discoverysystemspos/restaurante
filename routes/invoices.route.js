@@ -105,7 +105,6 @@ router.get('/vendedor/mesa/:mesa', validarJWT, getInvoiceCreditCajeroMesa);
 =========================================================================*/
 router.post('/:turno', [
         validarJWT,
-        check('client', 'EL ID del cliente debe ser correcto').isMongoId(),
         check('type', 'Tienes que especificar que metodo de pago uso').not().isEmpty(),
         check('amount', 'El monto es obligatorio').not().isEmpty(),
         check('products', 'No ha seleccionado ningun producto').not().isEmpty(),

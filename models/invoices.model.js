@@ -128,6 +128,10 @@ const InvoiceSchema = Schema({
         type: Boolean,
         default: false
     },
+    ocasional: {
+        type: Boolean,
+        default: false
+    },
     porcentaje: {
         type: Number,
     },

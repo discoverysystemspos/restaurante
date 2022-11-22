@@ -571,8 +571,15 @@ const createInvoice = async(req, res = response) => {
 
     try {
 
-        const invoice = new Invoice(req.body);
+        const { client, ...factura } = req.body
 
+        if (!client === '') {
+            factura.client = client;
+        } else {
+            factura.ocasional = true
+        }
+
+        const invoice = new Invoice(factura);
         invoice.user = user;
 
         await invoice.save();
@@ -583,7 +590,7 @@ const createInvoice = async(req, res = response) => {
 
             return res.status(500).json({
                 ok: false,
-                msg: 'Este producto no tiene asigando un departamento'
+                msg: 'Este producto no tiene asignado un departamento'
             });
 
         }
@@ -594,6 +601,8 @@ const createInvoice = async(req, res = response) => {
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
+
+
 
         res.json({
             ok: true,

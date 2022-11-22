@@ -184,9 +184,25 @@ const updateMesa = async(req, res = response) => {
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
 
+        const { deleteClient } = req.body;
+
+        let mesa = mesaUpdate;
+
+        // ELIMINAR CLIENTE
+        if (deleteClient) {
+
+            const clientDel = await Mesas.updateOne({ _id: mid }, { $unset: { cliente: campos.cliente } });
+
+            // VERIFICAR SI SE ACTUALIZO..
+
+            mesa = await Mesas.findById(mid);
+
+        }
+        // ELIMINAR CLIENTE
+
         res.json({
             ok: true,
-            mesa: mesaUpdate
+            mesa
         });
 
     } catch (error) {
@@ -386,6 +402,45 @@ const deleteIngrediente = async(req, res = response) => {
 /** =====================================================================
  *  DELETE DEPARTMENT
 =========================================================================*/
+/** =====================================================================
+ *  DELETE CLIENT OF MESA
+=========================================================================*/
+const deletClientMesa = async(req, res = response) => {
+
+    try {
+
+        const mid = req.params.id;
+        const cliente = req.params.cliente;
+
+        const clientDel = await Mesa.updateOne({ _id: mid }, { $unset: { cliente } });
+
+        // VERIFICAR SI SE ACTUALIZO..
+        if (clientDel.nModified === 0) {
+            console.log('No se puedo eliminar el cliente de la mesa');
+        } else {
+            console.log('Se elimino el cliente correctamente');
+        }
+
+        const mesa = await Mesa.findById(mid);
+
+        res.json({
+            ok: true,
+            mesa
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
+ *  DELETE CLIENT OF MESA
+=========================================================================*/
 
 // EXPORTS
 module.exports = {
@@ -396,5 +451,6 @@ module.exports = {
     getMesasComanda,
     updateNota,
     deleteIngrediente,
-    updateMenu
+    updateMenu,
+    deletClientMesa
 };
