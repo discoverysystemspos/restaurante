@@ -27,7 +27,7 @@ const getProducts = async(req, res = response) => {
 
                 if (department !== 'none') {
 
-                    products = await Product.find({ department: department, out: valor })
+                    products = await Product.find({ department: department, out: valor, status: true })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .populate('taxid', 'name valor')
@@ -37,7 +37,7 @@ const getProducts = async(req, res = response) => {
 
                 } else {
 
-                    products = await Product.find({ out: valor })
+                    products = await Product.find({ out: valor, status: true })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .populate('taxid', 'name valor')
@@ -53,6 +53,7 @@ const getProducts = async(req, res = response) => {
                 if (department !== 'none') {
 
                     products = await Product.find({
+                            status: true,
                             department: department,
                             $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }]
                         })
@@ -65,6 +66,7 @@ const getProducts = async(req, res = response) => {
                 } else {
 
                     products = await Product.find({
+                            status: true,
                             $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }],
                         })
                         .populate('kit.product', 'name')
@@ -92,7 +94,7 @@ const getProducts = async(req, res = response) => {
 
                 if (department !== 'none') {
 
-                    products = await Product.find({ department: department, out: valor })
+                    products = await Product.find({ department: department, out: valor, status: true })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .populate('taxid', 'name valor')
@@ -102,7 +104,7 @@ const getProducts = async(req, res = response) => {
 
                 } else {
 
-                    products = await Product.find()
+                    products = await Product.find({ status: true })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .populate('taxid', 'name valor')
@@ -116,7 +118,7 @@ const getProducts = async(req, res = response) => {
 
                 if (department !== 'none') {
 
-                    products = await Product.find({ department: department })
+                    products = await Product.find({ department: department, status: true })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .populate('taxid', 'name valor')
@@ -125,7 +127,7 @@ const getProducts = async(req, res = response) => {
 
                 } else {
 
-                    products = await Product.find()
+                    products = await Product.find({ status: true })
                         .populate('kit.product', 'name')
                         .populate('department', 'name')
                         .populate('taxid', 'name valor')
@@ -201,6 +203,40 @@ const getCostProducts = async(req, res = response) => {
         });
     }
 };
+/** =====================================================================
+ *  GET PRODUTS DELETES
+=========================================================================*/
+const getProductsDeletes = async(req, res = response) => {
+
+    try {
+
+        const [products, total] = await Promise.all([
+            Product.find({ status: false })
+            .populate('kit.product', 'name')
+            .populate('department', 'name')
+            .populate('taxid', 'name valor'),
+            Product.countDocuments()
+        ])
+
+        res.json({
+            ok: true,
+            products,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  GET PRODUTS DELETES
+=========================================================================*/
+
 /** =====================================================================
  *  GET PRODUTS FOR ID
 =========================================================================*/
@@ -822,5 +858,6 @@ module.exports = {
     productsExcel,
     repairInventario,
     ajustarInventario,
-    ivaAllProducts
+    ivaAllProducts,
+    getProductsDeletes
 };

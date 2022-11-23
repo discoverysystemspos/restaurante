@@ -96,7 +96,8 @@ const search = async(req, res = response) => {
                         { name: regex },
                         { description: regex },
                         { type: regex }
-                    ]
+                    ],
+                    status: true
                 })
                 .populate('kit.product', 'name')
                 .populate('department', 'name')
