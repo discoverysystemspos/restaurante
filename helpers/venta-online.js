@@ -15,34 +15,38 @@ const createInvoiceOnline = async(pedido, vendedor, mid) => {
 
     try {
 
-        let usuario = '60da36c1f6beed066c105b3b';
+        let usuario = vendedor;
+
+        if (!vendedor || vendedor === '') {
+            usuario = '606f22c91d266d0308d74964'
+        }
 
         const turnoDB = await Turno.findOne({ cajero: usuario })
-            .sort({'fecha' : -1})
+            .sort({ 'fecha': -1 })
             .populate('cajero', 'name')
             .populate('caja', 'name')
             .populate('sales.facturas', 'amount payments status type products cost');
-        
-        
-        if (vendedor === '' || vendedor === null ) {
+
+
+        if (vendedor === '' || vendedor === null) {
             vendedor = usuario
         }
 
-        let factura = [];        
+        let factura = [];
 
         let cost = 0;
         let iva = 0;
 
         for (let i = 0; i < pedido.products.length; i++) {
-            
+
             let product = await Product.findById(pedido.products[i].product)
-            .populate('kit.product', 'name')
-            .populate('department', 'name');
+                .populate('kit.product', 'name')
+                .populate('department', 'name');
 
             cost += (pedido.products[i].qty * product.cost);
-            
-        }        
-                
+
+        }
+
         factura.user = usuario;
         factura.venta = 'Online';
         factura.pedido = pedido._id;
@@ -55,7 +59,7 @@ const createInvoiceOnline = async(pedido, vendedor, mid) => {
         factura.nota = pedido.comentario;
         factura.base = pedido.amount;
         factura.credito = true;
-        factura.mesa = '61d5469da90ac6e7973167a3';
+        factura.mesa = '63793379bea54503a3c75b18';
         factura.mesero = vendedor;
 
         if (mid !== '') {
@@ -63,7 +67,7 @@ const createInvoiceOnline = async(pedido, vendedor, mid) => {
         }
 
         if (turnoDB.cerrado === false) {
-            factura.turno = turnoDB._id;            
+            factura.turno = turnoDB._id;
         }
 
         const invoice = new Invoice(factura);
@@ -72,7 +76,7 @@ const createInvoiceOnline = async(pedido, vendedor, mid) => {
 
         soldProduct(invoice.products, invoice.invoice, factura.user, invoice);
 
-        
+
 
     } catch (error) {
 
