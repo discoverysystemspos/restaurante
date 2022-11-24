@@ -571,9 +571,9 @@ const createInvoice = async(req, res = response) => {
 
     try {
 
-        const { client, ...factura } = req.body
+        const { client, ...factura } = req.body;
 
-        if (!client === '') {
+        if (client != '') {
             factura.client = client;
         } else {
             factura.ocasional = true
@@ -581,6 +581,7 @@ const createInvoice = async(req, res = response) => {
 
         const invoice = new Invoice(factura);
         invoice.user = user;
+
 
         await invoice.save();
 
