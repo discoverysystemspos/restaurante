@@ -105,6 +105,7 @@ const InvoiceSchema = Schema({
         type: Number
     },
     payments: [PaymentSchema],
+    paymentsCredit: [PaymentSchema],
     credito: {
         type: Boolean,
         default: false
