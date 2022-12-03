@@ -36,6 +36,23 @@ const PaymentSchema = Schema({
     }
 });
 
+// Payment SCHEMA
+const AbonoSchema = Schema({
+    type: {
+        type: String
+    },
+    amount: {
+        type: Number
+    },
+    description: {
+        type: String
+    },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos'
+    }
+});
+
 // INVOICE SCHEMA
 const InvoiceSchema = Schema({
 
@@ -105,7 +122,7 @@ const InvoiceSchema = Schema({
         type: Number
     },
     payments: [PaymentSchema],
-    paymentsCredit: [PaymentSchema],
+    paymentsCredit: [AbonoSchema],
     credito: {
         type: Boolean,
         default: false

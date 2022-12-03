@@ -5,6 +5,7 @@ const { soldProduct, returnStock } = require('../helpers/products-stock');
 
 // MODELS
 const Invoice = require('../models/invoices.model');
+const Product = require('../models/products.model');
 
 /** =====================================================================
  *  GET INVOICE
@@ -133,6 +134,7 @@ const getInvoicesTurn = async(req, res = response) => {
         let tarjeta = 0;
         let credit = 0;
         let vales = 0;
+        let devolucion = 0;
         let transferencia = 0;
         let payments = [];
 
@@ -147,7 +149,8 @@ const getInvoicesTurn = async(req, res = response) => {
                 tarjeta,
                 credit,
                 vales,
-                transferencia
+                transferencia,
+                devolucion
             });
 
         }
@@ -184,6 +187,8 @@ const getInvoicesTurn = async(req, res = response) => {
                     credit += payments[i].amount;
                 } else if (payments[i].type === 'vales') {
                     vales += payments[i].amount;
+                } else if (payments[i].type === 'devolucion') {
+                    devolucion += payments[i].amount;
                 }
 
             }
@@ -200,7 +205,8 @@ const getInvoicesTurn = async(req, res = response) => {
             tarjeta,
             transferencia,
             credit,
-            vales
+            vales,
+            devolucion
         });
 
     } catch (error) {
@@ -761,6 +767,15 @@ const deleteProductInvoice = async(req, res = response) => {
             let monto = (tempArr[0].qty * tempArr[0].price);
 
             invoiceDB.amount -= monto;
+            invoiceDB.base -= monto;
+
+            const productDB = await Product.findById(tempArr[0].product);
+
+            invoiceDB.payments.push({
+                type: 'devolucion',
+                amount: monto * -1,
+                description: `Devolucion de ${tempArr[0].qty} - ${productDB.name}`
+            })
 
             invoiceDB.products.splice(index, 1);
 
@@ -829,6 +844,15 @@ const updateProductQty = async(req, res = response) => {
         let monto = (qty * tempArr[0].price);
 
         invoiceDB.amount -= monto;
+        invoiceDB.base -= monto;
+
+        const productDB = await Product.findById(tempArr[0]);
+
+        invoiceDB.payments.push({
+            type: 'devolucion',
+            amount: monto * -1,
+            description: `Devolucion de ${qty} - ${productDB.name}`
+        })
 
         const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
             .populate('client', 'name cedula phone email address city tip')

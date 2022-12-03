@@ -27,6 +27,9 @@ const AbonoSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Invoice'
     },
+    pay: {
+        type: String
+    },
     monto: {
         type: Number
     }
