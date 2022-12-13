@@ -90,9 +90,27 @@ const DatoSchema = Schema({
     logo: {
         type: String
     },
-    comandas: {
+    moneda: {
+        type: String,
+        default: 'COP'
+    },
+    decimal: {
         type: Boolean,
         default: false
+    },
+    usd: {
+        type: Boolean,
+        default: false
+    },
+    currencyusd: {
+        type: Number
+    },
+    cop: {
+        type: Boolean,
+        default: false
+    },
+    currencycop: {
+        type: Number
     },
     status: {
         type: Boolean,
