@@ -35,6 +35,28 @@ const AbonoSchema = Schema({
     }
 });
 
+const DevolucionSchema = Schema({
+
+    factura: {
+        type: Schema.Types.ObjectId,
+        ref: 'Invoice'
+    },
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+    },
+    qty: {
+        type: Number
+    },
+    price: {
+        type: Number
+    },
+    monto: {
+        type: Number
+    }
+
+});
+
 // INVOICE SCHEMA
 const TurnoSchema = Schema({
 
@@ -63,6 +85,9 @@ const TurnoSchema = Schema({
         type: Boolean,
         default: false
     },
+
+    devolucion: [DevolucionSchema],
+
     diferencia: {
         type: Boolean,
         default: false

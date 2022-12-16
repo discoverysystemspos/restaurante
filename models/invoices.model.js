@@ -23,6 +23,24 @@ const ProductosSchema = Schema({
 
 });
 
+const DevolucionSchema = Schema({
+
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product',
+    },
+    qty: {
+        type: Number
+    },
+    price: {
+        type: Number
+    },
+    monto: {
+        type: Number
+    }
+
+});
+
 // Payment SCHEMA
 const PaymentSchema = Schema({
     type: {
@@ -123,6 +141,7 @@ const InvoiceSchema = Schema({
     },
     payments: [PaymentSchema],
     paymentsCredit: [AbonoSchema],
+    devolucion: [DevolucionSchema],
     credito: {
         type: Boolean,
         default: false

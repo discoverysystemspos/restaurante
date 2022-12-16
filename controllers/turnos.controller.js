@@ -94,6 +94,8 @@ const getTurnoId = async(req, res = response) => {
         const turnoDB = await Turno.findById({ _id: tid })
             .populate('cajero', 'name')
             .populate('caja', 'name')
+            .populate('devolucion.product')
+            .populate('devolucion.factura')
             .populate('sales.facturas', 'amount payments paymentsCredit status type products cost')
             .populate('abonos.factura', 'amount payments paymentsCredit status type products cost');
         // SEARCH TURNO

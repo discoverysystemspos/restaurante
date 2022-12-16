@@ -383,6 +383,7 @@ const getInvoiceId = async(req, res = response) => {
             .populate('products.product', 'name taxid code type tax impuesto')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
+            .populate('devolucion.product')
             .populate('user', 'name');
 
         if (!invoice) {
@@ -769,14 +770,6 @@ const deleteProductInvoice = async(req, res = response) => {
             invoiceDB.amount -= monto;
             invoiceDB.base -= monto;
 
-            const productDB = await Product.findById(tempArr[0].product);
-
-            invoiceDB.payments.push({
-                type: 'devolucion',
-                amount: monto * -1,
-                description: `Devolucion de ${tempArr[0].qty} - ${productDB.name}`
-            })
-
             invoiceDB.products.splice(index, 1);
 
             const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
@@ -845,14 +838,6 @@ const updateProductQty = async(req, res = response) => {
 
         invoiceDB.amount -= monto;
         invoiceDB.base -= monto;
-
-        const productDB = await Product.findById(tempArr[0]);
-
-        invoiceDB.payments.push({
-            type: 'devolucion',
-            amount: monto * -1,
-            description: `Devolucion de ${qty} - ${productDB.name}`
-        })
 
         const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
             .populate('client', 'name cedula phone email address city tip')
