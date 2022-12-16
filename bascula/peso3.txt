@@ -1,0 +1,4 @@
+ ST,GS,+ 00.460  kg
+ ST,GS,+ 00.460  kg
+ ST,GS,+ 00.460  kg
+ ST,GS,+ 00.460  kg

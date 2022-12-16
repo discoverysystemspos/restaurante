@@ -14,6 +14,8 @@ const getPeso = async(req, res = response) => {
 
         let data = fs.readFileSync(path.join(__dirname, '../bascula') + '/peso.txt', 'utf8');
 
+
+
         let peso = data.toString();
 
 
@@ -27,9 +29,12 @@ const getPeso = async(req, res = response) => {
                 let pesos = peso.split(' ');
                 w = pesos[2];
 
-            } else {
-                w = peso.slice(2, -2);
             }
+            // else {
+            //     w = peso.slice(2, -2);
+            // }
+
+            w = peso;
 
             res.json({
                 ok: true,

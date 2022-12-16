@@ -77,6 +77,18 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+    basculaimp: {
+        type: Boolean,
+        default: false
+    },
+    basculatype: {
+        type: String,
+        default: 'precio'
+    },
+    basculacode: {
+        type: String,
+        default: '2000'
+    },
     fruver: {
         type: Boolean,
         default: false
