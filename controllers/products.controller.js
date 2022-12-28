@@ -457,9 +457,21 @@ const updateProduct = async(req, res = response) => {
         }
 
         // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
+
+
         if (campos.expiration) {
-            if (Date.parse(campos.expiration) > Date.parse(productDB.expiration)) {
+
+            let camExp = new Date(campos.expiration);
+            let dbExp = new Date(productDB.expiration);
+            let hoy = new Date(Date.now());
+
+            if (camExp.getTime() > dbExp.getTime() ||
+                dbExp.getTime() > hoy.getTime() ||
+                camExp.getTime() > hoy.getTime()
+            ) {
                 campos.vencido = false;
+            } else {
+                campos.vencido = true;
             }
         }
 
