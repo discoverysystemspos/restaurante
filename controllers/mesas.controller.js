@@ -47,8 +47,7 @@ const getMesasComanda = async(req, res = response) => {
             .populate('cliente', 'name')
             .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid')
             .populate('carrito.product.taxid', 'name valor')
-            .populate('comanda.product', 'name cost comanda tipo')
-            .sort({ fecha: -1 }),
+            .populate('comanda.product', 'name cost comanda tipo'),
             Mesas.countDocuments()
         ]);
 
@@ -173,8 +172,8 @@ const updateMesa = async(req, res = response) => {
         }
 
         // FECHAS
-        inicial = new Date();
-        campos.fecha = new Date();
+        // inicial = new Date();
+        // campos.fecha = new Date();
 
         // UPDATE
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
