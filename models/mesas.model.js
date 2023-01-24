@@ -1,4 +1,8 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, connection } = require('mongoose');
+
+const autoIncrement = require('mongoose-auto-increment');
+
+autoIncrement.initialize(connection);
 
 const notaSchema = Schema({
     nota: {
@@ -48,6 +52,10 @@ const ingredientesSchema = Schema({
 });
 
 const comandaSchema = Schema({
+
+    orden: {
+        type: Number
+    },
     product: {
         type: Schema.Types.ObjectId,
         ref: 'Product',
@@ -120,6 +128,12 @@ MesasSchema.method('toJSON', function() {
     object.mid = _id;
     return object;
 
+});
+
+comandaSchema.plugin(autoIncrement.plugin, {
+    model: 'Mesas',
+    field: 'comanda.orden',
+    startAt: process.env.INVOICE_INIT
 });
 
 module.exports = model('Mesas', MesasSchema);

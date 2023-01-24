@@ -193,7 +193,6 @@ const updateMesa = async(req, res = response) => {
             const clientDel = await Mesas.updateOne({ _id: mid }, { $unset: { cliente: campos.cliente } });
 
             // VERIFICAR SI SE ACTUALIZO..
-
             mesa = await Mesas.findById(mid);
 
         }
