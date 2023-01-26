@@ -23,7 +23,8 @@ const {
     getInvoiceCreditClient,
     getInvoiceVenida,
     getInvoicesCredito,
-    getInvoiceCreditCajeroMesa
+    getInvoiceCreditCajeroMesa,
+    postQueryInvoice
 } = require('../controllers/invoices.controller');
 
 const router = Router();
@@ -113,6 +114,14 @@ router.post('/:turno', [
     createInvoice);
 /** =====================================================================
 *  CREATE INVOICE
+=========================================================================*/
+
+/** =====================================================================
+ *  POST QUERY INVOICE
+=========================================================================*/
+router.post('/search/query', validarJWT, postQueryInvoice);
+/** =====================================================================
+*  POST QUERY INVOICE
 =========================================================================*/
 
 /** =====================================================================

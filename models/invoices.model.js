@@ -77,6 +77,9 @@ const InvoiceSchema = Schema({
     invoice: {
         type: Number
     },
+    control: {
+        type: Number
+    },
     nota: {
         type: String
     },
@@ -190,6 +193,12 @@ InvoiceSchema.method('toJSON', function() {
 InvoiceSchema.plugin(autoIncrement.plugin, {
     model: 'Invoice',
     field: 'invoice',
+    startAt: process.env.INVOICE_INIT
+});
+
+InvoiceSchema.plugin(autoIncrement.plugin, {
+    model: 'Invoice',
+    field: 'control',
     startAt: process.env.INVOICE_INIT
 });
 

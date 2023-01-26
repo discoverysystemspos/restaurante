@@ -631,6 +631,58 @@ const createInvoice = async(req, res = response) => {
 /** =====================================================================
  *  CREATE INVOICE
 =========================================================================*/
+
+/** =====================================================================
+ *  POST QUERY INVOICE
+=========================================================================*/
+const postQueryInvoice = async(req, res = response) => {
+
+    try {
+
+        const query = req.body;
+
+        const invoices = await Invoice.find(query)
+            .populate('client', 'name cedula phone email address city tip')
+            .populate('products.product', 'name taxid')
+            .populate('user', 'name')
+            .populate('mesero', 'name')
+            .populate('mesa', 'name')
+            .sort({ invoice: -1 });
+
+        let montos = 0;
+        let costos = 0;
+
+        invoices.forEach(invoice => {
+
+            if (!invoice.base) {
+                invoice.base = invoice.amount;
+            }
+
+            montos += invoice.base;
+            costos += invoice.cost;
+        });
+
+        res.json({
+            ok: true,
+            invoices,
+            montos,
+            costos
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+}
+
+/** =====================================================================
+ *  POST QUERY INVOICE
+=========================================================================*/
+
 /** =====================================================================
  *  UPDATE PAYMENTS INVOICE
 =========================================================================*/
@@ -889,5 +941,6 @@ module.exports = {
     getInvoiceCreditClient,
     getInvoiceVenida,
     getInvoicesCredito,
-    getInvoiceCreditCajeroMesa
+    getInvoiceCreditCajeroMesa,
+    postQueryInvoice
 };
