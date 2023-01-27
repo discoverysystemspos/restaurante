@@ -270,6 +270,7 @@ const getInvoicesAll = async(req, res = response) => {
 
         let montos = 0;
         let costos = 0;
+        let iva = 0;
 
         invoices.forEach(invoice => {
 
@@ -279,13 +280,15 @@ const getInvoicesAll = async(req, res = response) => {
 
             montos += invoice.base;
             costos += invoice.cost;
+            iva += invoice.iva;
         });
 
         res.json({
             ok: true,
             invoices,
             montos,
-            costos
+            costos,
+            iva
         });
 
     } catch (error) {
@@ -651,6 +654,7 @@ const postQueryInvoice = async(req, res = response) => {
 
         let montos = 0;
         let costos = 0;
+        let iva = 0;
 
         invoices.forEach(invoice => {
 
@@ -660,13 +664,15 @@ const postQueryInvoice = async(req, res = response) => {
 
             montos += invoice.base;
             costos += invoice.cost;
+            iva += invoice.iva;
         });
 
         res.json({
             ok: true,
             invoices,
             montos,
-            costos
+            costos,
+            iva
         });
 
     } catch (error) {
