@@ -44,6 +44,10 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+    comandas: {
+        type: Boolean,
+        default: false
+    },
     comision: {
         type: Number,
         default: 0
