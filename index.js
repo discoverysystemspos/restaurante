@@ -44,6 +44,7 @@ app.use('/api/mesas', require('./routes/mesas.route'));
 app.use('/api/movimientos', require('./routes/movimiento.route'));
 app.use('/api/users', require('./routes/users.route'));
 app.use('/api/pedidos', require('./routes/pedidos.route'));
+app.use('/api/prestamos', require('./routes/prestamo.route'));
 app.use('/api/products', require('./routes/products.route'));
 app.use('/api/proveedores', require('./routes/proveedores.route'));
 app.use('/api/search', require('./routes/search.route'));
