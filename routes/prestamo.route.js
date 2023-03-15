@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getPrestamos, getPrestamoId, createPrestamo, updatePrestamo, deletePrestamo, getPrestamosDates } = require('../controllers/prestamos.controller');
+const { getPrestamos, getPrestamoId, createPrestamo, updatePrestamo, deletePrestamo, getPrestamosDates, getPrestamoClient } = require('../controllers/prestamos.controller');
 
 const router = Router();
 
@@ -27,6 +27,14 @@ router.get('/', validarJWT, getPrestamos);
 router.get('/:id', validarJWT, getPrestamoId);
 /** =====================================================================
  *  GET PRESTAMO ID
+=========================================================================*/
+
+/** =====================================================================
+ *  GET PRESTAMOS CLIENTS
+=========================================================================*/
+router.get('/client/:client', validarJWT, getPrestamoClient);
+/** =====================================================================
+ *  GET PRESTAMOS CLIENTS
 =========================================================================*/
 
 /** =====================================================================

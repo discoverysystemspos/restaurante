@@ -1,4 +1,5 @@
 const { response } = require('express');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const Prestamo = require('../models/prestamos.model');
 
@@ -74,6 +75,47 @@ const getPrestamoId = async(req, res = response) => {
 };
 /** =====================================================================
  *  GET PRESTAMO ID
+=========================================================================*/
+
+/** =====================================================================
+ *  GET PRESTAMOS CLIENTS
+=========================================================================*/
+const getPrestamoClient = async(req, res = response) => {
+
+    try {
+        const client = req.params.client;
+
+        if (!ObjectId.isValid(client)) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'Error en el ID del cliente'
+            });
+        }
+
+        const [prestamos, total] = await Promise.all([
+
+            Prestamo.find({ client }).populate('client'),
+            Prestamo.countDocuments({ client })
+
+        ])
+
+        res.json({
+            ok: true,
+            prestamos,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  GET PRESTAMOS CLIENTS
 =========================================================================*/
 
 /** =====================================================================
@@ -240,5 +282,6 @@ module.exports = {
     updatePrestamo,
     deletePrestamo,
     getPrestamoId,
-    getPrestamosDates
+    getPrestamosDates,
+    getPrestamoClient
 };
