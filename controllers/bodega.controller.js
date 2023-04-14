@@ -3,7 +3,7 @@ const { response } = require('express');
 const Bodega = require('../models/bodega.model');
 
 /** =====================================================================
- *  GET BODEGAS
+ *  GET BODEGA
 =========================================================================*/
 const getBodega = async(req, res = response) => {
 
