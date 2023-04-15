@@ -18,8 +18,13 @@ const getPeso = async(req, res = response) => {
 
         let peso = data.toString();
 
+        var regex = /(\d+)/g;
+
+
 
         if (peso.length > 17) {
+
+
 
             const basc = ['ST'];
             let w;
@@ -29,12 +34,9 @@ const getPeso = async(req, res = response) => {
                 let pesos = peso.split(' ');
                 w = pesos[2];
 
+            } else {
+                w = `${peso.match(regex)[0]}.${peso.match(regex)[1]}`;
             }
-            // else {
-            //     w = peso.slice(2, -2);
-            // }
-
-            w = peso;
 
             res.json({
                 ok: true,
@@ -44,6 +46,7 @@ const getPeso = async(req, res = response) => {
             });
 
         } else {
+
 
             // let pesos = peso.split(' ');
 
