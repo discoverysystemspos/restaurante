@@ -128,6 +128,12 @@ const DatoSchema = Schema({
     currencycop: {
         type: Number
     },
+
+    electronica: {
+        type: Boolean,
+        default: false
+    },
+
     status: {
         type: Boolean,
         default: true
