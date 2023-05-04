@@ -36,6 +36,7 @@ app.use('/api/categorias', require('./routes/categorias.route'));
 app.use('/api/calendario', require('./routes/calendario.route'));
 app.use('/api/clients', require('./routes/clients.route'));
 app.use('/api/counters', require('./routes/counters.route'));
+app.use('/api/dataico', require('./routes/dataico.route'));
 app.use('/api/datos', require('./routes/datos.route'));
 app.use('/api/departments', require('./routes/departments.route'));
 app.use('/api/invoice', require('./routes/invoices.route'));

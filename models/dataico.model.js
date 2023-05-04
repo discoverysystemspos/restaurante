@@ -131,7 +131,7 @@ const DataicoSchema = Schema({
 DataicoSchema.method('toJSON', function() {
 
     const { __v, _id, ...object } = this.toObject();
-    object.daid = _id;
+    object.datid = _id;
     return object;
 
 });
