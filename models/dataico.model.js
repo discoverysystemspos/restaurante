@@ -16,6 +16,11 @@ const NumberingSchema = Schema({
     }
 });
 
+NumberingSchema.method('toJSON', function() {
+    const { __v, _id, ...object } = this.toObject();
+    return object;
+});
+
 const AttachmentsSchema = Schema({
     name: {
         type: String
@@ -23,6 +28,11 @@ const AttachmentsSchema = Schema({
     data: {
         type: String
     }
+});
+
+AttachmentsSchema.method('toJSON', function() {
+    const { __v, _id, ...object } = this.toObject();
+    return object;
 });
 
 const ActionsSchema = Schema({
@@ -34,13 +44,15 @@ const ActionsSchema = Schema({
         type: Boolean,
         default: false
     },
-    email: {
-        type: String
-    },
     pdf: {
         type: String
     },
     attachments: [AttachmentsSchema],
+});
+
+ActionsSchema.method('toJSON', function() {
+    const { __v, _id, ...object } = this.toObject();
+    return object;
 });
 
 const CustomerSchema = Schema({
@@ -93,6 +105,11 @@ const CustomerSchema = Schema({
         type: String
     },
 
+});
+
+CustomerSchema.method('toJSON', function() {
+    const { __v, _id, ...object } = this.toObject();
+    return object;
 });
 
 const DataicoSchema = Schema({

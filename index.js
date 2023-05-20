@@ -39,6 +39,7 @@ app.use('/api/counters', require('./routes/counters.route'));
 app.use('/api/dataico', require('./routes/dataico.route'));
 app.use('/api/datos', require('./routes/datos.route'));
 app.use('/api/departments', require('./routes/departments.route'));
+app.use('/api/electronica', require('./routes/electronica.route'));
 app.use('/api/invoice', require('./routes/invoices.route'));
 app.use('/api/login', require('./routes/auth.route'));
 app.use('/api/mesas', require('./routes/mesas.route'));

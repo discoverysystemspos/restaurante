@@ -9,11 +9,11 @@ const getDataico = async(req, res = response) => {
 
     try {
 
-        const dataico = await Dataico.findOne();
+        const dataico = await Dataico.find();
 
         res.json({
             ok: true,
-            dataico
+            dataico: dataico[0]
         });
 
     } catch (error) {
@@ -78,7 +78,7 @@ const updateDataico = async(req, res = response) => {
     try {
 
         // SEARCH DEPARTMENT
-        const dataicoDB = await Banco.findById({ _id: datid });
+        const dataicoDB = await Dataico.findById({ _id: datid });
         if (!dataicoDB) {
             return res.status(400).json({
                 ok: false,
@@ -112,8 +112,6 @@ const updateDataico = async(req, res = response) => {
 /** =====================================================================
  *  UPDATE DATAICO
 =========================================================================*/
-
-
 
 // EXPORTS
 module.exports = {

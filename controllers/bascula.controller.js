@@ -14,17 +14,11 @@ const getPeso = async(req, res = response) => {
 
         let data = fs.readFileSync(path.join(__dirname, '../bascula') + '/peso.txt', 'utf8');
 
-
-
         let peso = data.toString();
 
         var regex = /(\d+)/g;
 
-
-
         if (peso.length > 17) {
-
-
 
             const basc = ['ST'];
             let w;
