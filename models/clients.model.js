@@ -2,6 +2,39 @@ const { Schema, model } = require('mongoose');
 
 const ClientSchema = Schema({
 
+    party_type: {
+        type: String,
+        default: 'PERSONA_NATURAL'
+    },
+    tax_level_code: {
+        type: String,
+        default: 'NO_RESPONSABLE_DE_IVA'
+    },
+    country_code: {
+        type: String,
+        default: 'CO'
+    },
+    first_name: {
+        type: String
+    },
+    party_identification_type: {
+        type: String,
+        default: 'CC'
+    },
+    company_name: {
+        type: String
+    },
+    family_name: {
+        type: String
+    },
+    regimen: {
+        type: String,
+        default: 'SIMPLE'
+    },
+    party_identification: {
+        type: String
+    },
+
     name: {
         type: String,
         require: true

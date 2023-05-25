@@ -17,8 +17,9 @@ const createInvoiceElectronic = async(req, res = response) => {
         const invoiceNew = req.body;
 
         const token = req.params.token;
+        const factura = req.params.factura;
 
-        console.log("Body: ", invoiceNew);
+        console.log("factura: ", factura);
 
         // POST DATAICO
         const invoice = await fetch(`https://api.dataico.com/dataico_api/v2/invoices`, {
