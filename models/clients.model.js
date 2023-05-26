@@ -35,6 +35,13 @@ const ClientSchema = Schema({
         type: String
     },
 
+    codigodepartamento: {
+        type: String
+    },
+    codigociudad: {
+        type: String
+    },
+
     name: {
         type: String,
         require: true

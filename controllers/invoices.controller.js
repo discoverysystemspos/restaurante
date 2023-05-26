@@ -607,13 +607,11 @@ const createInvoice = async(req, res = response) => {
         }
 
         const invoiceNew = await Invoice.findById(invoice._id)
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
-
-
 
         res.json({
             ok: true,
