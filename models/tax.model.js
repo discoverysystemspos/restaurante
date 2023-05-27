@@ -6,6 +6,9 @@ const TaxSchema = Schema({
         type: String,
         require: true
     },
+    taxcategory: {
+        type: String,
+    },
     valor: {
         type: Number
     },

@@ -22,25 +22,27 @@ const createInvoiceElectronic = async(req, res = response) => {
         console.log("factura: ", factura);
 
         // POST DATAICO
-        const invoice = await fetch(`https://api.dataico.com/dataico_api/v2/invoices`, {
+        const response = await fetch(`https://api.dataico.com/dataico_api/v2/invoices`, {
             method: 'POST',
             body: JSON.stringify(invoiceNew),
             headers: {
                 "auth-token": token,
             }
-        }).then(response => {
-            console.log(response);
-            res.json({
-                ok: true,
-                response
-            });
-
         }).catch(err => {
             console.log(err);
             res.json({
                 ok: true,
                 err
             });
+        });
+
+        const invoice = await response.json();
+
+        console.log(invoice);
+
+        res.json({
+            ok: true,
+            invoice
         });
 
     } catch (error) {
