@@ -2,6 +2,8 @@ const { response } = require('express');
 
 const https = require("https");
 
+const Invoice = require('../models/invoices.model');
+
 
 
 const fetch = (...args) =>
@@ -38,7 +40,7 @@ const createInvoiceElectronic = async(req, res = response) => {
 
         const invoice = await response.json();
 
-        console.log(invoice);
+        const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, { pdf_url: invoice.pdf_url, uuid: invoice.uuid }, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,

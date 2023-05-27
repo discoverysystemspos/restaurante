@@ -175,6 +175,12 @@ const InvoiceSchema = Schema({
     porcentaje: {
         type: Number,
     },
+    pdf_url: {
+        type: String,
+    },
+    uuid: {
+        type: String,
+    },
     fecha: {
         type: Date,
         default: Date.now
