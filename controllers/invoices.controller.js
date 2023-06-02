@@ -8,6 +8,30 @@ const Invoice = require('../models/invoices.model');
 const Product = require('../models/products.model');
 
 /** =====================================================================
+ *  COUNT INVOICE
+=========================================================================*/
+const getCountInvoicesElectronic = async(req, res = response) => {
+
+    try {
+
+        const total = await Invoice.countDocuments({ electronica: true })
+
+        res.json({
+            ok: true,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  GET INVOICE
 =========================================================================*/
 const getInvoices = async(req, res = response) => {
@@ -946,5 +970,6 @@ module.exports = {
     getInvoiceVenida,
     getInvoicesCredito,
     getInvoiceCreditCajeroMesa,
-    postQueryInvoice
+    postQueryInvoice,
+    getCountInvoicesElectronic
 };

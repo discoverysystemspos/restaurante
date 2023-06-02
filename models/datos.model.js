@@ -125,6 +125,16 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+
+    currencycop: {
+        type: Number
+    },
+
+    min: {
+        type: Number,
+        default: 212000
+    },
+
     currencycop: {
         type: Number
     },

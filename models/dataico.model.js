@@ -133,6 +133,13 @@ const DataicoSchema = Schema({
 
     numbering: NumberingSchema,
 
+    desde: {
+        type: Number,
+    },
+    hasta: {
+        type: Number,
+    },
+
     env: {
         type: String,
     },

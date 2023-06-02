@@ -172,6 +172,13 @@ const InvoiceSchema = Schema({
         type: Boolean,
         default: false
     },
+    electronica: {
+        type: Boolean,
+        default: false
+    },
+    number: {
+        type: String,
+    },
     porcentaje: {
         type: Number,
     },
