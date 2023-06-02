@@ -176,6 +176,9 @@ const InvoiceSchema = Schema({
         type: Boolean,
         default: false
     },
+    prefix: {
+        type: String,
+    },
     number: {
         type: String,
     },

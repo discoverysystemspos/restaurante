@@ -25,7 +25,7 @@ const router = Router();
 /** =====================================================================
  *  CREATE BANCO
 =========================================================================*/
-router.post('/:token/:factura', validarJWT, createInvoiceElectronic);
+router.post('/:token/:factura/:desde', validarJWT, createInvoiceElectronic);
 /** =====================================================================
  *  CREATE BANCO
 =========================================================================*/

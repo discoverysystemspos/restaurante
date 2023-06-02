@@ -20,8 +20,11 @@ const createInvoiceElectronic = async(req, res = response) => {
 
         const token = req.params.token;
         const factura = req.params.factura;
+        const desde = Number(req.params.desde);
+        const prefix = invoiceNew.invoice.numbering.prefix;
+        const number = await Invoice.countDocuments({ electronica: true, prefix: prefix });
 
-        console.log("factura: ", factura);
+        invoiceNew.invoice.number = (number + 1) + desde;
 
         // POST DATAICO
         const response = await fetch(`https://api.dataico.com/dataico_api/v2/invoices`, {
@@ -39,8 +42,7 @@ const createInvoiceElectronic = async(req, res = response) => {
         });
 
         const invoice = await response.json();
-
-        const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, { pdf_url: invoice.pdf_url, uuid: invoice.uuid, number: invoice.number, electronica: true }, { new: true, useFindAndModify: false });
+        await Invoice.findByIdAndUpdate(factura, { pdf_url: invoice.pdf_url, uuid: invoice.uuid, number: invoice.number, electronica: true, prefix: prefix }, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
