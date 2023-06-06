@@ -43,7 +43,7 @@ const getInvoices = async(req, res = response) => {
         const [invoices, total] = await Promise.all([
 
             Invoice.find()
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid')
             .populate('user', 'name')
             .populate('mesero', 'name')
@@ -88,7 +88,7 @@ const getInvoicesCredito = async(req, res = response) => {
         const [invoices, total] = await Promise.all([
 
             Invoice.find({ credito: true, status: true })
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid')
             .populate('user', 'name')
             .populate('mesero', 'name')
@@ -137,14 +137,14 @@ const getInvoicesTurn = async(req, res = response) => {
 
         if (creditos) {
             invoices = await Invoice.find({ turno, status, credito })
-                .populate('client', 'name cedula phone email address city tip')
+                .populate('client')
                 .populate('products.product', 'name taxid department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name');
         } else {
             invoices = await Invoice.find({ turno, status })
-                .populate('client', 'name cedula phone email address city tip')
+                .populate('client')
                 .populate('products.product', 'name taxid department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
@@ -270,7 +270,7 @@ const getInvoicesAll = async(req, res = response) => {
                     status,
                     credito
                 })
-                .populate('client', 'name cedula phone email address city tip')
+                .populate('client')
                 .populate('products.product', 'name taxid')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
@@ -284,7 +284,7 @@ const getInvoicesAll = async(req, res = response) => {
                     credito,
                     mesa
                 })
-                .populate('client', 'name cedula phone email address city tip')
+                .populate('client')
                 .populate('products.product', 'name taxid')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
@@ -372,7 +372,7 @@ const getInvoicesDate = async(req, res = response) => {
                     ]
                 }
             })
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .sort({ invoice: -1 }),
             Invoice.countDocuments()
         ]);
@@ -406,7 +406,7 @@ const getInvoiceId = async(req, res = response) => {
     try {
 
         const invoice = await Invoice.findById(id)
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid code type tax impuesto')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
@@ -452,7 +452,7 @@ const getInvoiceCreditClient = async(req, res = response) => {
     try {
 
         const invoice = await Invoice.find({ client, credito })
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid code type tax impuesto')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
@@ -500,7 +500,7 @@ const getInvoiceCreditCajeroMesa = async(req, res = response) => {
         if (mesa === 'none') {
 
             invoices = await Invoice.find({ credito: true })
-                .populate('client', 'name cedula phone email address city tip')
+                .populate('client')
                 .populate('products.product', 'name taxid code type tax impuesto')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')
@@ -509,7 +509,7 @@ const getInvoiceCreditCajeroMesa = async(req, res = response) => {
         } else {
 
             invoices = await Invoice.find({ mesa, credito: true })
-                .populate('client', 'name cedula phone email address city tip')
+                .populate('client')
                 .populate('products.product', 'name taxid code type tax impuesto')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')
@@ -559,7 +559,7 @@ const getInvoiceVenida = async(req, res = response) => {
                 $and: [{ fechaCredito: { $gte: new Date('10/10/2020'), $lt: fechaActual } }],
                 credito: true
             })
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid')
             .populate('user', 'name')
             .populate('mesero', 'name')
@@ -667,7 +667,7 @@ const postQueryInvoice = async(req, res = response) => {
         const query = req.body;
 
         const invoices = await Invoice.find(query)
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid')
             .populate('user', 'name')
             .populate('mesero', 'name')
@@ -853,7 +853,7 @@ const deleteProductInvoice = async(req, res = response) => {
             invoiceDB.products.splice(index, 1);
 
             const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
-                .populate('client', 'name cedula phone email address city tip')
+                .populate('client')
                 .populate('products.product', 'name taxid code type')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')
@@ -920,7 +920,7 @@ const updateProductQty = async(req, res = response) => {
         invoiceDB.base -= monto;
 
         const invoiceUpdate = await Invoice.findByIdAndUpdate(factura, invoiceDB, { new: true, useFindAndModify: false })
-            .populate('client', 'name cedula phone email address city tip')
+            .populate('client')
             .populate('products.product', 'name taxid code type')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
