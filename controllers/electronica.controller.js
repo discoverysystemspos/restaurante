@@ -22,7 +22,7 @@ const createInvoiceElectronic = async(req, res = response) => {
         const factura = req.params.factura;
         const desde = Number(req.params.desde);
         const prefix = invoiceNew.invoice.numbering.prefix;
-        const number = await Invoice.countDocuments({ electronica: true, prefix: prefix });
+        const number = await Invoice.countDocuments({ electronica: true, prefix: prefix, send: true });
 
         invoiceNew.invoice.number = (number + 1) + desde;
 
@@ -41,12 +41,19 @@ const createInvoiceElectronic = async(req, res = response) => {
             });
         });
 
+        const status = await response.status;
         const invoice = await response.json();
-        await Invoice.findByIdAndUpdate(factura, { pdf_url: invoice.pdf_url, uuid: invoice.uuid, number: invoice.number, electronica: true, prefix: prefix }, { new: true, useFindAndModify: false });
+
+        if (Number(status) !== 201) {
+            await Invoice.findByIdAndUpdate(factura, { electronica: true, send: false }, { new: true, useFindAndModify: false });
+        } else {
+            await Invoice.findByIdAndUpdate(factura, { pdf_url: invoice.pdf_url, uuid: invoice.uuid, number: invoice.number, electronica: true, prefix: prefix, send: true }, { new: true, useFindAndModify: false });
+        }
 
         res.json({
             ok: true,
-            invoice
+            invoice,
+            status
         });
 
     } catch (error) {

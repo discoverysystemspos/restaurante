@@ -172,6 +172,10 @@ const InvoiceSchema = Schema({
         type: Boolean,
         default: false
     },
+    send: {
+        type: Boolean,
+        default: false
+    },
     electronica: {
         type: Boolean,
         default: false
