@@ -128,7 +128,7 @@ const updateTax = async(req, res = response) => {
         }
         // SEARCH DEPARTMENT
 
-        // VALIDATE DEPARTMENT
+        // VALIDATE DEPARTMENTS
         const { name, ...campos } = req.body;
         if (taxDB.name !== name) {
             const cajaDepartment = await Tax.findOne({ name });
