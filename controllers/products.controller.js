@@ -622,6 +622,52 @@ const codeProductUpdate = async(req, res = response) => {
 /** =====================================================================
  *  AJUSTAR INVENTARIO
 =========================================================================*/
+/** =====================================================================
+ *  RESET INVENTARY PRODUCTS
+=========================================================================*/
+const resetInv = async(req, res = response) => {
+
+        try {
+            let number = 0;
+
+            const product = await Product.find();
+
+            for (const producto of product) {
+
+                let update = {
+                    inventario: 0,
+                    stock: 0,
+                    bought: 0,
+                    sold: 0,
+                    returned: 0,
+                    damaged: 0,
+                    out: false
+                }
+
+                const productUpdate = await Product.findByIdAndUpdate(producto._id, update, { new: true, useFindAndModify: false });
+
+                number++;
+            }
+
+            res.json({
+                ok: true,
+                number
+            });
+
+
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                ok: false,
+                msg: 'Error inesperado, porfavor intente nuevamente'
+            });
+        }
+
+    }
+    /** =====================================================================
+     *  RESET INVENTARY PRODUCTS
+    =========================================================================*/
+
 const ajustarInventario = async(req, res = response) => {
 
     try {
@@ -871,5 +917,6 @@ module.exports = {
     repairInventario,
     ajustarInventario,
     ivaAllProducts,
-    getProductsDeletes
+    getProductsDeletes,
+    resetInv
 };
