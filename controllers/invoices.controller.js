@@ -138,14 +138,14 @@ const getInvoicesTurn = async(req, res = response) => {
         if (creditos) {
             invoices = await Invoice.find({ turno, status, credito })
                 .populate('client')
-                .populate('products.product', 'name taxid department')
+                .populate('products.product', 'name taxid tax department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name');
         } else {
             invoices = await Invoice.find({ turno, status })
                 .populate('client')
-                .populate('products.product', 'name taxid department')
+                .populate('products.product', 'name taxid tax department')
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name');
