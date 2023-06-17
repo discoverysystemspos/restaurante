@@ -214,7 +214,6 @@ const deleteAlquiler = async(req, res = response) => {
 /** =====================================================================
  *  DELETE ALQUILER
 =========================================================================*/
-
 // EXPORTS
 module.exports = {
     getAlquileres,

@@ -135,6 +135,9 @@ const ProductSchema = Schema({
     tipo: {
         type: String
     },
+    kardex: {
+        type: Number
+    },
     fecha: {
         type: Date,
         default: Date.now

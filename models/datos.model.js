@@ -148,6 +148,11 @@ const DatoSchema = Schema({
         type: Boolean,
         default: true
     },
+
+    fechakardex: {
+        type: Date
+    },
+
     fecha: {
         type: Date,
         default: Date.now
