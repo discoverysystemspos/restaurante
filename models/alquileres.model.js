@@ -52,7 +52,7 @@ const PaymentSchema = Schema({
 const AlquilerSchema = Schema({
 
     number: {
-        type: Number
+        type: String
     },
 
     client: {
@@ -97,7 +97,7 @@ AlquilerSchema.method('toJSON', function() {
 
 });
 
-InvoiceSchema.plugin(autoIncrement.plugin, {
+AlquilerSchema.plugin(autoIncrement.plugin, {
     model: 'Alquileres',
     field: 'number',
     startAt: process.env.INVOICE_INIT

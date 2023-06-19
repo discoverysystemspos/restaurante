@@ -28,6 +28,7 @@ dbConection();
 app.use(express.static('public'));
 
 // RUTASs
+app.use('/api/alquileres', require('./routes/alquileres.route'));
 app.use('/api/bascula', require('./routes/bascula.route'));
 app.use('/api/bancos', require('./routes/bancos.route'));
 app.use('/api/bodega', require('./routes/bodega.route'));

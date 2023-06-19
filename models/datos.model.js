@@ -48,10 +48,17 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+
+    alquileres: {
+        type: Boolean,
+        default: false
+    },
+
     comision: {
         type: Number,
         default: 0
     },
+
     commissions: {
         type: Boolean,
         default: false

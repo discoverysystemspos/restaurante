@@ -128,6 +128,10 @@ const ProductSchema = Schema({
         type: Boolean,
         default: true
     },
+    bascula: {
+        type: Boolean,
+        default: false
+    },
     comanda: {
         type: Boolean,
         default: false

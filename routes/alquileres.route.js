@@ -1,5 +1,5 @@
 /** =====================================================================
- *  DATOS ROUTER 
+ *  BANCO ROUTER
 =========================================================================*/
 const { Router } = require('express');
 const { check } = require('express-validator');
@@ -7,43 +7,58 @@ const { check } = require('express-validator');
 // MIDDLEWARES
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
+const { getAlquileres, getAlquilerId, createAlquiler, updateAlquiler, deleteAlquiler } = require('../controllers/alquileres.controller');
 
-// CONTROLLERS
-const { getDatos, createDatos, updateDatos } = require('../controllers/datos.controller');
+// CONTROLLER
+
+
 
 const router = Router();
 
 /** =====================================================================
- *  GET DATOS
+ *  GET ALQUILERES
 =========================================================================*/
-router.get('/', validarJWT, getDatos);
+router.get('/', validarJWT, getAlquileres);
 /** =====================================================================
- *  GET DATOS
-=========================================================================*/
-/** =====================================================================
- *  POST CREATE DATOS
-=========================================================================*/
-router.post('/', [
-        validarJWT,
-        check('name', 'El nombre es olbigatorio').not().isEmpty(),
-        check('address', 'El nombre es olbigatorio').not().isEmpty(),
-        check('phone', 'El nombre es olbigatorio').not().isEmpty(),
-        check('nit', 'El nombre es olbigatorio').not().isEmpty(),
-        check('tax', 'El nombre es olbigatorio').not().isEmpty(),
-        validarCampos
-    ],
-    createDatos
-);
-/** =====================================================================
- *  POST CREATE DATOS
-=========================================================================*/
-/** =====================================================================
- *  PUT DATOS
-=========================================================================*/
-router.put('/:id', validarJWT, updateDatos);
-/** =====================================================================
- *  PUT DATOS
+ *  GET ALQUILERES
 =========================================================================*/
 
-// EXPORT
+/** =====================================================================
+ *  GET BANCO ID
+=========================================================================*/
+router.get('/:id', validarJWT, getAlquilerId);
+/** =====================================================================
+ *  GET BANCO ID
+=========================================================================*/
+
+/** =====================================================================
+ *  CREATE BANCO
+=========================================================================*/
+router.post('/', validarJWT, createAlquiler);
+/** =====================================================================
+ *  CREATE BANCO
+=========================================================================*/
+
+/** =====================================================================
+ *  UPDATE BANCO
+=========================================================================*/
+router.put('/:id', [
+        validarJWT,
+        validarCampos
+    ],
+    updateAlquiler
+);
+/** =====================================================================
+ *  UPDATE BANCO
+=========================================================================*/
+
+/** =====================================================================
+ *  DELETE BANCO
+=========================================================================*/
+router.delete('/:id', validarJWT, deleteAlquiler);
+/** =====================================================================
+ *  DELETE BANCO
+=========================================================================*/
+
+// EXPORTS
 module.exports = router;
