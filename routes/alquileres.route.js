@@ -1,5 +1,5 @@
 /** =====================================================================
- *  BANCO ROUTER
+ *  ALQUILERES ROUTER
 =========================================================================*/
 const { Router } = require('express');
 const { check } = require('express-validator');
@@ -7,40 +7,38 @@ const { check } = require('express-validator');
 // MIDDLEWARES
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
-const { getAlquileres, getAlquilerId, createAlquiler, updateAlquiler, deleteAlquiler } = require('../controllers/alquileres.controller');
 
 // CONTROLLER
-
-
+const { getAlquileres, getAlquilerId, createAlquiler, updateAlquiler, deleteAlquiler } = require('../controllers/alquileres.controller');
 
 const router = Router();
 
 /** =====================================================================
- *  GET ALQUILERES
-=========================================================================*/
-router.get('/', validarJWT, getAlquileres);
-/** =====================================================================
- *  GET ALQUILERES
-=========================================================================*/
-
-/** =====================================================================
- *  GET BANCO ID
+ *  GET ALQUILER ID
 =========================================================================*/
 router.get('/:id', validarJWT, getAlquilerId);
 /** =====================================================================
- *  GET BANCO ID
+ *  GET ALQUILER ID
 =========================================================================*/
 
 /** =====================================================================
- *  CREATE BANCO
+ *  CREATE ALQUILER
 =========================================================================*/
 router.post('/', validarJWT, createAlquiler);
 /** =====================================================================
- *  CREATE BANCO
+ *  CREATE ALQUILER
 =========================================================================*/
 
 /** =====================================================================
- *  UPDATE BANCO
+ *  GET ALQUILERES
+=========================================================================*/
+router.post('/query', validarJWT, getAlquileres);
+/** =====================================================================
+ *  GET ALQUILERES
+=========================================================================*/
+
+/** =====================================================================
+ *  UPDATE ALQUILER
 =========================================================================*/
 router.put('/:id', [
         validarJWT,
@@ -49,15 +47,15 @@ router.put('/:id', [
     updateAlquiler
 );
 /** =====================================================================
- *  UPDATE BANCO
+ *  UPDATE ALQUILER
 =========================================================================*/
 
 /** =====================================================================
- *  DELETE BANCO
+ *  DELETE ALQUILER
 =========================================================================*/
 router.delete('/:id', validarJWT, deleteAlquiler);
 /** =====================================================================
- *  DELETE BANCO
+ *  DELETE ALQUILER
 =========================================================================*/
 
 // EXPORTS

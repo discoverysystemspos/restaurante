@@ -78,9 +78,18 @@ const AlquilerSchema = Schema({
         default: Date.now
     },
 
+    fechaIni: {
+        type: Date
+    },
+
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+
+    cotizacion: {
+        type: Boolean,
+        default: false
     },
 
     status: {
