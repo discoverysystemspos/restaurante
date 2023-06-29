@@ -84,9 +84,16 @@ const createAlquiler = async(req, res = response) => {
     try {
 
         const user = req.uid;
+        const cotizacion = req.body.cotizacion;
 
         // SAVE DEPARTMENT
         const alquiler = new Alquiler(req.body);
+
+        if (!cotizacion) {
+            alquiler.items.map((alquiler) => {
+                alquiler.desde = new Date();
+            });
+        }
 
         alquiler.user = user;
         await alquiler.save();

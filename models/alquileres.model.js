@@ -20,13 +20,14 @@ const ItemsSchema = Schema({
         require: true
     },
     desde: {
-        type: Number
+        type: Date
     },
     hasta: {
-        type: Number
+        type: Date
     },
     entregado: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
 
 });
