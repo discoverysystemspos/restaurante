@@ -78,8 +78,7 @@ const MesasSchema = Schema({
         type: String
     },
     disponible: {
-        type: Boolean,
-        default: true
+        type: Boolean
     },
     mesero: {
         type: Schema.Types.ObjectId,

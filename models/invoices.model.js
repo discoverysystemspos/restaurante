@@ -71,6 +71,26 @@ const AbonoSchema = Schema({
     }
 });
 
+// Payment SCHEMA
+const AlquilerPaidSchema = Schema({
+    type: {
+        type: String
+    },
+    amount: {
+        type: Number
+    },
+    description: {
+        type: String
+    },
+    fecha: {
+        type: Date
+    },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos'
+    }
+});
+
 // INVOICE SCHEMA
 const InvoiceSchema = Schema({
 
@@ -145,6 +165,7 @@ const InvoiceSchema = Schema({
     payments: [PaymentSchema],
     paymentsCredit: [AbonoSchema],
     devolucion: [DevolucionSchema],
+    paymentsAlquiler: [AlquilerPaidSchema],
     credito: {
         type: Boolean,
         default: false
@@ -194,6 +215,10 @@ const InvoiceSchema = Schema({
     },
     uuid: {
         type: String,
+    },
+    alquiler: {
+        type: Schema.Types.ObjectId,
+        ref: 'Alquileres'
     },
     fecha: {
         type: Date,

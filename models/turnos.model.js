@@ -35,6 +35,17 @@ const AbonoSchema = Schema({
     }
 });
 
+// ALQUILERES SCHEMA
+const AlquilerSchema = Schema({
+    alquiler: {
+        type: Schema.Types.ObjectId,
+        ref: 'Alquileres'
+    },
+    payid: {
+        type: String
+    }
+});
+
 const DevolucionSchema = Schema({
 
     factura: {
@@ -77,6 +88,7 @@ const TurnoSchema = Schema({
     sales: [SalesSchema],
     abonos: [AbonoSchema],
     movements: [MovementsSchema],
+    alquileres: [AlquilerSchema],
     status: {
         type: Boolean,
         default: true

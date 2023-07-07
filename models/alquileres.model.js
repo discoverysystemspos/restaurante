@@ -46,6 +46,10 @@ const PaymentSchema = Schema({
     fecha: {
         type: Date,
         default: Date.now
+    },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos'
     }
 });
 
@@ -93,9 +97,18 @@ const AlquilerSchema = Schema({
         default: false
     },
 
+    finalizada: {
+        type: Boolean,
+        default: false
+    },
+
     status: {
         type: Boolean,
         default: true
+    },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos'
     }
 });
 
