@@ -94,19 +94,7 @@ router.post('/', [
 /** =====================================================================
  *  UPDATE PRODUCT
 =========================================================================*/
-router.put('/:id', [
-        validarJWT,
-        check('code', 'El codigo es obligatorio').not().isEmpty(),
-        check('name', 'El nombre es obligatorio').not().isEmpty(),
-        check('cost', 'El costo es obligatorio').not().isEmpty(),
-        check('gain', 'La ganancia es obligatoria').not().isEmpty(),
-        check('price', 'El precio es obligatorio').not().isEmpty(),
-        check('wholesale', 'El mayoreo es obligatorio').not().isEmpty(),
-        check('type', 'El tipo es obligatorio').not().isEmpty(),
-        validarCampos
-    ],
-    updateProduct
-);
+router.put('/:id', validarJWT, updateProduct);
 /** =====================================================================
  *  UPDATE PRODUCT
 =========================================================================*/

@@ -3,7 +3,8 @@ const autoIncrement = require('mongoose-auto-increment');
 
 autoIncrement.initialize(connection);
 
-// PRODUCTS SCHEMA
+/* The `ItemsSchema` is defining the schema for the items in the `AlquilerSchema` (rental schema). It
+includes the following fields: */
 const ItemsSchema = Schema({
 
     product: {
@@ -32,7 +33,8 @@ const ItemsSchema = Schema({
 
 });
 
-// Payment SCHEMA
+/* The `PaymentSchema` is defining the schema for the payments in the `AlquilerSchema` (rental schema).
+It includes the following fields: */
 const PaymentSchema = Schema({
     type: {
         type: String
@@ -54,10 +56,13 @@ const PaymentSchema = Schema({
 });
 
 // SCHEMA
+/* The `AlquilerSchema` is defining the schema for the rental documents in the MongoDB collection. It
+includes various fields such as `number`, `client`, `address`, `items`, `payments`, `amount`,
+`fecha`, `fechaIni`, `user`, `cotizacion`, `finalizada`, `status`, and `turno`. */
 const AlquilerSchema = Schema({
 
     number: {
-        type: String
+        type: Number
     },
 
     client: {
@@ -112,18 +117,25 @@ const AlquilerSchema = Schema({
     }
 });
 
+/* The `AlquilerSchema.method('toJSON', function() {...})` is defining a custom method called `toJSON`
+for the `AlquilerSchema`. This method is used to modify the default behavior of converting a
+document to a JSON object. */
 AlquilerSchema.method('toJSON', function() {
-
     const { __v, _id, ...object } = this.toObject();
     object.alid = _id;
     return object;
-
 });
 
+/* The code `AlquilerSchema.plugin(autoIncrement.plugin, { model: 'Alquileres', field: 'number',
+startAt: process.env.INVOICE_INIT });` is using the `autoIncrement` plugin from the
+`mongoose-auto-increment` package to automatically generate and increment the `number` field in the
+`AlquilerSchema` schema. */
 AlquilerSchema.plugin(autoIncrement.plugin, {
     model: 'Alquileres',
     field: 'number',
     startAt: process.env.INVOICE_INIT
 });
 
+/* `module.exports = model('Alquileres', AlquilerSchema);` is exporting the `Alquileres` model, which
+is created using the `model` function from the `mongoose` library. */
 module.exports = model('Alquileres', AlquilerSchema);
