@@ -8,7 +8,7 @@ const { generarJWT, generarClientJWT } = require('../helpers/jwt');
 const { googleVerify } = require('../helpers/google-verify');
 
 /** =====================================================================
- *  LOGINN
+ *  LOGIN
 =========================================================================*/
 const login = async(req, res = response) => {
 
