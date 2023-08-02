@@ -22,7 +22,7 @@ const createInvoiceElectronic = async(req, res = response) => {
         const factura = req.params.factura;
         const desde = Number(req.params.desde);
         const prefix = invoiceNew.invoice.numbering.prefix;
-        const number = await Invoice.countDocuments({ electronica: true, prefix: prefix, send: true });
+        const number = await Invoice.countDocuments({ electronica: true, prefix: prefix, send: true, status: true });
 
         invoiceNew.invoice.number = (number + 1) + desde;
 
