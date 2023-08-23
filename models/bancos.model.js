@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-// SCHEMA
+// SCHEMAS
 const BancosSchema = Schema({
     name: {
         type: String,
