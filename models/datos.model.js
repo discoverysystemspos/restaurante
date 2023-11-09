@@ -59,6 +59,11 @@ const DatoSchema = Schema({
         default: 0
     },
 
+    impresora: {
+        type: Number,
+        default: 58
+    },
+
     commissions: {
         type: Boolean,
         default: false

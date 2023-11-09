@@ -407,7 +407,15 @@ const getInvoiceId = async(req, res = response) => {
 
         const invoice = await Invoice.findById(id)
             .populate('client')
-            .populate('products.product', 'name taxid code type tax impuesto')
+            // .populate('products.product', 'name taxid code type tax impuesto')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('devolucion.product')
@@ -632,7 +640,15 @@ const createInvoice = async(req, res = response) => {
 
         const invoiceNew = await Invoice.findById(invoice._id)
             .populate('client')
-            .populate('products.product', 'name taxid code type')
+            // .populate('products.product', 'name taxid code type')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
