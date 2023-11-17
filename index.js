@@ -2,6 +2,7 @@
 require('dotenv').config();
 const path = require('path');
 
+// BY Gilmer
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -9,13 +10,11 @@ const bodyParser = require('body-parser');
 //Conection DB
 const { dbConection } = require('./database/config');
 
-
 /*
 ? INIT EXPRESS SERVER
 `const app = express();` is creating an instance of the Express application. This instance will be
 used to define routes, middleware, and start the server. */
 const app = express();
-
 
 /* 
 ? CORS
@@ -39,7 +38,7 @@ dbConection();
 from the specified directory. In this case, it is serving files from the 'public' directory. */
 app.use(express.static('public'));
 
-// RUTASs
+// RUTAS
 app.use('/api/alquileres', require('./routes/alquileres.route'));
 app.use('/api/bascula', require('./routes/bascula.route'));
 app.use('/api/bancos', require('./routes/bancos.route'));
@@ -47,6 +46,7 @@ app.use('/api/bodega', require('./routes/bodega.route'));
 app.use('/api/caja', require('./routes/cajas.route'));
 app.use('/api/categorias', require('./routes/categorias.route'));
 app.use('/api/calendario', require('./routes/calendario.route'));
+app.use('/api/cars', require('./routes/cars.route'));
 app.use('/api/clients', require('./routes/clients.route'));
 app.use('/api/counters', require('./routes/counters.route'));
 app.use('/api/dataico', require('./routes/dataico.route'));
@@ -58,6 +58,7 @@ app.use('/api/login', require('./routes/auth.route'));
 app.use('/api/mesas', require('./routes/mesas.route'));
 app.use('/api/movimientos', require('./routes/movimiento.route'));
 app.use('/api/users', require('./routes/users.route'));
+app.use('/api/parqueos', require('./routes/parqueo.route'));
 app.use('/api/pedidos', require('./routes/pedidos.route'));
 app.use('/api/prestamos', require('./routes/prestamo.route'));
 app.use('/api/products', require('./routes/products.route'));
@@ -65,6 +66,7 @@ app.use('/api/proveedores', require('./routes/proveedores.route'));
 app.use('/api/search', require('./routes/search.route'));
 app.use('/api/turno', require('./routes/turnos.route'));
 app.use('/api/tax', require('./routes/tax.route'));
+app.use('/api/typeparq', require('./routes/typeparq.route'));
 app.use('/api/uploads', require('./routes/uploads.route'));
 
 // LOGS
