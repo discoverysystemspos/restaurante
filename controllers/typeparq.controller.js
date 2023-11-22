@@ -11,7 +11,7 @@ const getTypeparq = async(req, res = response) => {
 
         let { desde, hasta, sort, ...query } = req.body;
 
-        const [typeparq, total] = await Promise.all([
+        const [typeparqs, total] = await Promise.all([
             Typeparq.find(query)
             .skip(desde)
             .limit(hasta)
@@ -21,7 +21,7 @@ const getTypeparq = async(req, res = response) => {
 
         res.json({
             ok: true,
-            typeparq,
+            typeparqs,
             total
         });
 
