@@ -15,7 +15,8 @@ const getCars = async(req, res = response) => {
             Car.find(query)
             .skip(desde)
             .limit(hasta)
-            .sort(sort),
+            .sort(sort)
+            .populate('typeparq'),
             Car.countDocuments(query)
         ]);
 
@@ -44,7 +45,8 @@ const getOneCar = async(req, res = response) => {
         const placa = req.params.placa;
 
         // VALIDATE CAR
-        const carDB = await Car.findOne({ placa });
+        const carDB = await Car.findOne({ placa })
+            .populate('typeparq');
         if (!carDB) {
             return res.status(400).json({
                 ok: false,
@@ -75,7 +77,7 @@ const createCar = async(req, res = response) => {
 
     try {
 
-        const placa = req.body.name;
+        const placa = req.body.placa.trim();
 
         // VALIDATE Typeparq
         const validatePlaca = await Car.findOne({ placa });
@@ -88,11 +90,15 @@ const createCar = async(req, res = response) => {
 
         // SAVE Typeparq
         const car = new Car(req.body);
+        car.placa = placa;
         await car.save();
+
+        const carDB = await Car.findById(car._id)
+            .populate('typeparq');
 
         res.json({
             ok: true,
-            car
+            car: carDB
         });
 
 

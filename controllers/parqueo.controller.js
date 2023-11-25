@@ -1,6 +1,7 @@
 const { response } = require('express');
 
 const Parqueo = require('../models/parqueo.model');
+const Car = require('../models/cars.model');
 
 /** =====================================================================
  *  GET PARQUEO
@@ -11,17 +12,26 @@ const getParqueos = async(req, res = response) => {
 
         const { desde, hasta, sort, ...query } = req.body;
 
-        const [parqueo, total] = await Promise.all([
+        const [parqueos, total] = await Promise.all([
             Parqueo.find(query)
             .skip(desde)
             .limit(hasta)
-            .sort(sort),
+            .sort(sort)
+            .populate({
+                path: 'car',
+                model: 'Cars',
+                populate: {
+                    path: 'typeparq',
+                    model: 'Typeparqs',
+                }
+            })
+            .populate('user', 'name email'),
             Parqueo.countDocuments(query)
         ]);
 
         res.json({
             ok: true,
-            parqueo,
+            parqueos,
             total
         });
 
@@ -44,7 +54,16 @@ const getOneParqueo = async(req, res = response) => {
         const { placa, estado } = req.body;
 
         // VALIDATE CAR
-        const parqueoDB = await Parqueo.findOne({ placa, estado });
+        const parqueoDB = await Parqueo.findOne({ placa, estado })
+            .populate({
+                path: 'car',
+                model: 'Cars',
+                populate: {
+                    path: 'typeparq',
+                    model: 'Typeparqs',
+                }
+            })
+            .populate('user', 'name email');
         if (!parqueoDB) {
             return res.status(400).json({
                 ok: false,
@@ -74,10 +93,21 @@ const createParqueo = async(req, res = response) => {
 
     try {
 
-        const car = req.body.car;
+        const uid = req.uid;
+
+        let placa = req.body.placa.trim();
+
+        const carDB = await Car.findOne({ placa });
+        if (!carDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe vehiculo con esta placa'
+            });
+        }
+
 
         // VALIDATE PARQUEO
-        const validateCar = await Parqueo.findOne({ car, estado: 'Parqueado' });
+        const validateCar = await Parqueo.findOne({ car: carDB._id, estado: 'Parqueado' });
         if (validateCar) {
             return res.status(400).json({
                 ok: false,
@@ -85,13 +115,25 @@ const createParqueo = async(req, res = response) => {
             });
         }
 
+        let ingreso = new Date().getTime();
+
         // SAVE PARQUEO
-        const parqueo = new Parqueo(req.body);
+        const parqueo = new Parqueo({
+            car: carDB._id,
+            placa: carDB.placa,
+            checkin: ingreso,
+            user: uid,
+        });
+
         await parqueo.save();
+
+        const parqueDB = await Parqueo.findById(parqueo._id)
+            .populate('car')
+            .populate('user', 'name email');
 
         res.json({
             ok: true,
-            parqueo
+            parqueo: parqueDB
         });
 
 

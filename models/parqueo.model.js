@@ -10,11 +10,11 @@ const ParqueoSchema = Schema({
         type: String,
         require: true
     },
-    in: {
+    checkin: {
         type: Number,
         require: true
     },
-    out: {
+    checkout: {
         type: Number
     },
     total: {

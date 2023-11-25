@@ -6,18 +6,22 @@ const CarSchema = Schema({
         type: String,
         require: true
     },
+
     cliente: {
         type: String,
         default: 'Consumidor Final'
     },
+
     typeparq: {
         type: Schema.Types.ObjectId,
         ref: 'Typeparqs',
     },
+
     status: {
         type: Boolean,
         default: true
     },
+
     fecha: {
         type: Date,
         default: Date.now
