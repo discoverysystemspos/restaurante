@@ -128,7 +128,14 @@ const createParqueo = async(req, res = response) => {
         await parqueo.save();
 
         const parqueDB = await Parqueo.findById(parqueo._id)
-            .populate('car')
+            .populate({
+                path: 'car',
+                model: 'Cars',
+                populate: {
+                    path: 'typeparq',
+                    model: 'Typeparqs',
+                }
+            })
             .populate('user', 'name email');
 
         res.json({
