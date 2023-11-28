@@ -10,6 +10,20 @@ const TypeparqSchema = Schema({
         type: Number,
         require: true
     },
+    plena: {
+        type: Number
+    },
+    tplena: {
+        type: Number
+    },
+    type: {
+        type: String,
+        default: 'Minutos'
+    },
+    tax: {
+        type: Schema.Types.ObjectId,
+        ref: 'Tax',
+    },
     status: {
         type: Boolean,
         default: true
