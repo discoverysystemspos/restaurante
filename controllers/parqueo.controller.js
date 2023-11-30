@@ -94,7 +94,6 @@ const createParqueo = async(req, res = response) => {
     try {
 
         const uid = req.uid;
-
         let placa = req.body.placa.trim();
 
         const carDB = await Car.findOne({ placa });
@@ -105,7 +104,6 @@ const createParqueo = async(req, res = response) => {
             });
         }
 
-
         // VALIDATE PARQUEO
         const validateCar = await Parqueo.findOne({ car: carDB._id, estado: 'Parqueado' });
         if (validateCar) {
@@ -115,13 +113,14 @@ const createParqueo = async(req, res = response) => {
             });
         }
 
-        let ingreso = new Date().getTime();
+        let { checkin, turno } = req.body;
 
         // SAVE PARQUEO
         const parqueo = new Parqueo({
             car: carDB._id,
             placa: carDB.placa,
-            checkin: ingreso,
+            checkin,
+            turno,
             user: uid,
         });
 

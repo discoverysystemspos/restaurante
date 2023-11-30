@@ -54,6 +54,11 @@ const DatoSchema = Schema({
         default: false
     },
 
+    parqueadero: {
+        type: Boolean,
+        default: false
+    },
+
     comision: {
         type: Number,
         default: 0

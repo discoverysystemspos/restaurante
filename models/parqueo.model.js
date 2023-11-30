@@ -49,6 +49,11 @@ const ParqueoSchema = Schema({
         default: 'Parqueado'
     },
 
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos'
+    },
+
     status: {
         type: Boolean,
         default: true
