@@ -10,6 +10,7 @@ const Invoice = require('../models/invoices.model');
 const LogProducts = require('../models/log.products.model');
 const Categoria = require('../models/categorias.model');
 const Pedido = require('../models/pedidos.model');
+const Car = require('../models/cars.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -177,6 +178,22 @@ const search = async(req, res = response) => {
                 .populate('mesa', 'name')
                 .populate('user', 'name'),
                 Invoice.countDocuments()
+            ]);
+            break;
+        case 'car':
+
+            // data = await Client.find({ name: regex });
+            [data, total] = await Promise.all([
+                Car.find({
+                    $or: [
+                        { placa: regex },
+                        { cliente: regex },
+                    ]
+                })
+                .skip(0)
+                .limit(20)
+                .populate('typeparq'),
+                Car.countDocuments()
             ]);
             break;
 

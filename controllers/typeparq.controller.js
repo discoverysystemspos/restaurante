@@ -13,6 +13,7 @@ const getTypeparq = async(req, res = response) => {
 
         const [typeparqs, total] = await Promise.all([
             Typeparq.find(query)
+            .populate('tax')
             .skip(desde)
             .limit(hasta)
             .sort(sort),
@@ -60,9 +61,14 @@ const createTypeparq = async(req, res = response) => {
         const typeparq = new Typeparq(req.body);
         await typeparq.save();
 
+        const typeparqDB = await Typeparq.findById(typeparq._id)
+            .populate('tax');
+
+        typeparqDB.tpid = typeparq._id;
+
         res.json({
             ok: true,
-            typeparq
+            typeparq: typeparqDB
         });
 
 
@@ -112,11 +118,14 @@ const updateTypeparq = async(req, res = response) => {
 
         // UPDATE
         campos.name = name;
-        const typeparqUpdate = await Typeparq.findByIdAndUpdate(tpid, campos, { new: true, useFindAndModify: false });
+        await Typeparq.findByIdAndUpdate(tpid, campos, { new: true, useFindAndModify: false });
+
+        const typeparq = await Typeparq.findById(tpid)
+            .populate('tax');
 
         res.json({
             ok: true,
-            typeparq: typeparqUpdate
+            typeparq
         });
 
     } catch (error) {
@@ -130,10 +139,6 @@ const updateTypeparq = async(req, res = response) => {
 };
 /** =====================================================================
  *  UPDATE Typeparq
-=========================================================================*/
-
-/** =====================================================================
- *  DELETE DEPARTMENT
 =========================================================================*/
 
 // EXPORTS

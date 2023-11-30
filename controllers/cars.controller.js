@@ -145,11 +145,14 @@ const updateCar = async(req, res = response) => {
         }
 
         // UPDATE
-        const carUpdate = await Car.findByIdAndUpdate(carid, campos, { new: true, useFindAndModify: false });
+        await Car.findByIdAndUpdate(carid, campos, { new: true, useFindAndModify: false });
+
+        const car = await Car.findById(carid)
+            .populate('typeparq');
 
         res.json({
             ok: true,
-            car: carUpdate
+            car
         });
 
     } catch (error) {

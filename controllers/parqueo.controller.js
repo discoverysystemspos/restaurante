@@ -134,6 +134,10 @@ const createParqueo = async(req, res = response) => {
                 populate: {
                     path: 'typeparq',
                     model: 'Typeparqs',
+                    populate: {
+                        path: 'tax',
+                        model: 'Tax'
+                    }
                 }
             })
             .populate('user', 'name email');
@@ -177,11 +181,26 @@ const updateParqueo = async(req, res = response) => {
         const {...campos } = req.body;
 
         // UPDATE
-        const parqueoUpdate = await Parqueo.findByIdAndUpdate(parqid, campos, { new: true, useFindAndModify: false });
+        await Parqueo.findByIdAndUpdate(parqid, campos, { new: true, useFindAndModify: false });
+
+        const parqueo = await Parqueo.findById(parqid)
+            .populate({
+                path: 'car',
+                model: 'Cars',
+                populate: {
+                    path: 'typeparq',
+                    model: 'Typeparqs',
+                    populate: {
+                        path: 'tax',
+                        model: 'Tax'
+                    }
+                }
+            })
+            .populate('user', 'name email');
 
         res.json({
             ok: true,
-            parqueo: parqueoUpdate
+            parqueo
         });
 
     } catch (error) {
