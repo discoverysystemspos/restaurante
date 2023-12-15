@@ -154,7 +154,7 @@ const InvoiceSchema = Schema({
     },
     tip: {
         type: Number,
-        require: true
+        dafault: 0
     },
     pago: {
         type: Number

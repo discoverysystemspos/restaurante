@@ -142,6 +142,10 @@ const ProductSchema = Schema({
     kardex: {
         type: Number
     },
+    mayoreo: {
+        type: Number,
+        default: 0
+    },
     fecha: {
         type: Date,
         default: Date.now
