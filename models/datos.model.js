@@ -59,6 +59,11 @@ const DatoSchema = Schema({
         default: false
     },
 
+    domi: {
+        type: Boolean,
+        default: false
+    },
+
     comision: {
         type: Number,
         default: 0
