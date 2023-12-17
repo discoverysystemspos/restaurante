@@ -18,14 +18,7 @@ const getQueryDomicilio = async(req, res = response) => {
             .skip(desde)
             .limit(hasta)
             .sort(sort)
-            .populate({
-                path: 'car',
-                model: 'Cars',
-                populate: {
-                    path: 'typeparq',
-                    model: 'Typeparqs',
-                }
-            })
+            .populate('carrito.product')
             .populate('user', 'name email'),
             Domicilio.countDocuments(query)
         ]);
@@ -157,5 +150,6 @@ const updateDomicilio = async(req, res = response) => {
 module.exports = {
     createDomicilio,
     getDomicilioId,
-    updateDomicilio
+    updateDomicilio,
+    getQueryDomicilio
 }
