@@ -6,6 +6,7 @@ const { soldProduct, returnStock } = require('../helpers/products-stock');
 // MODELS
 const Invoice = require('../models/invoices.model');
 const Product = require('../models/products.model');
+const Turno = require('../models/turnos.model');
 
 /** =====================================================================
  *  COUNT INVOICE
@@ -196,6 +197,9 @@ const getInvoicesTurn = async(req, res = response) => {
                 costos += invoice.cost;
             }
 
+            if (invoice.fechaCredito) {
+                costos -= invoice.cost;
+            }
 
             payments = invoice.payments;
 
@@ -800,13 +804,26 @@ const returnInvoice = async(req, res = response) => {
         }
         // CHANGE STATUS
 
-        const invoiceUpdate = await Invoice.findByIdAndUpdate(id, invoice, { new: true, useFindAndModify: false });
+        await Invoice.findByIdAndUpdate(id, invoice, { new: true, useFindAndModify: false });
 
         returnStock(invoice.products, invoice.invoice, user);
 
+        if (invoice.fechaCredito) {
+
+            for (const abo of invoice.paymentsCredit) {
+
+                const turnoID = abo.turno;
+                await Turno.updateOne({ _id: turnoID }, { $pull: { abonos: { factura: id } } });
+
+            }
+
+        }
+
+        const invoiceDB = await Invoice.findById(id);
+
         res.json({
             ok: true,
-            invoice: invoiceUpdate
+            invoice: invoiceDB
         });
 
 
