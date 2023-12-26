@@ -154,6 +154,7 @@ const getInvoicesTurn = async(req, res = response) => {
 
         let total = 0;
         let montos = 0;
+        let propinas = 0;
         let costos = 0;
         let efectivo = 0;
         let tarjeta = 0;
@@ -174,6 +175,7 @@ const getInvoicesTurn = async(req, res = response) => {
                 tarjeta,
                 credit,
                 vales,
+                propinas,
                 transferencia,
                 devolucion
             });
@@ -200,6 +202,8 @@ const getInvoicesTurn = async(req, res = response) => {
             if (invoice.fechaCredito) {
                 costos -= invoice.cost;
             }
+
+            propinas += invoice.tip;
 
             payments = invoice.payments;
 
@@ -233,6 +237,7 @@ const getInvoicesTurn = async(req, res = response) => {
             tarjeta,
             transferencia,
             credit,
+            propinas,
             vales,
             devolucion
         });
