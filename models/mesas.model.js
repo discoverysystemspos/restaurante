@@ -65,6 +65,10 @@ const comandaSchema = Schema({
     estado: {
         type: String,
         default: 'Pendiente'
+    },
+    fecha: {
+        type: Date,
+        default: Date.now
     }
 });
 
