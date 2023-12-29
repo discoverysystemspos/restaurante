@@ -13,20 +13,26 @@ const getQueryDomicilio = async(req, res = response) => {
 
         const { desde, hasta, sort, ...query } = req.body;
 
-        const [domicilios, total] = await Promise.all([
+        const [domicilios, total, pendientes, enviandos, entregados] = await Promise.all([
             Domicilio.find(query)
             .skip(desde)
             .limit(hasta)
             .sort(sort)
             .populate('carrito.product')
             .populate('user', 'name email'),
-            Domicilio.countDocuments(query)
+            Domicilio.countDocuments(),
+            Domicilio.countDocuments({ estado: 'Pendiente' }),
+            Domicilio.countDocuments({ estado: 'Enviando' }),
+            Domicilio.countDocuments({ estado: 'Entregado' })
         ]);
 
         res.json({
             ok: true,
             domicilios,
-            total
+            total,
+            pendientes,
+            enviandos,
+            entregados
         });
 
     } catch (error) {
