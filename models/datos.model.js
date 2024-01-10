@@ -147,8 +147,16 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+    bs: {
+        type: Boolean,
+        default: false
+    },
 
     currencycop: {
+        type: Number
+    },
+
+    currencybs: {
         type: Number
     },
 
