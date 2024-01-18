@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getProducts, createProduct, updateProduct, deleteProduct, oneProduct, codeProduct, departmentProduct, getCostProducts, productsExcel, repairInventario, ajustarInventario, ivaAllProducts, codeProductUpdate, getProductsDeletes, resetInv } = require('../controllers/products.controller');
+const { getProducts, createProduct, updateProduct, deleteProduct, oneProduct, codeProduct, departmentProduct, getCostProducts, productsExcel, repairInventario, ajustarInventario, ivaAllProducts, codeProductUpdate, getProductsDeletes, resetInv, createProductExcel } = require('../controllers/products.controller');
 
 const router = Router();
 
@@ -89,6 +89,13 @@ router.post('/', [
 );
 /** =====================================================================
  *  CREATE PRODUCTS
+=========================================================================*/
+/** =====================================================================
+ *  CREATE PRODUCTS EXCEL
+=========================================================================*/
+router.post('/create/excel', validarJWT, createProductExcel);
+/** =====================================================================
+ *  CREATE PRODUCTS EXCEL
 =========================================================================*/
 
 /** =====================================================================

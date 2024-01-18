@@ -411,6 +411,56 @@ const createProduct = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  CREATE PRODUCT EXCEL
+=========================================================================*/
+const createProductExcel = async(req, res = response) => {
+
+    try {
+
+        let products = req.body.products;
+
+        if (products.length === 0) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Lista de productos vacias, verifique he intene nuevamente'
+            });
+        }
+
+        let i = 0;
+
+        for (const producto of products) {
+
+            // VALIDATE CODE
+            const validateCode = await Product.findOne({ code: producto.code });
+            if (!validateCode) {
+
+                producto.inventario = producto.stock;
+
+                // SAVE PRODUCT
+                const product = new Product(producto);
+                await product.save();
+                i++;
+            }
+
+        }
+
+        res.json({
+            ok: true,
+            total: i
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  UPDATE PRODUCT
 =========================================================================*/
 const updateProduct = async(req, res = response) => {
@@ -918,5 +968,6 @@ module.exports = {
     ajustarInventario,
     ivaAllProducts,
     getProductsDeletes,
-    resetInv
+    resetInv,
+    createProductExcel
 };
