@@ -68,6 +68,10 @@ const AbonoSchema = Schema({
     turno: {
         type: Schema.Types.ObjectId,
         ref: 'Turnos'
+    },
+    fecha: {
+        type: Date,
+        default: Date.now
     }
 });
 
