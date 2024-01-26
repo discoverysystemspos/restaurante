@@ -434,10 +434,10 @@ const createProductExcel = async(req, res = response) => {
             const validateCode = await Product.findOne({ code: producto.code });
             if (!validateCode) {
 
-                producto.inventario = producto.stock;
-
                 // SAVE PRODUCT
                 const product = new Product(producto);
+                product.inventario = producto.stock;
+
                 await product.save();
                 i++;
             }
@@ -567,98 +567,130 @@ const codeProductUpdate = async(req, res = response) => {
 
         const user = req.uid;
 
-        const { agregar, code, department, ...campos } = req.body;
+        let products = req.body.products;
 
-        const productDB = await Product.findOne({ code })
-            .populate('department', 'name');
-        if (!productDB) {
+        if (products.length === 0) {
             return res.status(400).json({
                 ok: false,
-                msg: 'No existe ningun producto con este ID'
+                msg: 'Lista de productos vacias, verifique he intene nuevamente'
             });
         }
 
-        // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
-        if (campos.expiration) {
-            if (Date.parse(campos.expiration) > Date.parse(productDB.expiration)) {
-                campos.vencido = false;
-            }
-        }
+        let i = 0;
 
-        // COMPROBAR SI VIENE DEÄRTAMENTO
-        let departamento = '';
+        for (const producto of products) {
 
-        if (productDB.department) {
-            departamento = productDB.department.name;
-        }
+            // const { agregar, code, department, ...campos } = req.body;
 
-        if (department) {
+            // OBTENER GANANCIA
+            let gain = 0;
+            let porcent = 0;
 
-            const depart = await Department.findById({ _id: department });
+            if (producto.cost && producto.price) {
+                porcent = (producto.cost * 100) / producto.price;
 
-            departamento = depart.name;
-            campos.department = department;
+                gain = (porcent - 100) * -1;
+                gain = Math.round(gain * 100) / 100;
 
-        }
-
-        // COMPROBAR SI EL PRODUCTO SE AGOTA
-        if (agregar > 0) {
-            campos.inventario = agregar + productDB.inventario;
-            campos.bought = agregar + productDB.bought;
-
-            // COMPROBAR SI ES UNA COMPRA O RETORNO 
-            let habia = 0;
-            let description = '';
-
-            habia = productDB.inventario;
-            description = 'Compra';
-
-            // GUARDAR EN EL LOG
-            let log = {
-                code: productDB.code,
-                name: productDB.name,
-                description,
-                type: 'Agrego',
-                departamento,
-                befored: habia,
-                qty: agregar,
-                stock: campos.inventario,
-                cajero: user
+                producto.gain = gain;
             }
 
-            let logProducts = new LogProducts(log);
-            await logProducts.save();
-            // GUARDAR EN EL LOG
+            // OBTENER GANANCIA
 
-            // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
-            if (campos.inventario > 0) {
-                campos.out = false;
+            // EXPIRATION
+            if (producto.expiration) {
+                producto.expiration = new Date(producto.expiration);
+            }
 
-                if (campos.inventario > productDB.min) {
-                    campos.low = false;
-                } else {
-                    campos.low = true;
+            const productDB = await Product.findOne({ code: producto.code })
+                .populate('department', 'name');
+            if (!productDB) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'No existe ningun producto con este ID'
+                });
+            }
+
+            // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
+            if (producto.expiration) {
+                if (Date.parse(producto.expiration) > Date.parse(productDB.expiration)) {
+                    producto.vencido = false;
+                }
+            }
+
+            // COMPROBAR SI VIENE DEÄRTAMENTO
+            let departamento = '';
+
+            if (productDB.department) {
+                departamento = productDB.department.name;
+            }
+
+            if (producto.department) {
+                const depart = await Department.findById({ _id: producto.department });
+                departamento = depart.name;
+                producto.department = depart._id;
+            }
+
+            // COMPROBAR SI EL PRODUCTO SE AGOTA
+            if (producto.agregar > 0) {
+                producto.inventario = agregar + productDB.inventario;
+                producto.bought = agregar + productDB.bought;
+
+                // COMPROBAR SI ES UNA COMPRA O RETORNO 
+                let habia = 0;
+                let description = '';
+
+                habia = productDB.inventario;
+                description = 'Compra';
+
+                // GUARDAR EN EL LOG
+                let log = {
+                    code: productDB.code,
+                    name: productDB.name,
+                    description,
+                    type: 'Agrego',
+                    departamento,
+                    befored: habia,
+                    qty: agregar,
+                    stock: producto.inventario,
+                    cajero: user
                 }
 
-            } else {
-                campos.out = true;
-                campos.low = false;
+                let logProducts = new LogProducts(log);
+                await logProducts.save();
+                // GUARDAR EN EL LOG
+
+                // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
+                if (producto.inventario > 0) {
+                    producto.out = false;
+
+                    if (producto.inventario > productDB.min) {
+                        producto.low = false;
+                    } else {
+                        producto.low = true;
+                    }
+
+                } else {
+                    producto.out = true;
+                    producto.low = false;
+                }
+
+                if (productDB.type === 'Paquete') {
+                    producto.out = false;
+                    producto.low = false;
+                }
+
             }
 
-            if (productDB.type === 'Paquete') {
-                campos.out = false;
-                campos.low = false;
-            }
+            await Product.findByIdAndUpdate(productDB._id, producto, { new: true, useFindAndModify: false });
+            i++;
 
         }
-
-        const productUpdate = await Product.findByIdAndUpdate(productDB._id, campos, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            product: productUpdate
+            total: i
         });
-
 
     } catch (error) {
         console.log(error);
