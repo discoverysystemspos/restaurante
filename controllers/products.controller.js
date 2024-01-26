@@ -604,86 +604,83 @@ const codeProductUpdate = async(req, res = response) => {
 
             const productDB = await Product.findOne({ code: producto.code })
                 .populate('department', 'name');
-            if (!productDB) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'No existe ningun producto con este ID'
-                });
-            }
+            if (productDB) {
 
-            // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
-            if (producto.expiration) {
-                if (Date.parse(producto.expiration) > Date.parse(productDB.expiration)) {
-                    producto.vencido = false;
-                }
-            }
-
-            // COMPROBAR SI VIENE DEÄRTAMENTO
-            let departamento = '';
-
-            if (productDB.department) {
-                departamento = productDB.department.name;
-            }
-
-            if (producto.department) {
-                const depart = await Department.findById({ _id: producto.department });
-                departamento = depart.name;
-                producto.department = depart._id;
-            }
-
-            // COMPROBAR SI EL PRODUCTO SE AGOTA
-            if (producto.agregar > 0) {
-                producto.inventario = agregar + productDB.inventario;
-                producto.bought = agregar + productDB.bought;
-
-                // COMPROBAR SI ES UNA COMPRA O RETORNO 
-                let habia = 0;
-                let description = '';
-
-                habia = productDB.inventario;
-                description = 'Compra';
-
-                // GUARDAR EN EL LOG
-                let log = {
-                    code: productDB.code,
-                    name: productDB.name,
-                    description,
-                    type: 'Agrego',
-                    departamento,
-                    befored: habia,
-                    qty: agregar,
-                    stock: producto.inventario,
-                    cajero: user
+                // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
+                if (producto.expiration) {
+                    if (Date.parse(producto.expiration) > Date.parse(productDB.expiration)) {
+                        producto.vencido = false;
+                    }
                 }
 
-                let logProducts = new LogProducts(log);
-                await logProducts.save();
-                // GUARDAR EN EL LOG
+                // COMPROBAR SI VIENE DEÄRTAMENTO
+                let departamento = '';
 
-                // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
-                if (producto.inventario > 0) {
-                    producto.out = false;
+                if (productDB.department) {
+                    departamento = productDB.department.name;
+                }
 
-                    if (producto.inventario > productDB.min) {
-                        producto.low = false;
-                    } else {
-                        producto.low = true;
+                if (producto.department) {
+                    const depart = await Department.findById({ _id: producto.department });
+                    departamento = depart.name;
+                    producto.department = depart._id;
+                }
+
+                // COMPROBAR SI EL PRODUCTO SE AGOTA
+                if (producto.agregar > 0) {
+                    producto.inventario = agregar + productDB.inventario;
+                    producto.bought = agregar + productDB.bought;
+
+                    // COMPROBAR SI ES UNA COMPRA O RETORNO 
+                    let habia = 0;
+                    let description = '';
+
+                    habia = productDB.inventario;
+                    description = 'Compra';
+
+                    // GUARDAR EN EL LOG
+                    let log = {
+                        code: productDB.code,
+                        name: productDB.name,
+                        description,
+                        type: 'Agrego',
+                        departamento,
+                        befored: habia,
+                        qty: agregar,
+                        stock: producto.inventario,
+                        cajero: user
                     }
 
-                } else {
-                    producto.out = true;
-                    producto.low = false;
+                    let logProducts = new LogProducts(log);
+                    await logProducts.save();
+                    // GUARDAR EN EL LOG
+
+                    // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
+                    if (producto.inventario > 0) {
+                        producto.out = false;
+
+                        if (producto.inventario > productDB.min) {
+                            producto.low = false;
+                        } else {
+                            producto.low = true;
+                        }
+
+                    } else {
+                        producto.out = true;
+                        producto.low = false;
+                    }
+
+                    if (productDB.type === 'Paquete') {
+                        producto.out = false;
+                        producto.low = false;
+                    }
+
                 }
 
-                if (productDB.type === 'Paquete') {
-                    producto.out = false;
-                    producto.low = false;
-                }
-
+                await Product.findByIdAndUpdate(productDB._id, producto, { new: true, useFindAndModify: false });
+                i++;
             }
 
-            await Product.findByIdAndUpdate(productDB._id, producto, { new: true, useFindAndModify: false });
-            i++;
 
         }
 
