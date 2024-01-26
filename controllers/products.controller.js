@@ -628,8 +628,8 @@ const codeProductUpdate = async(req, res = response) => {
 
                 // COMPROBAR SI EL PRODUCTO SE AGOTA
                 if (producto.agregar > 0) {
-                    producto.inventario = agregar + productDB.inventario;
-                    producto.bought = agregar + productDB.bought;
+                    producto.inventario = producto.agregar + productDB.inventario;
+                    producto.bought = producto.agregar + productDB.bought;
 
                     // COMPROBAR SI ES UNA COMPRA O RETORNO 
                     let habia = 0;
@@ -646,7 +646,7 @@ const codeProductUpdate = async(req, res = response) => {
                         type: 'Agrego',
                         departamento,
                         befored: habia,
-                        qty: agregar,
+                        qty: producto.agregar,
                         stock: producto.inventario,
                         cajero: user
                     }
