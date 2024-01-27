@@ -57,7 +57,7 @@ const ClientSchema = Schema({
     },
     sendemail: {
         type: Boolean,
-        default: false
+        default: true
     },
     address: {
         type: String

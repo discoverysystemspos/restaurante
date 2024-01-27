@@ -81,6 +81,54 @@ const createClient = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  CREATE CLIENTS EXCEL
+=========================================================================*/
+const createClientsExcel = async(req, res = response) => {
+
+    try {
+
+        let clients = req.body.clients;
+
+        if (clients.length === 0) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Lista de clientes esta vacia, verifique he intene nuevamente'
+            });
+        }
+
+        let i = 0;
+
+        for (const client of clients) {
+
+            // VALIDATE CODE
+            const validateCedula = await Client.findOne({ cedula: client.cedula });
+            if (!validateCedula) {
+
+                // SAVE CLIENT
+                const cliente = new Client(client);
+                await cliente.save();
+                i++;
+            }
+
+        }
+
+        res.json({
+            ok: true,
+            total: i
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  UPDATE CLIENT
 =========================================================================*/
 const updateClient = async(req, res = response) => {
@@ -153,7 +201,7 @@ const deleteClient = async(req, res = response) => {
             });
         }
         // SEARCH CLIENT
-        
+
         // CHANGE STATUS
         if (clientDB.status === true) {
             clientDB.status = false;
@@ -190,5 +238,6 @@ module.exports = {
     getClients,
     createClient,
     updateClient,
-    deleteClient
+    deleteClient,
+    createClientsExcel
 };
