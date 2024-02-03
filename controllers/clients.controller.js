@@ -2,6 +2,38 @@ const { response } = require('express');
 
 const Client = require('../models/clients.model');
 
+/** =====================================================================
+ *  GET QUERY CLIENT
+=========================================================================*/
+const getClientsQuery = async(req, res = response) => {
+
+    try {
+
+        const { desde, hasta, ...query } = req.body;
+
+        const [clients, total] = await Promise.all([
+            Client.find(query)
+            .skip(desde)
+            .limit(hasta),
+            Client.countDocuments()
+        ])
+
+        res.json({
+            ok: true,
+            clients,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente de nuevo'
+        });
+    }
+
+};
+
 
 /** =====================================================================
  *  GET CLIENTS
@@ -239,5 +271,6 @@ module.exports = {
     createClient,
     updateClient,
     deleteClient,
-    createClientsExcel
+    createClientsExcel,
+    getClientsQuery
 };
