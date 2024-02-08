@@ -31,13 +31,24 @@ const ProductSchema = Schema({
         require: true,
         unique: true
     },
+
+    sku: {
+        type: String,
+    },
+
     name: {
         type: String,
         require: true
     },
+
     description: {
         type: String,
     },
+
+    brand: {
+        type: String,
+    },
+
     type: {
         type: String,
         require: true
@@ -69,6 +80,10 @@ const ProductSchema = Schema({
     },
     wholesale: {
         type: Number
+    },
+    distribuidor: {
+        type: Number,
+        default: 0
     },
     department: {
         type: Schema.Types.ObjectId,

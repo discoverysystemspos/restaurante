@@ -277,10 +277,17 @@ const codeProduct = async(req, res = response) => {
 
         const code = req.params.code;
 
-        const product = await Product.findOne({ code, status: true })
+        let product = await Product.findOne({ code, status: true })
             .populate('kit.product', 'name')
             .populate('taxid', 'name valor')
             .populate('department', 'name');
+
+        if (!product) {
+            product = await Product.findOne({ sku: code, status: true })
+                .populate('kit.product', 'name')
+                .populate('taxid', 'name valor')
+                .populate('department', 'name');
+        }
 
         res.json({
             ok: true,

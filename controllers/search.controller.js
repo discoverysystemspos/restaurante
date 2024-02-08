@@ -94,6 +94,8 @@ const search = async(req, res = response) => {
                 Product.find({
                     $or: [
                         { code: regex },
+                        { sku: regex },
+                        { brand: regex },
                         { name: regex },
                         { description: regex },
                         { type: regex }
