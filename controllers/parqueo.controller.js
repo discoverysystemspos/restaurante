@@ -23,6 +23,10 @@ const getParqueos = async(req, res = response) => {
                 populate: {
                     path: 'typeparq',
                     model: 'Typeparqs',
+                    populate: {
+                        path: 'tax',
+                        model: 'Tax',
+                    }
                 }
             })
             .populate('user', 'name email'),
@@ -61,6 +65,10 @@ const getOneParqueo = async(req, res = response) => {
                 populate: {
                     path: 'typeparq',
                     model: 'Typeparqs',
+                    populate: {
+                        path: 'tax',
+                        model: 'Tax',
+                    }
                 }
             })
             .populate('user', 'name email');
