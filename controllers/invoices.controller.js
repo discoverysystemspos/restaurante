@@ -132,11 +132,11 @@ const getInvoicesTurn = async(req, res = response) => {
         const turno = req.query.turno;
         const credito = req.query.credito || false;
         const status = req.query.status || true;
-        const creditos = req.query.creditos || false;
+        const credits = req.query.creditos || false;
 
         let invoices;
 
-        if (creditos) {
+        if (credits) {
             invoices = await Invoice.find({ turno, status, credito })
                 .populate('client')
                 .populate('products.product', 'name taxid tax department')
@@ -159,6 +159,7 @@ const getInvoicesTurn = async(req, res = response) => {
         let efectivo = 0;
         let tarjeta = 0;
         let credit = 0;
+        let creditos = 0;
         let vales = 0;
         let devolucion = 0;
         let transferencia = 0;
@@ -203,6 +204,10 @@ const getInvoicesTurn = async(req, res = response) => {
                 costos -= invoice.cost;
             }
 
+            if (invoice.credito || invoice.credit) {
+                creditos += invoice.amount;
+            }
+
             propinas += invoice.tip;
 
             payments = invoice.payments;
@@ -237,6 +242,7 @@ const getInvoicesTurn = async(req, res = response) => {
             tarjeta,
             transferencia,
             credit,
+            creditos,
             propinas,
             vales,
             devolucion
@@ -304,11 +310,16 @@ const getInvoicesAll = async(req, res = response) => {
         let montos = 0;
         let costos = 0;
         let iva = 0;
+        let creditos = 0;
 
         invoices.forEach(invoice => {
 
             if (!invoice.base) {
                 invoice.base = invoice.amount;
+            }
+
+            if (invoice.credito || invoice.credit) {
+                creditos += invoice.amount;
             }
 
             montos += invoice.base;
@@ -321,6 +332,7 @@ const getInvoicesAll = async(req, res = response) => {
             invoices,
             montos,
             costos,
+            creditos,
             iva
         });
 
@@ -632,6 +644,10 @@ const createInvoice = async(req, res = response) => {
 
         const invoice = new Invoice(factura);
         invoice.user = user;
+
+        if (invoice.credito) {
+            invoice.credit = true;
+        }
 
 
         await invoice.save();

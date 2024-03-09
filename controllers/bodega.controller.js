@@ -9,9 +9,12 @@ const getBodega = async(req, res = response) => {
 
     try {
 
+        const { desde, hasta, ...query } = req.body;
+
         const [bodegas, total] = await Promise.all([
-            Bodega.find()
-            .populate('department.department', 'name did'),
+            Bodega.find(query)
+            .skip(desde)
+            .limit(hasta),
             Bodega.countDocuments()
         ]);
 

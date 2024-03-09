@@ -6,6 +6,10 @@ const BodegasSchema = Schema({
         type: String,
         require: true
     },
+    endpoint: {
+        type: String,
+        require: true
+    },
     status: {
         type: Boolean,
         default: true

@@ -174,6 +174,10 @@ const InvoiceSchema = Schema({
         type: Boolean,
         default: false
     },
+    credit: {
+        type: Boolean,
+        default: false
+    },
     apartado: {
         type: Boolean,
         default: false
