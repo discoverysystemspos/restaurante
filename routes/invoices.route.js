@@ -25,7 +25,8 @@ const {
     getInvoicesCredito,
     getInvoiceCreditCajeroMesa,
     postQueryInvoice,
-    getCountInvoicesElectronic
+    getCountInvoicesElectronic,
+    invoicePDF
 } = require('../controllers/invoices.controller');
 
 const router = Router();
@@ -34,6 +35,14 @@ const router = Router();
  *  GET INVOICES
 =========================================================================*/
 router.get('/', validarJWT, getInvoices);
+/** =====================================================================
+ *  GET INVOICES
+=========================================================================*/
+
+/** =====================================================================
+ *  GET INVOICES
+=========================================================================*/
+router.get('/pdf/:id', invoicePDF);
 /** =====================================================================
  *  GET INVOICES
 =========================================================================*/

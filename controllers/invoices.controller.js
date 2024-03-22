@@ -1,12 +1,17 @@
 const { response } = require('express');
 
+const path = require('path');
+const fs = require("fs");
+
 // HERLPERS
 const { soldProduct, returnStock } = require('../helpers/products-stock');
+const { createInvoicePDF } = require("../helpers/createPdfInvoice");
 
 // MODELS
 const Invoice = require('../models/invoices.model');
 const Product = require('../models/products.model');
 const Turno = require('../models/turnos.model');
+const Datos = require('../models/datos.model');
 
 /** =====================================================================
  *  COUNT INVOICE
@@ -1001,12 +1006,95 @@ const updateProductQty = async(req, res = response) => {
 
     }
 
-}
-
-
+};
 /** =====================================================================
  *  UPDATE PRODUCT QTY
 =========================================================================*/
+/** =====================================================================
+ *  INVOICE PDF
+=========================================================================*/
+const invoicePDF = async(req, res = response) => {
+    try {
+
+        const iid = req.params.id;
+
+        const datos = await Datos.findOne({ status: true });
+
+        const invoiceDB = await Invoice.findById(iid)
+            .populate('client')
+            // .populate('products.product', 'name taxid code type tax impuesto')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
+            .populate('mesero', 'name')
+            .populate('mesa', 'name')
+            .populate('devolucion.product')
+            .populate('user', 'name');
+
+        const invoice = {
+            shipping: {
+                name: "John Doe",
+                address: "1234 Main Street",
+                city: "San Francisco",
+                state: "CA",
+                country: "US",
+                postal_code: 94111
+            },
+            items: [{
+                    item: "TC 100",
+                    description: "Toner Cartridge",
+                    quantity: 2,
+                    amount: 6000
+                },
+                {
+                    item: "USB_EXT",
+                    description: "USB Cable Extender",
+                    quantity: 1,
+                    amount: 2000
+                }
+            ],
+            subtotal: 8000,
+            paid: 0,
+            invoice_nr: 1234
+        };
+
+        const pathPDf = path.join(__dirname, `../uploads/pdf/factura.pdf`);
+
+        await createInvoicePDF(invoiceDB, datos, pathPDf);
+
+        setTimeout(() => {
+
+            if (fs.existsSync(pathPDf)) {
+                res.sendFile(pathPDf);
+            } else {
+                res.json({
+                    ok: false,
+                    msg: 'No se ha generado el PDF del preventivo!'
+                });
+            }
+
+        }, 2000);
+
+        if (!invoice) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ninguna factura con este ID'
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+}
 
 // EXPORTS
 module.exports = {
@@ -1025,5 +1113,6 @@ module.exports = {
     getInvoicesCredito,
     getInvoiceCreditCajeroMesa,
     postQueryInvoice,
-    getCountInvoicesElectronic
+    getCountInvoicesElectronic,
+    invoicePDF
 };
