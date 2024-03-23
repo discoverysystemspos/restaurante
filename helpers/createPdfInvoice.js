@@ -3,7 +3,7 @@ const fs = require("fs");
 const PDFDocument = require("pdfkit");
 
 function createInvoicePDF(invoice, empresa, path) {
-    let doc = new PDFDocument({ size: "A4", layout: 'landscape' });
+    let doc = new PDFDocument({ size: "A4" });
 
     generateHeader(doc, empresa);
     generateCustomerInformation(doc, invoice);
@@ -24,7 +24,6 @@ function generateHeader(doc, empresa) {
             .text(empresa.nit, 200, 65, { align: "right" })
             .text(empresa.address, 200, 80, { align: "right" })
             .text(empresa.phone, 200, 95, { align: "right" })
-            .moveDown();
     } else {
         doc
             .fillColor("#444444")
@@ -34,56 +33,51 @@ function generateHeader(doc, empresa) {
             .text(empresa.nit, 200, 65, { align: "right" })
             .text(empresa.address, 200, 80, { align: "right" })
             .text(empresa.phone, 200, 95, { align: "right" })
-            .moveDown();
+
     }
 
     if (!empresa.impuesto) {
         doc
             .fontSize(10)
             .text('No responsable de IVA', { align: "right" })
-            .moveDown();
+
     } else {
 
         if (empresa.responsable) {
             doc
                 .fontSize(10)
                 .text('Responsable de iva', { align: "right" })
-                .moveDown();
+
         } else if (empresa.impuestoconsumo) {
             doc
                 .fontSize(10)
                 .text('Responsable nacional al consumo', { align: "right" })
-                .moveDown();
+
         }
         doc
             .fontSize(10)
             .text(`Resolucion: ${empresa.resolucion}`, { align: "right" })
             .text(`Prefijo Pos: ${empresa.prefijopos}`, { align: "right" })
-            .moveDown();
+
 
     }
 
 }
 
 function generateCustomerInformation(doc, invoice) {
-    doc
-        .fillColor("#444444")
-        .fontSize(20)
-        .text(`# ${invoice.invoice}`, 50, 160);
 
-    generateHr(doc, 185);
-
-    const customerInformationTop = 200;
+    const customerInformationTop = 150;
 
     doc
         .fontSize(10)
+        .font("Helvetica-Bold")
+        .text("# " + invoice.invoice, 50, customerInformationTop)
         .font("Helvetica")
-        .text("Fecha:", 50, customerInformationTop)
-        .text(formatDate(new Date(invoice.fecha)), 150, customerInformationTop)
-        .text("Vendedor:", 50, customerInformationTop + 15)
-        .text(invoice.mesero.name, 150, customerInformationTop + 15)
-
-    .font("Helvetica-Bold")
+        .text("Fecha:", 50, customerInformationTop + 15)
+        .text(formatDate(new Date(invoice.fecha)), 150, customerInformationTop + 15)
+        .text("Vendedor:", 50, customerInformationTop + 30)
+        .text(invoice.mesero.name, 150, customerInformationTop + 30)
+        .font("Helvetica-Bold")
         .text(`${invoice.client.name}`, 300, customerInformationTop)
         .font("Helvetica")
         .text(`${invoice.client.address}`, 300, customerInformationTop + 15)
@@ -96,12 +90,12 @@ function generateCustomerInformation(doc, invoice) {
         )
         .moveDown();
 
-    generateHr(doc, 252);
+    generateHr(doc, 215);
 }
 
 function generateInvoiceTable(doc, invoice) {
     let i;
-    const invoiceTableTop = 330;
+    const invoiceTableTop = 220;
 
     doc.font("Helvetica-Bold");
     generateTableRow(
@@ -115,12 +109,12 @@ function generateInvoiceTable(doc, invoice) {
         "Val IVA",
         "Total"
     );
-    generateHr(doc, invoiceTableTop + 20);
+    generateHr(doc, invoiceTableTop + 10);
     doc.font("Helvetica");
 
     for (i = 0; i < invoice.products.length; i++) {
         const item = invoice.products[i];
-        const position = invoiceTableTop + (i + 1) * 30;
+        const position = invoiceTableTop + (i + 1) * 25;
 
         let valorIva = 0;
         if (item.product.tax) {
@@ -139,10 +133,10 @@ function generateInvoiceTable(doc, invoice) {
             formatCurrency((item.price + (valorIva) / 100) * item.qty)
         );
 
-        generateHr(doc, position + 20);
+        generateHr(doc, position + 15);
     }
 
-    const subtotalPosition = invoiceTableTop + (i + 1) * 30;
+    const subtotalPosition = invoiceTableTop + (i + 1) * 25;
     generateTableRow(
         doc,
         subtotalPosition,
@@ -205,13 +199,14 @@ function generateTableRow(
     Total,
 ) {
     doc
-        .fontSize(10)
+        .fontSize(6)
         .text(Codigo, 50, y)
-        .text(Descripcion, 150, y)
-        .text(Cant, 480, y)
-        .text(Precio, 530, y)
-        .text(`${IVA}`, 630, y)
-        .text(Val, 680, y)
+        .fontSize(8)
+        .text(Descripcion, 110, y)
+        .text(Cant, 320, y)
+        .text(Precio, 350, y)
+        .text(`${IVA}`, 400, y)
+        .text(Val, 430, y)
         .text(Total, 0, y, { align: "right" });
 }
 
@@ -220,7 +215,7 @@ function generateHr(doc, y) {
         .strokeColor("#aaaaaa")
         .lineWidth(1)
         .moveTo(50, y)
-        .lineTo(790, y)
+        .lineTo(530, y)
         .stroke();
 }
 
