@@ -45,7 +45,7 @@ const getMesasComanda = async(req, res = response) => {
             Mesas.find({ disponible: false })
             .populate('mesero', 'name')
             .populate('cliente', 'name')
-            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid')
+            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
             .populate('carrito.product.taxid', 'name valor')
             .populate('comanda.product', 'name cost comanda tipo'),
             Mesas.countDocuments()
@@ -77,7 +77,7 @@ const getMesaId = async(req, res = response) => {
     try {
 
         const mesa = await Mesas.findById(id)
-            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid')
+            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
             .populate('carrito.product.taxid', 'name valor')
             .populate('comanda.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
@@ -177,7 +177,7 @@ const updateMesa = async(req, res = response) => {
 
         // UPDATE
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
-            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid')
+            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
             .populate('carrito.product.taxid', 'name valor')
             .populate('comanda.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
@@ -244,7 +244,7 @@ const updateNota = async(req, res = response) => {
             });
 
             const mesaUpdate = await Mesas.findByIdAndUpdate(mid, mesaDB, { new: true, useFindAndModify: false })
-                .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid')
+                .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
                 .populate('carrito.product.taxid', 'name valor')
                 .populate('cliente', 'name cedula phone email address city cid')
                 .populate('mesero', 'name');
@@ -260,7 +260,7 @@ const updateNota = async(req, res = response) => {
             const nota = req.body.nota;
 
             const mesaUpdate = await Mesas.findByIdAndUpdate(mid, { nota }, { new: true, useFindAndModify: false })
-                .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid')
+                .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
                 .populate('carrito.product.taxid', 'name valor')
                 .populate('cliente', 'name cedula phone email address city cid')
                 .populate('mesero', 'name');
@@ -307,7 +307,7 @@ const updateMenu = async(req, res = response) => {
 
         // ACTUALIZAMOS
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, { menu }, { new: true, useFindAndModify: false })
-            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid')
+            .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
             .populate('carrito.product.taxid', 'name valor')
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
