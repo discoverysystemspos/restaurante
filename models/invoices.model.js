@@ -19,6 +19,10 @@ const ProductosSchema = Schema({
     price: {
         type: Number,
         require: true
+    },
+    mayor: {
+        type: Boolean,
+        default: false
     }
 
 });
