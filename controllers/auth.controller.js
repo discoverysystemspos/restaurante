@@ -9,7 +9,7 @@ const { googleVerify } = require('../helpers/google-verify');
 const { sendMail } = require('../helpers/send-mail');
 
 /** =====================================================================
- *  LOGIN
+ *  LOGIN USER
 =========================================================================*/
 const login = async(req, res = response) => {
 
