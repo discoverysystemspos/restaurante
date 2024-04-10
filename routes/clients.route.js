@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getClients, createClient, updateClient, deleteClient, createClientsExcel, getClientsQuery } = require('../controllers/clients.controller');
+const { getClients, createClient, updateClient, deleteClient, createClientsExcel, getClientsQuery, createClientWeb } = require('../controllers/clients.controller');
 
 const router = Router();
 
@@ -35,6 +35,22 @@ router.post('/', [
 /** =====================================================================
  *  CREATE CLIENT
 =========================================================================*/
+
+/** =====================================================================
+ *  CREATE CLIENT WEB
+=========================================================================*/
+router.post('/web', [
+        check('first_name', 'El nombre es olbigatorio').not().isEmpty(),
+        check('phone', 'El telefono es obligatorio').not().isEmpty(),
+        check('email', 'El correo es obligatorio').not().isEmpty(),
+        validarCampos
+    ],
+    createClientWeb
+);
+/** =====================================================================
+*  CREATE CLIENT WEB
+=========================================================================*/
+
 /** =====================================================================
  *  GET CLIENTS QUERY
 =========================================================================*/

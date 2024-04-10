@@ -55,6 +55,9 @@ const ClientSchema = Schema({
     email: {
         type: String
     },
+    password: {
+        type: String
+    },
     sendemail: {
         type: Boolean,
         default: true

@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT, validarClientJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLERS
-const { login, renewJWT, googleSignIn, renewClientJWT, facebookSignIn } = require('../controllers/auth.controller');
+const { login, renewJWT, googleSignIn, renewClientJWT, facebookSignIn, loginClient, rePass } = require('../controllers/auth.controller');
 
 const router = Router();
 
@@ -52,6 +52,30 @@ router.post('/facebook', [
 /** =====================================================================
 *  LOGIN - FACEBOOK
 =========================================================================*/
+
+/** =====================================================================
+ *  LOGIN CLIENT
+=========================================================================*/
+router.post('/user', [
+        check('email', 'El email es olbigatorio').not().isEmpty(),
+        check('password', 'La contraseña es obligatoria').not().isEmpty(),
+        validarCampos
+    ],
+    loginClient
+);
+/** =====================================================================
+*  LOGIN
+=========================================================================*/
+
+/** =====================================================================
+ *  RECUPERAR CONTRASEÑA
+=========================================================================*/
+router.post('/recuperar/password', [
+        check('email', 'El email es obligatorio').not().isEmpty(),
+        validarCampos
+    ],
+    rePass
+);
 
 /** =====================================================================
  *  RENEW TOKEN
