@@ -38,7 +38,7 @@ dbConection();
 from the specified directory. In this case, it is serving files from the 'public' directory. */
 app.use(express.static('public'));
 
-// RUTAS
+// RUTASS
 app.use('/api/alquileres', require('./routes/alquileres.route'));
 app.use('/api/bascula', require('./routes/bascula.route'));
 app.use('/api/bancos', require('./routes/bancos.route'));
