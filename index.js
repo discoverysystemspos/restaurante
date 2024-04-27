@@ -49,6 +49,7 @@ app.use('/api/calendario', require('./routes/calendario.route'));
 app.use('/api/cars', require('./routes/cars.route'));
 app.use('/api/clients', require('./routes/clients.route'));
 app.use('/api/counters', require('./routes/counters.route'));
+app.use('/api/compras', require('./routes/compras.route'));
 app.use('/api/dataico', require('./routes/dataico.route'));
 app.use('/api/datos', require('./routes/datos.route'));
 app.use('/api/departments', require('./routes/departments.route'));

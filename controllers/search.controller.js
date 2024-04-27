@@ -11,6 +11,7 @@ const LogProducts = require('../models/log.products.model');
 const Categoria = require('../models/categorias.model');
 const Pedido = require('../models/pedidos.model');
 const Car = require('../models/cars.model');
+const Proveedor = require('../models/proveedores.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -196,6 +197,23 @@ const search = async(req, res = response) => {
                 .limit(20)
                 .populate('typeparq'),
                 Car.countDocuments()
+            ]);
+            break;
+
+        case 'proveedores':
+
+            // data = await Client.find({ name: regex });
+            [data, total] = await Promise.all([
+                Proveedor.find({
+                    $or: [
+                        { name: regex },
+                        { cedula: regex },
+                        { phone: regex },
+                        { email: regex }
+                    ],
+                    status: true
+                }),
+                Proveedor.countDocuments()
             ]);
             break;
 

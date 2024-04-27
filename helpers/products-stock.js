@@ -54,7 +54,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                 }
                 // COMPROBAR SI EL PRODUCTO SE AGOTA
 
-                const productUpdate = await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
+                await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
 
                 let habia = stock + products[i].qty;
 
@@ -148,6 +148,89 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 /** =====================================================================
  *  UPDATE STOCK
 =========================================================================*/
+/** =====================================================================
+ *  UPDATE STOCK 
+=========================================================================*/
+const compraUpdate = async(compra) => {
+
+    try {
+
+        for (let i = 0; i < compra.products.length; i++) {
+            const item = compra.products[i];
+
+            const productDB = await Product.findById(item.product).populate('department', 'name');
+
+            productDB.inventario += item.qty;
+
+            if (item.price !== productDB.price) {
+                productDB.price = item.price;
+            }
+
+            if (item.cost !== productDB.cost) {
+                productDB.cost = item.cost;
+            }
+
+            if (item.wholesale && item.wholesale !== productDB.wholesale) {
+                productDB.wholesale = item.wholesale;
+            }
+
+            // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
+            if (productDB.inventario > 0) {
+                productDB.out = false;
+
+                if (productDB.inventario > productDB.min) {
+                    productDB.low = false;
+                } else {
+                    productDB.low = true;
+                }
+
+            } else {
+                productDB.out = true;
+                productDB.low = false;
+            }
+
+            // ACTUALIZAR GANANCIA
+            if (item.cost && item.price) {
+                let porcent = (item.cost * 100) / item.price;
+
+                let gain = (porcent - 100) * -1;
+                gain = Math.round(gain * 100) / 100;
+
+                productDB.gain = gain.toFixed(0);
+            }
+
+            await productDB.save();
+
+            let log = {
+                code: productDB.code,
+                name: productDB.name,
+                description: `compra #${compra.invoice}`,
+                type: 'Compra',
+                befored: productDB.inventario - item.qty,
+                qty: item.qty,
+                monto: (item.price * item.qty),
+                stock: productDB.inventario,
+                cajero: compra.user,
+                compra: compra._id,
+                department: productDB.department._id,
+                departamento: productDB.department.name
+            }
+
+            const logProducts = new LogProducts(log);
+
+            await logProducts.save();
+
+
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+
+};
+
 /** =====================================================================
  *  RETURN STOCK
 =========================================================================*/
@@ -285,5 +368,6 @@ const returnStock = async(products, invoice, user) => {
 // EXPORT
 module.exports = {
     soldProduct,
-    returnStock
+    returnStock,
+    compraUpdate
 };
