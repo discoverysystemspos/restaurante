@@ -66,6 +66,7 @@ app.use('/api/prestamos', require('./routes/prestamo.route'));
 app.use('/api/products', require('./routes/products.route'));
 app.use('/api/proveedores', require('./routes/proveedores.route'));
 app.use('/api/search', require('./routes/search.route'));
+app.use('/api/traslados', require('./routes/traslados.route'));
 app.use('/api/turno', require('./routes/turnos.route'));
 app.use('/api/tax', require('./routes/tax.route'));
 app.use('/api/typeparq', require('./routes/typeparq.route'));

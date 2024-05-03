@@ -149,7 +149,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
  *  UPDATE STOCK
 =========================================================================*/
 /** =====================================================================
- *  UPDATE STOCK 
+ *  UPDATE STOCK COMPRAS
 =========================================================================*/
 const compraUpdate = async(compra) => {
 
@@ -231,6 +231,65 @@ const compraUpdate = async(compra) => {
 
 };
 
+/** =====================================================================
+ *  UPDATE STOCK TRASLADO
+=========================================================================*/
+const trasladoStock = async(traslado) => {
+
+    try {
+
+        // VERIFICAR EL TIPO DE TRASLADO
+        if (traslado.type === 'Enviado') {
+
+            for (let i = 0; i < traslado.prodcuts.length; i++) {
+                const product = traslado.prodcuts[i];
+
+                const productDB = await Product.findOne({ code: product.code }).populate('department', 'name');
+
+                productDB.inventario -= product.qty;
+
+                // VERIFICAMOS SI EL PRODUCTO ESTA AGOTADO O BAJO DE INVENTARIO
+                if (productDB.inventario > 0) {
+                    productDB.out = false;
+
+                    if (productDB.inventario > productDB.min) {
+                        productDB.low = false;
+                    } else {
+                        productDB.low = true;
+                    }
+
+                } else {
+                    productDB.out = true;
+                    productDB.low = false;
+                }
+
+                let log = {
+                    code: productDB.code,
+                    name: productDB.name,
+                    description: `Traslado #${traslado.referencia}`,
+                    type: 'Traslado',
+                    befored: productDB.inventario - product.qty,
+                    qty: product.qty,
+                    monto: (product.price * product.qty),
+                    stock: productDB.inventario,
+                    cajero: req.uid,
+                    department: productDB.department._id,
+                    departamento: productDB.department.name
+                }
+
+                const logProducts = new LogProducts(log);
+
+                await logProducts.save();
+            }
+
+        }
+
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+
+};
 /** =====================================================================
  *  RETURN STOCK
 =========================================================================*/
@@ -369,5 +428,6 @@ const returnStock = async(products, invoice, user) => {
 module.exports = {
     soldProduct,
     returnStock,
-    compraUpdate
+    compraUpdate,
+    trasladoStock
 };
