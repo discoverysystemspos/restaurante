@@ -67,8 +67,7 @@ const TrasladoSchema = Schema({
         type: String,
     },
     fechaIn: {
-        type: Date,
-        default: Date.now
+        type: Date
     },
     fecha: {
         type: Date,
@@ -80,7 +79,7 @@ const TrasladoSchema = Schema({
 TrasladoSchema.method('toJSON', function() {
 
     const { __v, _id, ...object } = this.toObject();
-    object.trasid = _id;
+    object.traid = _id;
     return object;
 
 });

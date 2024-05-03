@@ -38,6 +38,39 @@ const getBodega = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  GET ONE TRASLADO
+=========================================================================*/
+const getBodegaId = async(req, res = response) => {
+
+    try {
+        const bid = req.params.id;
+
+        // VALIDATE CAR
+        const bodegaDB = await Bodega.findById(bid);
+
+        if (!bodegaDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun traslado de mercancia con este ID'
+            });
+        }
+
+        res.json({
+            ok: true,
+            bodega: bodegaDB
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  CREATE BODEGA
 =========================================================================*/
 const createBodega = async(req, res = response) => {
@@ -185,5 +218,6 @@ module.exports = {
     getBodega,
     createBodega,
     updateBodega,
-    deleteBodega
+    deleteBodega,
+    getBodegaId
 };

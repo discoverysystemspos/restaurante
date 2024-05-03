@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getBodega, createBodega, updateBodega, deleteBodega } = require('../controllers/bodega.controller');
+const { getBodega, createBodega, updateBodega, deleteBodega, getBodegaId } = require('../controllers/bodega.controller');
 
 const router = Router();
 
@@ -17,9 +17,11 @@ const router = Router();
  *  GET BODEGAS
 =========================================================================*/
 router.post('/query', getBodega);
+
 /** =====================================================================
- *  GET BODEGAS
+ *  GET BODEGAS ID
 =========================================================================*/
+router.get('/:id', getBodegaId);
 
 /** =====================================================================
  *  CREATE BODEGAS
