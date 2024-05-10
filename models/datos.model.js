@@ -91,6 +91,10 @@ const DatoSchema = Schema({
         type: Boolean,
         default: true
     },
+    noresponsable: {
+        type: Boolean,
+        default: false
+    },
     responsable: {
         type: Boolean,
         default: false
