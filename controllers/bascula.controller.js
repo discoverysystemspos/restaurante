@@ -23,10 +23,12 @@ const getPeso = async(req, res = response) => {
             const basc = ['ST'];
             let w;
 
+
             if (peso.includes(basc)) {
 
                 let pesos = peso.split(' ');
-                w = pesos[2];
+                w = pesos[5];
+                console.log(pesos);
 
             } else {
                 w = `${peso.match(regex)[0]}.${peso.match(regex)[1]}`;
