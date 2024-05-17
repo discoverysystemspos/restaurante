@@ -49,6 +49,16 @@ const DatoSchema = Schema({
         default: false
     },
 
+    datafon: {
+        type: Boolean,
+        default: false
+    },
+
+    comidatafon: {
+        type: Number,
+        default: 0
+    },
+
     alquileres: {
         type: Boolean,
         default: false

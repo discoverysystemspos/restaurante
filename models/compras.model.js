@@ -31,6 +31,40 @@ const ProductosSchema = Schema({
 
 });
 
+// Payment SCHEMA
+const PaymentSchema = Schema({
+    type: {
+        type: String
+    },
+    amount: {
+        type: Number
+    },
+    description: {
+        type: String
+    }
+});
+
+// Payment SCHEMA
+const AbonoSchema = Schema({
+    type: {
+        type: String
+    },
+    amount: {
+        type: Number
+    },
+    description: {
+        type: String
+    },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos'
+    },
+    fecha: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 // COMPRAS SCHEMA
 const ComprasSchema = Schema({
 
@@ -46,10 +80,17 @@ const ComprasSchema = Schema({
         ref: 'User'
     },
     products: [ProductosSchema],
+    payments: [PaymentSchema],
+    abonos: [AbonoSchema],
     amount: {
         type: Number,
         require: true
     },
+    turno: {
+        type: Schema.Types.ObjectId,
+        ref: 'Turnos'
+    },
+
     base: {
         type: Number,
         require: true

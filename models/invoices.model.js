@@ -148,6 +148,9 @@ const InvoiceSchema = Schema({
         type: Number,
         require: true
     },
+    datafon: {
+        type: Number
+    },
     base: {
         type: Number,
         require: true
