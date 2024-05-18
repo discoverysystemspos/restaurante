@@ -35,6 +35,20 @@ const AbonoSchema = Schema({
     }
 });
 
+// ABONOS SCHEMA
+const AbonoComprasSchema = Schema({
+    compra: {
+        type: Schema.Types.ObjectId,
+        ref: 'Compras'
+    },
+    pay: {
+        type: String
+    },
+    monto: {
+        type: Number
+    }
+});
+
 // ALQUILERES SCHEMA
 const AlquilerSchema = Schema({
     alquiler: {
@@ -87,6 +101,7 @@ const TurnoSchema = Schema({
     },
     sales: [SalesSchema],
     abonos: [AbonoSchema],
+    abonosCompras: [AbonoComprasSchema],
     movements: [MovementsSchema],
     alquileres: [AlquilerSchema],
     status: {
