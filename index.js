@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 
 //Conection DB
 const { dbConection } = require('./database/config');
+const { sendElectronica } = require('./helpers/electronica');
 
 /*
 ? INIT EXPRESS SERVER
