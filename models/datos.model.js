@@ -13,6 +13,19 @@ const ComisionesSchema = Schema({
     }
 });
 
+const HeaderSchema = Schema({
+    texto: {
+        type: String,
+    },
+    bold: {
+        type: Boolean,
+        default: false
+    },
+    size: {
+        type: Number
+    }
+});
+
 const DatoSchema = Schema({
 
     name: {
@@ -89,9 +102,21 @@ const DatoSchema = Schema({
         default: false
     },
     comisiones: [ComisionesSchema],
+    header: {
+        type: String,
+        default: '0000112233 \nBucaramanga \n000000000 \nNo responsable de IVA'
+    },
+    footer: {
+        type: String,
+        default: 'GRACIAS POR SU COMPRA \nFactura impresa por SIMIDS \n(Nataly Castillo) \nNIT. 1090502421-0'
+    },
     tip: {
         type: Boolean,
         default: false
+    },
+    type: {
+        type: String,
+        default: 'Factura de venta pos'
     },
     propina: {
         type: Number,
