@@ -8,7 +8,7 @@ function createInvoicePDF(invoice, empresa, path) {
     let doc = new PDFDocument({ size: "A4" });
 
     generateHeader(doc, empresa);
-    generateCustomerInformation(doc, invoice);
+    generateCustomerInformation(doc, invoice, empresa);
     generateInvoiceTable(doc, invoice);
     // generateFooter(doc);
 
@@ -66,9 +66,21 @@ function generateHeader(doc, empresa) {
 
 }
 
-function generateCustomerInformation(doc, invoice) {
+function generateCustomerInformation(doc, invoice, empresa) {
 
     const customerInformationTop = 150;
+
+    let name = 'Ocasional';
+    let address = empresa.address;
+    let city = '';
+    let department = '';
+
+    if (invoice.client) {
+        name = invoice.client.name;
+        address = invoice.client.address;
+        city = invoice.client.city;
+        department = invoice.client.department
+    }
 
     doc
         .fontSize(10)
@@ -80,13 +92,13 @@ function generateCustomerInformation(doc, invoice) {
         .text("Vendedor:", 50, customerInformationTop + 30)
         .text(invoice.mesero.name, 150, customerInformationTop + 30)
         .font("Helvetica-Bold")
-        .text(`${invoice.client.name}`, 300, customerInformationTop)
+        .text(`${name}`, 300, customerInformationTop)
         .font("Helvetica")
-        .text(`${invoice.client.address}`, 300, customerInformationTop + 15)
+        .text(`${address}`, 300, customerInformationTop + 15)
         .text(
-            invoice.client.city +
+            city +
             ", " +
-            invoice.client.department,
+            department,
             300,
             customerInformationTop + 30
         )
