@@ -222,6 +222,12 @@ const InvoiceSchema = Schema({
     number: {
         type: String,
     },
+    cufe: {
+        type: String,
+    },
+    qr: {
+        type: String,
+    },
     porcentaje: {
         type: Number,
     },

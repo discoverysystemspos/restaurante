@@ -47,7 +47,7 @@ const createInvoiceElectronic = async(req, res = response) => {
         if (Number(status) !== 201) {
             await Invoice.findByIdAndUpdate(factura, { electronica: true, send: false }, { new: true, useFindAndModify: false });
         } else {
-            await Invoice.findByIdAndUpdate(factura, { pdf_url: invoice.pdf_url, uuid: invoice.uuid, number: invoice.number, electronica: true, prefix: prefix, send: true }, { new: true, useFindAndModify: false });
+            await Invoice.findByIdAndUpdate(factura, { pdf_url: invoice.pdf_url, cufe: invoice.cufe, uuid: invoice.uuid, number: invoice.number, electronica: true, prefix: prefix, send: true }, { new: true, useFindAndModify: false });
         }
 
         res.json({
