@@ -143,6 +143,18 @@ const DataicoSchema = Schema({
     env: {
         type: String,
     },
+    department: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    email: {
+        type: String,
+    },
+    phone: {
+        type: String,
+    },
 
     operation: {
         type: String,
