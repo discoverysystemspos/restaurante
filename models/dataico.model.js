@@ -145,9 +145,11 @@ const DataicoSchema = Schema({
     },
     department: {
         type: String,
+        default: '11'
     },
     city: {
         type: String,
+        default: '001'
     },
     email: {
         type: String,
