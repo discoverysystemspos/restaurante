@@ -77,59 +77,59 @@ const createProveedor = async(req, res = response) => {
 
 };
 /** =====================================================================
- *  CREATE CLIENT
+ *  CREATE PROVEEDOR
 =========================================================================*/
 
-// /** =====================================================================
-//  *  UPDATE CLIENT
-// =========================================================================*/
-// const updateClient = async(req, res = response) => {
+/** =====================================================================
+ *  UPDATE PROVEEDOR
+=========================================================================*/
+const updateProveedor = async(req, res = response) => {
 
-//     const cid = req.params.id;
+    const provid = req.params.id;
 
-//     try {
+    try {
 
-//         // SEARCH CLIENT
-//         const clientDB = await Client.findById({ _id: cid });
-//         if (!clientDB) {
-//             return res.status(400).json({
-//                 ok: false,
-//                 msg: 'No existe ningun usuario con este ID'
-//             });
-//         }
-//         // SEARCH CLIENT
+        // SEARCH CLIENT
+        const proveedorDB = await Proveedor.findById({ _id: provid });
+        if (!proveedorDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun usuario con este ID'
+            });
+        }
+        // SEARCH CLIENT
 
-//         // VALIDATE CEDULA
-//         const { cedula, ...campos } = req.body;
-//         if (clientDB.cedula !== cedula) {
-//             const validarCedula = await Client.findOne({ cedula });
-//             if (validarCedula) {
-//                 return res.status(400).json({
-//                     ok: false,
-//                     msg: 'Ya existe un usuario con este numero de cedula de ciudadania'
-//                 });
-//             }
-//         }
+        // VALIDATE CEDULA
+        const { cedula, ...campos } = req.body;
+        if (proveedorDB.cedula !== cedula) {
+            const validarCedula = await Proveedor.findOne({ cedula });
+            if (validarCedula) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Ya existe un proveedor con este numero de identificación'
+                });
+            }
+        }
 
-//         // UPDATE
-//         campos.cedula = cedula;
-//         const clientUpdate = await Client.findByIdAndUpdate(cid, campos, { new: true, useFindAndModify: false });
+        // UPDATE
+        campos.cedula = cedula;
+        const proveedorUpdate = await Proveedor.findByIdAndUpdate(provid, campos, { new: true, useFindAndModify: false });
 
-//         res.json({
-//             ok: true,
-//             client: clientUpdate
-//         });
+        res.json({
+            ok: true,
+            proveedor: proveedorUpdate
+        });
 
 
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             ok: false,
-//             msg: 'Error inesperado, porfavor intente nuevamente'
-//         });
-//     }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
 
-// };
+};
 
 // /** =====================================================================
 //  *  UPDATE CLIENT
@@ -179,5 +179,6 @@ const createProveedor = async(req, res = response) => {
 // EXPORTS
 module.exports = {
     getProveedores,
-    createProveedor
+    createProveedor,
+    updateProveedor
 };
