@@ -2,6 +2,38 @@ const { response } = require('express');
 
 const Proveedor = require('../models/proveedores.model');
 
+/** =====================================================================
+ *  GET PROVEEDORES QUERY
+=========================================================================*/
+const getProveedoresQuery = async(req, res = response) => {
+
+    try {
+
+        const { desde, hasta, ...query } = req.body;
+
+        const [proveedores, total] = await Promise.all([
+            Proveedor.find(query)
+            .skip(desde)
+            .limit(hasta),
+            Proveedor.countDocuments()
+        ]);
+
+        res.json({
+            ok: true,
+            proveedores,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
 
 /** =====================================================================
  *  GET PROVEEDORES
@@ -180,5 +212,6 @@ const updateProveedor = async(req, res = response) => {
 module.exports = {
     getProveedores,
     createProveedor,
-    updateProveedor
+    updateProveedor,
+    getProveedoresQuery
 };

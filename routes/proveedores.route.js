@@ -9,9 +9,14 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { createProveedor, getProveedores, updateProveedor } = require('../controllers/proveedores.controller');
+const { createProveedor, getProveedores, updateProveedor, getProveedoresQuery } = require('../controllers/proveedores.controller');
 
 const router = Router();
+
+/** =====================================================================
+ *  GET PROVEEDORES QUeRY
+=========================================================================*/
+router.post('/query', getProveedoresQuery);
 
 /** =====================================================================
  *  GET PROVEEDOR
