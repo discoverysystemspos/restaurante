@@ -27,7 +27,7 @@ const createInvoiceElectronic = async(req, res = response) => {
         const dataicoDB = await Dataico.find();
         const dataico = dataicoDB[0];
 
-        invoiceNew.invoice.number = dataico.hasta + 1;
+        invoiceNew.invoice.number = Number(dataico.hasta + 1).toString();
 
         // POST DATAICO
         const responseOne = await fetch(`https://api.dataico.com/dataico_api/v2/invoices`, {
