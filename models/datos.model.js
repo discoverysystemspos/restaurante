@@ -101,6 +101,10 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+    cotizacion: {
+        type: Boolean,
+        default: true
+    },
     comisiones: [ComisionesSchema],
     header: {
         type: String,
