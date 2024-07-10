@@ -1,0 +1,5 @@
++     0.4 g
+ST,GS,+     0 g
+ST,GS,+     0 g
+ST,GS,+     0 g
+

@@ -1,5 +1,5 @@
-+     0.4 g
-ST,GS,+     0 g
-ST,GS,+     0 g
-ST,GS,+     0 g
-
+     0
+       Tt:       0
+ ST,GS,Wt:+  1.315, Kg
+       Ut:       0
+       Tt:     
