@@ -39,11 +39,11 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                 // COMPROBAR SI EL PRODUCTO SE AGOTA
                 const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
 
-                if (stock > 0) {
+                if (product.inventario > 0) {
 
                     product.out = false;
 
-                    if (stock < product.min) {
+                    if (product.inventario < product.min) {
                         product.low = true;
                     } else {
                         product.low = false;
@@ -56,7 +56,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 
                 await Product.findByIdAndUpdate(id, product, { new: true, useFindAndModify: false });
 
-                let habia = stock + products[i].qty;
+                let habia = product.inventario + products[i].qty;
 
                 if (!pedido) {
 
@@ -67,7 +67,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                         type: 'Salida',
                         befored: habia,
                         qty: products[i].qty,
-                        stock: stock,
+                        stock: product.inventario,
                         cajero: user,
                         invoice: invoices,
                         turno: invoices.turno,
@@ -88,11 +88,12 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 
                 // ACTUALIZAMOS
                 product.sold += products[i].qty;
+                product.inventario -= products[i].qty;
 
                 // COMPROBAR SI EL PRODUCTO SE AGOTA
                 const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
 
-                let habia = stock + products[i].qty;
+                let habia = product.inventario + products[i].qty;
 
                 let log = {
                     code: product.code,
@@ -102,7 +103,7 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                     befored: habia,
                     qty: products[i].qty,
                     monto: (products[i].price * products[i].qty),
-                    stock: stock,
+                    stock: product.inventario,
                     cajero: user,
                     invoice: invoices,
                     turno: invoices.turno,
@@ -118,7 +119,8 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
 
                     let id = kits[i].product;
 
-                    const productKit = await Product.findById(id);
+                    const productKit = await Product.findById(id)
+                        .populate('department', 'name');
 
                     // SI NO SE HA VENDIDO
                     if (!productKit.sold) {
@@ -129,6 +131,28 @@ const soldProduct = async(products, invoice, user, invoices, pedido = false) => 
                     productKit.sold += log.qty * kits[i].qty;
                     productKit.inventario -= log.qty * kits[i].qty;
                     const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
+
+                    let habiaK = productKit.inventario + (log.qty * kits[i].qty);
+
+                    let logK = {
+                        code: productKit.code,
+                        name: productKit.name,
+                        description: factura,
+                        type: 'Salida',
+                        befored: habiaK,
+                        qty: (log.qty * kits[i].qty),
+                        monto: (productKit.price * kits[i].qty),
+                        stock: productKit.inventario,
+                        cajero: user,
+                        invoice: invoices,
+                        turno: invoices.turno,
+                        department: productKit.department._id,
+                        departamento: productKit.department.name
+                    }
+
+                    const logProductsK = new LogProducts(logK);
+
+                    await logProductsK.save();
 
                 }
 
@@ -205,7 +229,7 @@ const compraUpdate = async(compra) => {
                 code: productDB.code,
                 name: productDB.name,
                 description: `compra #${compra.invoice}`,
-                type: 'Compra',
+                type: 'Agrego',
                 befored: productDB.inventario - item.qty,
                 qty: item.qty,
                 monto: (item.price * item.qty),

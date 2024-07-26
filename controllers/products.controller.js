@@ -763,7 +763,7 @@ const ajustarInventario = async(req, res = response) => {
 
         const { cantidad, bought, damaged, type } = req.body;
 
-        const productDB = await Product.findById({ _id: pid });
+        const productDB = await Product.findById({ _id: pid }).populate('department', 'name');
 
         if (!productDB) {
             return res.status(400).json({
@@ -800,7 +800,9 @@ const ajustarInventario = async(req, res = response) => {
             befored: habia,
             qty: cantidad,
             stock: productDB.inventario,
-            cajero: user
+            cajero: user,
+            department: productDB.department._id,
+            departamento: productDB.department.name
         }
 
         let logProducts = new LogProducts(log);
