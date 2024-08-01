@@ -331,7 +331,7 @@ const getInvoicesAll = async(req, res = response) => {
                 creditos += invoice.amount;
             }
 
-            montos += invoice.base;
+            montos += invoice.amount;
             costos += invoice.cost;
             iva += invoice.iva;
         });
