@@ -50,7 +50,14 @@ const getInvoices = async(req, res = response) => {
 
             Invoice.find()
             .populate('client')
-            .populate('products.product', 'name taxid')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('user', 'name')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
@@ -95,7 +102,14 @@ const getInvoicesCredito = async(req, res = response) => {
 
             Invoice.find({ credito: true, status: true })
             .populate('client')
-            .populate('products.product', 'name taxid')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('user', 'name')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
@@ -295,7 +309,14 @@ const getInvoicesAll = async(req, res = response) => {
                     credito
                 })
                 .populate('client')
-                .populate('products.product', 'name taxid')
+                .populate({
+                    path: 'products.product',
+                    model: 'Product',
+                    populate: {
+                        path: 'taxid',
+                        model: 'Tax',
+                    }
+                })
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')
@@ -309,7 +330,14 @@ const getInvoicesAll = async(req, res = response) => {
                     mesa
                 })
                 .populate('client')
-                .populate('products.product', 'name taxid')
+                .populate({
+                    path: 'products.product',
+                    model: 'Product',
+                    populate: {
+                        path: 'taxid',
+                        model: 'Tax',
+                    }
+                })
                 .populate('user', 'name')
                 .populate('mesero', 'name')
                 .populate('mesa', 'name')
@@ -491,7 +519,14 @@ const getInvoiceCreditClient = async(req, res = response) => {
 
         const invoice = await Invoice.find({ client, credito })
             .populate('client')
-            .populate('products.product', 'name taxid code type tax impuesto')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
@@ -598,7 +633,14 @@ const getInvoiceVenida = async(req, res = response) => {
                 credito: true
             })
             .populate('client')
-            .populate('products.product', 'name taxid')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('user', 'name')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
@@ -718,7 +760,14 @@ const postQueryInvoice = async(req, res = response) => {
 
         const invoices = await Invoice.find(query)
             .populate('client')
-            .populate('products.product', 'name taxid')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('user', 'name')
             .populate('mesero', 'name')
             .populate('mesa', 'name')

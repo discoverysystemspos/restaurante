@@ -92,9 +92,12 @@ const createMovimiento = async(req, res = response) => {
 
         await movimiento.save();
 
+        const movimientoDB = await Movimiento.findById(movimiento._id)
+            .populate('user');
+
         res.json({
             ok: true,
-            movimiento
+            movimiento: movimientoDB
         });
 
 
