@@ -28,6 +28,7 @@ const {
     getCountInvoicesElectronic,
     invoicePDF
 } = require('../controllers/invoices.controller');
+const { sendElectronica } = require('../helpers/electronica');
 
 const router = Router();
 
@@ -141,6 +142,11 @@ router.post('/search/query', validarJWT, postQueryInvoice);
 /** =====================================================================
 *  POST QUERY INVOICE
 =========================================================================*/
+
+/** =====================================================================
+ *  POST QUERY INVOICE
+=========================================================================*/
+router.post('/create/electronic', sendElectronica);
 
 /** =====================================================================
 *  PUT INVOICE
