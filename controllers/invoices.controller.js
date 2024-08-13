@@ -175,6 +175,7 @@ const getInvoicesTurn = async(req, res = response) => {
         let montos = 0;
         let propinas = 0;
         let costos = 0;
+        let iva = 0;
         let efectivo = 0;
         let tarjeta = 0;
         let credit = 0;
@@ -191,6 +192,7 @@ const getInvoicesTurn = async(req, res = response) => {
                 total,
                 montos,
                 costos,
+                iva,
                 efectivo,
                 tarjeta,
                 credit,
@@ -204,35 +206,50 @@ const getInvoicesTurn = async(req, res = response) => {
 
         invoices.forEach(invoice => {
 
-            if (!invoice.credit || !invoice.credito) {
+            // if (!invoice.credit || !invoice.credito) {
 
-                if (invoice.base) {
+            // if (invoice.base) {
 
-                    if (invoice.descuento) {
-                        let des = invoice.porcentaje / 100;
-                        montos += invoice.base - (invoice.base * des);
-                    } else {
-                        montos += invoice.base;
-                    }
+            //     if (invoice.descuento) {
+            //         let des = invoice.porcentaje / 100;
+            //         montos += invoice.base - (invoice.base * des);
+            //     } else {
+            //         montos += invoice.base;
+            //     }
 
-                    costos += invoice.cost;
-                } else {
-                    montos += invoice.amount;
-                    costos += invoice.cost;
-                }
+            //     costos += invoice.cost;
+            // } else {
+            //     montos += invoice.amount;
+            //     costos += invoice.cost;
+            // }
+
+            //     if (!invoice.base) {
+            //         invoice.base = invoice.amount;
+            //     }
+
+            //     if (invoice.credito || invoice.credit) {
+            //         creditos += invoice.amount;
+            //     }
+
+            //     montos += invoice.amount;
+            //     costos += invoice.cost;
+            //     iva += invoice.iva;
+            // }
+
+            if (!invoice.base) {
+                invoice.base = invoice.amount;
             }
 
-
-            if (invoice.fechaCredito) {
-                costos -= invoice.cost;
-            }
+            montos += invoice.amount;
+            costos += invoice.cost;
+            iva += invoice.iva;
 
             if (invoice.credito || invoice.credit) {
                 creditos += invoice.amount;
+                costos -= invoice.cost;
             }
 
             propinas += invoice.tip;
-
             payments = invoice.payments;
 
             for (let i = 0; i < payments.length; i++) {
@@ -261,6 +278,7 @@ const getInvoicesTurn = async(req, res = response) => {
             total: invoices.length,
             montos,
             costos,
+            iva,
             efectivo,
             tarjeta,
             transferencia,
