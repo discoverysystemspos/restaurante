@@ -1,206 +1,28 @@
-const soap = require('soap');
-const { response } = require('express');
-
-const Dsig = require('pkcs12-xml');
-const fs = require('fs');
-const forge = require('node-forge');
-const { DOMParser } = require('xmldom');
-const { SignedXml } = require('xml-crypto');
-
-// NAME DSPOS
-// ID 907d7c98-e72e-45ef-bb71-47d61c32b9ac
-// CLAVE TECNICA fc8eac422eba16e22ffd8c6f94b3f40a6e38162c
-// (TestSetId) 4e87ae6d-1b90-4f61-95a0-9dea876eac68
-// PIN 98765
-// URL https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc?wsdl
-// FECHA de INICIO 3/14/2019 12:00:00 AM
-// FECHA DE terMINO 6/14/2019 12:00:00 AM
-// PREFIJO SETP
-// RESOLUCNION 18760000001
-// DESDE 990000000
-// HASTA 995000000
-// FECHA DESDE 19-01-2019
-// FECHA HASTA 19-01-2030
-
-
-const sendElectronica = async(req, res = response) => {
-
-    let dian = {
-        id: '907d7c98-e72e-45ef-bb71-47d61c32b9ac',
-        clave: 'fc8eac422eba16e22ffd8c6f94b3f40a6e38162c',
-        test: '4e87ae6d-1b90-4f61-95a0-9dea876eac68',
-        pin: '98765',
-        url: 'https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc?wsdl',
-        fechaI: '3/14/2019',
-        fechaT: '3/14/ 2019',
-        prefijo: 'SETP',
-        resolucion: '18760000001',
-        cedual: '88243048',
-        nit: '882430486',
-        desde: '990000000',
-        hasta: '995000000',
-        fechaD: '2019-01-19',
-        fechaH: '2030-01-19',
-
-    }
-
-    let qrCode = `<QRCode>
-						NroFactura=SETP990000002
-						NitFacturador=${dian.nit}
-						NitAdquiriente=900108281
-						FechaFactura=2019-06-20
-						ValorTotalFactura=14024.07
-						CUFE=941cf36af62dbbc06f105d2a80e9bfe683a90e84960eae4d351cc3afbe8f848c26c39bac4fbc80fa254824c6369ea694
-						URL=https://catalogo-vpfe-hab.dian.gov.co/Document/FindDocument?documentKey=941cf36af62dbbc06f105d2a80e9bfe683a90e84960eae4d351cc3afbe8f848c26c39bac4fbc80fa254824c6369ea694&amp;partitionKey=co|06|94&amp;emissionDate=20190620
-					</QRCode>`
-
-    let firm = await firma();
-
-    const url = 'https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc?wsdl';
-    const _headXML = headXML();
-    const _ublExtentionXML = ublExtentionXML(firm, dian);
-    const _versionXML = versionXML();
-    const _accountingSuplierParty = accountingSuplierParty();
-    const _accountingCustomerParty = accountingCustomerParty();
-    const _payTotalLegal = payTotalLegal();
-    const _totalTributos = totalTributos();
-    const _invoiceLine = invoiceLine();
-    const _footerXML = footerXML();
-
-    let XML = `${_headXML.toString()}${_ublExtentionXML.toString()}${_versionXML.toString()}${_accountingSuplierParty.toString()}${_accountingCustomerParty.toString()}${_payTotalLegal.toString()}${_totalTributos.toString()}${_invoiceLine.toString()}${_footerXML.toString()}`
-
-    // Escribir el archivo XML
-    fs.writeFile('uploads/xml/signed.xml', XML, (err) => {
-        if (err) {
-            console.error('Error al escribir el archivo', err);
-        } else {
-            console.log('Archivo XML guardado con éxito');
-        }
-    });
-
-    res.json({
-        ok: true,
-        msg: 'Archivo Firmado'
-    });
-    // Crear el cliente SOAP
-    //  soap.createClient(url, (err, client) => {
-    //      if (err) {
-    //          console.error('Error al crear el cliente SOAP:', err);
-    //          return;
-    //      }
-
-    //      // Llamar a un método del servicio SOAP
-    //      client.exampleMethod({ xml: xmlData }, (err, result) => {
-    //          if (err) {
-    //              console.error('Error al llamar al método SOAP:', err);
-    //              return;
-    //          }
-
-    //          console.log('Respuesta del servidor:', result);
-    //      });
-    //  });
-
-
-};
-
-const firma = async() => {
-
-    // Cargar archivo .p12
-    const p12File = fs.readFileSync('uploads/p12/firma.p12');
-    const password = 'Abcd.1234';
-
-    // Parsear el archivo .p12 utilizando la clave
-    const p12Asn1 = forge.asn1.fromDer(p12File.toString('binary'));
-    const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
-
-    // Extraer la clave privada y el certificado del archivo .p12
-    let key, cert;
-    p12.safeContents.forEach(safeContent => {
-        safeContent.safeBags.forEach(safeBag => {
-            if (safeBag.type === forge.pki.oids.pkcs8ShroudedKeyBag) {
-                key = forge.pki.privateKeyToPem(safeBag.key);
-            } else if (safeBag.type === forge.pki.oids.certBag) {
-                cert = forge.pki.certificateToPem(safeBag.cert);
-            }
-        });
-    });
-
-    // Asegúrate de que tanto la clave privada como el certificado han sido extraídos
-    if (!key || !cert) {
-        throw new Error('No se pudo extraer la clave privada o el certificado del archivo .p12');
-    }
-
-    //  const xml = "<library>" + "<book>" + "<name>Harry Potter</name>" + "</book>" + "</library>";
-    const xml = `<UBLExtension><ExtensionContent></ExtensionContent></UBLExtension>`;
-    //  const xml = `${_headXML}${_ublExtentionXML}${_footerXML}`;
-    // Parsear el XML desde la cadena
-
-    // Crear la firma
-    const sig = new SignedXml({
-        privateKey: key,
-        publicCert: cert
-    });
-    sig.addReference({
-        xpath: "//*[local-name(.)='ExtensionContent']",
-        digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
-        transforms: ['http://www.w3.org/2000/09/xmldsig#enveloped-signature',
-            'http://www.w3.org/2001/10/xml-exc-c14n#',
-        ],
-        isEmptyUri: true
-    });
-    sig.signingKey = key;
-
-    // Incluir el certificado en la firma
-    sig.keyInfoProvider = {
-        getKeyInfo: () => `<X509Data><X509Certificate>${cert.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\n/g, '')}</X509Certificate></X509Data>`
-    };
-
-    sig.canonicalizationAlgorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-    sig.signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-
-
-    // Firmar el documento
-    sig.computeSignature(xml, {
-        prefix: "ds",
-        location: { reference: "//*[local-name(.)='ExtensionContent']" }
-    });
-
-    // Obtener el XML firmado
-    return sig.getSignedXml();
-
-}
-
-const headXML = () => {
-    return `<?xml version="1.0" encoding="UTF-8" standalone="no"?><Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2     http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">`;
-}
-
-const ublExtentionXML = (firma, dian, qrCode) => {
-
-    return `<UBLExtensions>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2     http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd"><UBLExtensions>
 		<UBLExtension>
 			<ExtensionContent>
 				<DianExtensions>
 					<InvoiceControl>
 						<InvoiceAuthorization>
-							${dian.resolucion}
+							18760000001
 						</InvoiceAuthorization>
 						<AuthorizationPeriod>
 							<StartDate>
-								${dian.fechaD}
+								2019-01-19
 							</StartDate>
 							<EndDate>
-								${dian.fechaH}
+								2030-01-19
 							</EndDate>
 						</AuthorizationPeriod>
 						<AuthorizedInvoices>
 							<Prefix>
-								${dian.prefijo}
+								SETP
 							</Prefix>
 							<From>
-								${dian.desde}
+								990000000
 							</From>
 							<To>
-								${dian.hasta}
+								995000000
 							</To>
 						</AuthorizedInvoices>
 					</InvoiceControl>
@@ -211,35 +33,36 @@ const ublExtentionXML = (firma, dian, qrCode) => {
 					</InvoiceSource>
 					<SoftwareProvider>
 						<ProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">
-							${dian.nit}
+							800197268
 						</ProviderID>
 						<SoftwareID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-							${dian.id}
-                  </SoftwareID>
-               </SoftwareProvider>
-               <SoftwareSecurityCode schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-						${dian.clave}
+							56f2ae4e-9812-4fad-9255-08fcfcd5ccb0
+						</SoftwareID>
+					</SoftwareProvider>
+					<SoftwareSecurityCode schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+						a8d18e4e5aa00b44a0b1f9ef413ad8215116bd3ce91730d580eaed795c83b5a32fe6f0823abc71400b3d59eb542b7de8
 					</SoftwareSecurityCode>
 					<AuthorizationProvider>
 						<AuthorizationProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">
-							${dian.nit}
+							800197268
 						</AuthorizationProviderID>
 					</AuthorizationProvider>
-
-               ${qrCode}
-
+					<QRCode>
+						NroFactura=SETP990000002
+						NitFacturador=800197268
+						NitAdquiriente=900108281
+						FechaFactura=2019-06-20
+						ValorTotalFactura=14024.07
+						CUFE=941cf36af62dbbc06f105d2a80e9bfe683a90e84960eae4d351cc3afbe8f848c26c39bac4fbc80fa254824c6369ea694
+						URL=https://catalogo-vpfe-hab.dian.gov.co/Document/FindDocument?documentKey=941cf36af62dbbc06f105d2a80e9bfe683a90e84960eae4d351cc3afbe8f848c26c39bac4fbc80fa254824c6369ea694&amp;partitionKey=co|06|94&amp;emissionDate=20190620
+					</QRCode>
 				</DianExtensions>
 			</ExtensionContent>
 		</UBLExtension>
 
-      ${firma}
+      <UBLExtension><ExtensionContent><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>TeV5s5DKXNDTFOjqlbGZJ2zQR56olTaD5eXfmNl7I3c=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>TKMPk3FkgLNGjNhhdYeqi8b1MIsWqDJ09xI0BhqLoRCXZi9zzZQJDN0ZaBFALqv3enC+EMLFG8yqOyBV6yKpnkiiROagzG3P8/Os2NP34mKd/qu1jP1VE2C4clrVbhdbdIrhNDIF4q2RuuKjdCiNcXdTRaYlaapXr9wvgCKKKmtW8G6buw8HrtnN3bO/2oTBHVDDp4ltAut74eQH+eAV8x0P8+/tM0iFeG2ccg/0sUzJeZtpizgGQdp5kv/vUZmiqwMZ07608p082DcgQzdPjipFLWSEkbyStT9VhD+/9duax+OVIx/BSci5LLNYxMMWl2xB11Vy79r4YTUS5DUgjQ==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo></ds:Signature></ExtensionContent></UBLExtension>
 		
-	</UBLExtensions>`
-}
-
-const versionXML = () => {
-
-    return `<cbc:UBLVersionID>UBL 2.1</cbc:UBLVersionID>
+	</UBLExtensions><cbc:UBLVersionID>UBL 2.1</cbc:UBLVersionID>
     <cbc:CustomizationID>05</cbc:CustomizationID>
     <cbc:ProfileID>DIAN 2.1</cbc:ProfileID>
     <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
@@ -255,12 +78,7 @@ const versionXML = () => {
     <cac:InvoicePeriod>
       <cbc:StartDate>2019-05-01</cbc:StartDate>
       <cbc:EndDate>2019-05-30</cbc:EndDate>
-   </cac:InvoicePeriod>`;
-}
-
-const accountingSuplierParty = () => {
-
-    return `<cac:AccountingSupplierParty>
+   </cac:InvoicePeriod><cac:AccountingSupplierParty>
     <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     <cac:Party>
        <cac:PartyName>
@@ -325,13 +143,7 @@ const accountingSuplierParty = () => {
           <cbc:Note>Test descripcion contacto</cbc:Note>
        </cac:Contact>
     </cac:Party>
- </cac:AccountingSupplierParty>`
-
-}
-
-const accountingCustomerParty = () => {
-
-    return `<cac:AccountingCustomerParty>
+ </cac:AccountingSupplierParty><cac:AccountingCustomerParty>
     <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     <cac:Party>
 
@@ -390,13 +202,7 @@ const accountingCustomerParty = () => {
           <cbc:ElectronicMail>dcruz@empresa.org</cbc:ElectronicMail>
        </cac:Contact>
     </cac:Party>
- </cac:AccountingCustomerParty>`
-
-}
-
-const payTotalLegal = () => {
-
-    return `<cac:TaxRepresentativeParty>
+ </cac:AccountingCustomerParty><cac:TaxRepresentativeParty>
     <cac:PartyIdentification>
        <cbc:ID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">989123123</cbc:ID>
     </cac:PartyIdentification>
@@ -480,13 +286,7 @@ const payTotalLegal = () => {
     <cbc:ReceivedDate>2018-09-29</cbc:ReceivedDate>
     <cbc:PaidDate>2018-09-29</cbc:PaidDate>
     <cbc:InstructionID>Prepago recibido</cbc:InstructionID>
- </cac:PrepaidPayment>`
-
-}
-
-const totalTributos = () => {
-
-    return `<cac:TaxTotal>      
+ </cac:PrepaidPayment><cac:TaxTotal>      
     <cbc:TaxAmount currencyID="COP">2424.01</cbc:TaxAmount>
     <cac:TaxSubtotal>
        <cbc:TaxableAmount currencyID="COP">12600.06</cbc:TaxableAmount>
@@ -546,13 +346,7 @@ const totalTributos = () => {
        </cac:TaxCategory>
     </cac:TaxSubtotal>
 
- </cac:TaxTotal>`
-
-}
-
-const invoiceLine = () => {
-
-    return `<cac:InvoiceLine>
+ </cac:TaxTotal><cac:InvoiceLine>
       <cbc:ID>1</cbc:ID>
       <cbc:InvoicedQuantity unitCode="EA">1.000000</cbc:InvoicedQuantity>
       <cbc:LineExtensionAmount currencyID="COP">12600.06</cbc:LineExtensionAmount>
@@ -656,13 +450,4 @@ const invoiceLine = () => {
          <cbc:PriceAmount currencyID="COP">0.00</cbc:PriceAmount>
          <cbc:BaseQuantity unitCode="NIU">1.000000</cbc:BaseQuantity>
       </cac:Price>
-   </cac:InvoiceLine>`
-
-}
-
-const footerXML = () => { return "</Invoice>" }
-
-// EXPORT
-module.exports = {
-    sendElectronica
-};
+   </cac:InvoiceLine></Invoice>
