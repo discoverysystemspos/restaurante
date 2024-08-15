@@ -7,23 +7,20 @@ const forge = require('node-forge');
 const { DOMParser } = require('xmldom');
 const { SignedXml } = require('xml-crypto');
 
-// NAME DSPOS
-// ID 907d7c98-e72e-45ef-bb71-47d61c32b9ac
-// CLAVE TECNICA fc8eac422eba16e22ffd8c6f94b3f40a6e38162c
-// (TestSetId) 4e87ae6d-1b90-4f61-95a0-9dea876eac68
-// PIN 98765
-// URL https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc?wsdl
-// FECHA de INICIO 3/14/2019 12:00:00 AM
-// FECHA DE terMINO 6/14/2019 12:00:00 AM
-// PREFIJO SETP
-// RESOLUCNION 18760000001
-// DESDE 990000000
-// HASTA 995000000
-// FECHA DESDE 19-01-2019
-// FECHA HASTA 19-01-2030
+// MODELS
+const Invoice = require('../models/invoices.model');
+const Datos = require('../models/datos.model');
+const Dataico = require('../models/dataico.model');
 
 
-const sendElectronica = async(req, res = response) => {
+const { searchCity } = require('./searchCity');
+
+const sendElectronica = async(invoice, res = response) => {
+
+    const datos = await Datos.findOne({ status: true });
+    const data = await Dataico.findOne();
+
+    const { ciudad, departamento } = await searchCity(data.city, data.department);
 
     let dian = {
         id: '907d7c98-e72e-45ef-bb71-47d61c32b9ac',
@@ -41,15 +38,26 @@ const sendElectronica = async(req, res = response) => {
         hasta: '995000000',
         fechaD: '2019-01-19',
         fechaH: '2030-01-19',
-
+        number: '0001',
+        fecha: invoice.fecha.toString()
     }
 
+    let numberI = await Invoice.countDocuments({ prefix: dian.prefijo, send: true, electronica: true });
+
+    numberI++;
+
+    if (numberI > Number(dian.hasta)) {
+        return { ok: false, msg: 'Ha llegado al limite de facturas en esta resolucion' };
+    }
+
+    dian.number = numberI.toString();
+
     let qrCode = `<QRCode>
-						NroFactura=SETP990000002
+						NroFactura=${dian.prefijo}${dian.number}
 						NitFacturador=${dian.nit}
-						NitAdquiriente=900108281
-						FechaFactura=2019-06-20
-						ValorTotalFactura=14024.07
+						NitAdquiriente=${invoice.client.cedula}
+						FechaFactura=${dian.fecha}
+						ValorTotalFactura=${invoice.amount}
 						CUFE=941cf36af62dbbc06f105d2a80e9bfe683a90e84960eae4d351cc3afbe8f848c26c39bac4fbc80fa254824c6369ea694
 						URL=https://catalogo-vpfe-hab.dian.gov.co/Document/FindDocument?documentKey=941cf36af62dbbc06f105d2a80e9bfe683a90e84960eae4d351cc3afbe8f848c26c39bac4fbc80fa254824c6369ea694&amp;partitionKey=co|06|94&amp;emissionDate=20190620
 					</QRCode>`
@@ -60,7 +68,7 @@ const sendElectronica = async(req, res = response) => {
     const _headXML = headXML();
     const _ublExtentionXML = ublExtentionXML(firm, dian);
     const _versionXML = versionXML();
-    const _accountingSuplierParty = accountingSuplierParty();
+    const _accountingSuplierParty = accountingSuplierParty(datos, data, ciudad, departamento);
     const _accountingCustomerParty = accountingCustomerParty();
     const _payTotalLegal = payTotalLegal();
     const _totalTributos = totalTributos();
@@ -130,10 +138,8 @@ const firma = async() => {
         throw new Error('No se pudo extraer la clave privada o el certificado del archivo .p12');
     }
 
-    //  const xml = "<library>" + "<book>" + "<name>Harry Potter</name>" + "</book>" + "</library>";
+    //  XML FIRMA
     const xml = `<UBLExtension><ExtensionContent></ExtensionContent></UBLExtension>`;
-    //  const xml = `${_headXML}${_ublExtentionXML}${_footerXML}`;
-    // Parsear el XML desde la cadena
 
     // Crear la firma
     const sig = new SignedXml({
@@ -243,43 +249,43 @@ const versionXML = () => {
     <cbc:CustomizationID>05</cbc:CustomizationID>
     <cbc:ProfileID>DIAN 2.1</cbc:ProfileID>
     <cbc:ProfileExecutionID>2</cbc:ProfileExecutionID>
-    <cbc:ID>SETP990000002</cbc:ID>
+    <cbc:ID>${dian.prefijo}${dian.number}</cbc:ID>
     <cbc:UUID schemeID="2" schemeName="CUFE-SHA384">941cf36af62dbbc06f105d2a80e9bfe683a90e84960eae4d351cc3afbe8f848c26c39bac4fbc80fa254824c6369ea694</cbc:UUID>
     <cbc:IssueDate>2019-06-20</cbc:IssueDate>
     <cbc:IssueTime>09:15:23-05:00</cbc:IssueTime>
     <cbc:InvoiceTypeCode>01</cbc:InvoiceTypeCode>
-    <cbc:Note>SETP9900000022019-06-2009:15:23-05:0012600.06012424.01040.00030.0014024.07900508908900108281fc8eac422eba16e22ffd8c6f94b3f40a6e38162c2</cbc:Note>
+    <cbc:Note>${dian.prefijo}${dian.number}${dian.fecha}:0012600.06012424.01040.00030.0014024.07900508908900108281fc8eac422eba16e22ffd8c6f94b3f40a6e38162c2</cbc:Note>
     <cbc:DocumentCurrencyCode listAgencyID="6" listAgencyName="United Nations Economic Commission for Europe" listID="ISO 4217 Alpha">COP</cbc:DocumentCurrencyCode>
     <cbc:LineCountNumeric>2</cbc:LineCountNumeric>
 
     <cac:InvoicePeriod>
-      <cbc:StartDate>2019-05-01</cbc:StartDate>
-      <cbc:EndDate>2019-05-30</cbc:EndDate>
+      <cbc:StartDate>${dian.fechaD}</cbc:StartDate>
+      <cbc:EndDate>${dian.fechaH}</cbc:EndDate>
    </cac:InvoicePeriod>`;
 }
 
-const accountingSuplierParty = () => {
+const accountingSuplierParty = (datos, data, ciudad, departamento) => {
 
     return `<cac:AccountingSupplierParty>
     <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     <cac:Party>
        <cac:PartyName>
-          <cbc:Name>Nombre Tienda</cbc:Name>
+          <cbc:Name>${datos.name}</cbc:Name>
        </cac:PartyName>
        <cac:PartyName>
-          <cbc:Name>Establecimiento Principal</cbc:Name>
+          <cbc:Name>${datos.name}</cbc:Name>
        </cac:PartyName>
        <cac:PartyName>
           <cbc:Name>DIAN</cbc:Name>
        </cac:PartyName>
        <cac:PhysicalLocation>
           <cac:Address>
-             <cbc:ID>11001</cbc:ID>
-             <cbc:CityName>Bogotá, D.c. </cbc:CityName>
-             <cbc:CountrySubentity>Bogotá</cbc:CountrySubentity>
-             <cbc:CountrySubentityCode>11</cbc:CountrySubentityCode>
+             <cbc:ID>${data.department}${data.city}</cbc:ID>
+             <cbc:CityName>${ciudad} </cbc:CityName>
+             <cbc:CountrySubentity>${departamento}</cbc:CountrySubentity>
+             <cbc:CountrySubentityCode>${data.department}</cbc:CountrySubentityCode>
              <cac:AddressLine>
-                <cbc:Line>Av. #97 - 13</cbc:Line>
+                <cbc:Line> ${datos.address}</cbc:Line>
              </cac:AddressLine>
              <cac:Country>
                 <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -289,7 +295,7 @@ const accountingSuplierParty = () => {
        </cac:PhysicalLocation>
 
        <cac:PartyTaxScheme>
-          <cbc:RegistrationName>DIAN</cbc:RegistrationName>
+          <cbc:RegistrationName>${datos.name}</cbc:RegistrationName>
           <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">800197268</cbc:CompanyID>
           <cbc:TaxLevelCode listName="05">O-99</cbc:TaxLevelCode>
           <cac:RegistrationAddress>
