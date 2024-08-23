@@ -299,12 +299,12 @@ const accountingSuplierParty = (datos, data, ciudad, departamento) => {
           <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">800197268</cbc:CompanyID>
           <cbc:TaxLevelCode listName="05">O-99</cbc:TaxLevelCode>
           <cac:RegistrationAddress>
-             <cbc:ID>11001</cbc:ID>
-             <cbc:CityName>Bogotá, D.c. </cbc:CityName>
-             <cbc:CountrySubentity>Bogotá</cbc:CountrySubentity>
-             <cbc:CountrySubentityCode>11</cbc:CountrySubentityCode>
+             <cbc:ID>${data.department}${data.city}</cbc:ID>
+             <cbc:CityName> ${ciudad} </cbc:CityName>
+             <cbc:CountrySubentity>${departamento}</cbc:CountrySubentity>
+             <cbc:CountrySubentityCode>${data.departamento}</cbc:CountrySubentityCode>
              <cac:AddressLine>
-                <cbc:Line>Av. Jiménez #7 - 13</cbc:Line>
+                <cbc:Line> ${datos.address} </cbc:Line>
              </cac:AddressLine>
              <cac:Country>
                 <cbc:IdentificationCode>CO</cbc:IdentificationCode>
@@ -316,18 +316,22 @@ const accountingSuplierParty = (datos, data, ciudad, departamento) => {
              <cbc:Name>IVA</cbc:Name>
           </cac:TaxScheme>
        </cac:PartyTaxScheme>
+
        <cac:PartyLegalEntity>
-          <cbc:RegistrationName>DIAN</cbc:RegistrationName>
-          <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="9" schemeName="31">800197268</cbc:CompanyID>
+          <cbc:RegistrationName>
+            ${datos.nombreLegal}
+          </cbc:RegistrationName>
+          <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="9" schemeName="31">
+            ${datos.cclegal}
+          </cbc:CompanyID>
           <cac:CorporateRegistrationScheme>
-             <cbc:ID>SETP</cbc:ID>
-             <cbc:Name>10181</cbc:Name>
+             <cbc:ID> ${datos.numbering.prefix} </cbc:ID>
           </cac:CorporateRegistrationScheme>
        </cac:PartyLegalEntity>
+
        <cac:Contact>
-          <cbc:Name>Eric Valencia</cbc:Name>
-          <cbc:Telephone>6111111</cbc:Telephone>
-          <cbc:ElectronicMail>eric.valencia@ket.co</cbc:ElectronicMail>
+          <cbc:Telephone> ${datos.phone} </cbc:Telephone>
+          <cbc:ElectronicMail>${datos.email}</cbc:ElectronicMail>
           <cbc:Note>Test descripcion contacto</cbc:Note>
        </cac:Contact>
     </cac:Party>
@@ -337,7 +341,8 @@ const accountingSuplierParty = (datos, data, ciudad, departamento) => {
 
 const accountingCustomerParty = () => {
 
-    return `<cac:AccountingCustomerParty>
+    return `
+   <cac:AccountingCustomerParty>
     <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     <cac:Party>
 
