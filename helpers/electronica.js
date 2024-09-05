@@ -15,7 +15,7 @@ const Dataico = require('../models/dataico.model');
 
 const { searchCity } = require('./searchCity');
 
-const sendElectronica = async(invoice, res = response) => {
+const sendElectronica = async(invoice) => {
 
     const datos = await Datos.findOne({ status: true });
     const data = await Dataico.findOne();
@@ -86,27 +86,26 @@ const sendElectronica = async(invoice, res = response) => {
         }
     });
 
-    res.json({
-        ok: true,
-        msg: 'Archivo Firmado'
-    });
+
     // Crear el cliente SOAP
-    //  soap.createClient(url, (err, client) => {
-    //      if (err) {
-    //          console.error('Error al crear el cliente SOAP:', err);
-    //          return;
-    //      }
+    soap.createClient(url, (err, client) => {
+        if (err) {
+            console.error('Error al crear el cliente SOAP:', err);
+            return;
+        }
 
-    //      // Llamar a un método del servicio SOAP
-    //      client.exampleMethod({ xml: xmlData }, (err, result) => {
-    //          if (err) {
-    //              console.error('Error al llamar al método SOAP:', err);
-    //              return;
-    //          }
+        // Llamar a un método del servicio SOAP
+        client.exampleMethod({ xml: xmlData }, (err, result) => {
+            if (err) {
+                console.error('Error al llamar al método SOAP:', err);
+                return;
+            }
 
-    //          console.log('Respuesta del servidor:', result);
-    //      });
-    //  });
+            console.log('Respuesta del servidor:', result);
+
+            return;
+        });
+    });
 
 
 };

@@ -12,6 +12,7 @@ const Invoice = require('../models/invoices.model');
 const Product = require('../models/products.model');
 const Turno = require('../models/turnos.model');
 const Datos = require('../models/datos.model');
+const { sendElectronica } = require('../helpers/electronica');
 
 /** =====================================================================
  *  COUNT INVOICE
@@ -746,6 +747,13 @@ const createInvoice = async(req, res = response) => {
             .populate('mesero', 'name')
             .populate('mesa', 'name')
             .populate('user', 'name');
+
+
+        if (invoiceNew.electronica) {
+            const sendDian = await sendElectronica(invoiceNew);
+        }
+
+
 
         res.json({
             ok: true,
