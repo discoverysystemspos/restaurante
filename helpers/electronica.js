@@ -344,63 +344,114 @@ const accountingCustomerParty = () => {
     return `
    <cac:AccountingCustomerParty>
     <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
-    <cac:Party>
-
-       <cac:PartyName>
-          <cbc:Name>OPTICAS GMO COLOMBIA S A S</cbc:Name>
-       </cac:PartyName>
-
-       <cac:PhysicalLocation>
-          <cac:Address>
-             <cbc:ID>11001</cbc:ID>
-             <cbc:CityName>Bogotá, D.c. </cbc:CityName>
-             <cbc:CountrySubentity>Bogotá</cbc:CountrySubentity>
-             <cbc:CountrySubentityCode>11</cbc:CountrySubentityCode>
-             <cac:AddressLine>
-                <cbc:Line>CARRERA 8 No 20-14/40</cbc:Line>
-             </cac:AddressLine>
-             <cac:Country>
-                <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-                <cbc:Name languageID="es">Colombia</cbc:Name>
-             </cac:Country>
-          </cac:Address>
-       </cac:PhysicalLocation>
-
-       <cac:PartyTaxScheme>
-          <cbc:RegistrationName>OPTICAS GMO COLOMBIA S A S</cbc:RegistrationName>
-          <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="3" schemeName="31">900108281</cbc:CompanyID>
-          <cbc:TaxLevelCode listName="04">O-99</cbc:TaxLevelCode>
-          <cac:RegistrationAddress>
-             <cbc:ID>11001</cbc:ID>
-             <cbc:CityName>Bogotá, D.c. </cbc:CityName>
-             <cbc:CountrySubentity>Bogotá</cbc:CountrySubentity>
-             <cbc:CountrySubentityCode>11</cbc:CountrySubentityCode>
-             <cac:AddressLine>
-                <cbc:Line>CR 9 A N0 99 - 07 OF 802</cbc:Line>
-             </cac:AddressLine>
-             <cac:Country>
-                <cbc:IdentificationCode>CO</cbc:IdentificationCode>
-                <cbc:Name languageID="es">Colombia</cbc:Name>
-             </cac:Country>
-          </cac:RegistrationAddress>
-          <cac:TaxScheme>
-             <cbc:ID>01</cbc:ID>
-             <cbc:Name>IVA</cbc:Name>
-          </cac:TaxScheme>
-       </cac:PartyTaxScheme>
-       <cac:PartyLegalEntity>
-          <cbc:RegistrationName>OPTICAS GMO COLOMBIA S A S</cbc:RegistrationName>
-          <cbc:CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="3" schemeName="31">900108281</cbc:CompanyID>
-          <cac:CorporateRegistrationScheme>
-             <cbc:Name>90518</cbc:Name>
-          </cac:CorporateRegistrationScheme>
-       </cac:PartyLegalEntity>
-       <cac:Contact>
-          <cbc:Name>Diana Cruz</cbc:Name>
-          <cbc:Telephone>31031031089</cbc:Telephone>
-          <cbc:ElectronicMail>dcruz@empresa.org</cbc:ElectronicMail>
-       </cac:Contact>
-    </cac:Party>
+    <Party>
+	   <PartyIdentification>
+	   	<ID schemeName="13">
+	   		222222222222
+	   	</ID>
+	   </PartyIdentification>
+	   <PartyName>
+	   	<Name>
+	   		Consumidor Final
+	   	</Name>
+	   </PartyName>
+	   <PhysicalLocation>
+	   	<Address>
+	   		<ID>
+	   			11001
+	   		</ID>
+	   		<CityName>
+	   			BOGOTA, D.C.
+	   		</CityName>
+	   		<CountrySubentity>
+	   			BOGOTA
+	   		</CountrySubentity>
+	   		<CountrySubentityCode>
+	   			11
+	   		</CountrySubentityCode>
+	   		<AddressLine>
+	   			<Line>
+	   				No aplica
+	   			</Line>
+	   		</AddressLine>
+	   		<Country>
+	   			<IdentificationCode>
+	   				CO
+	   			</IdentificationCode>
+	   			<Name languageID="es">
+	   				Colombia
+	   			</Name>
+	   		</Country>
+	   	</Address>
+	   </PhysicalLocation>
+	   <PartyTaxScheme>
+	   	<RegistrationName>
+	   		Consumidor Final
+	   	</RegistrationName>
+	   	<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="7" schemeName="13">
+	   		222222222222
+	   	</CompanyID>
+	   	<TaxLevelCode listName="49">
+	   		O-47
+	   	</TaxLevelCode>
+	   	<RegistrationAddress>
+	   		<ID>
+	   			11001
+	   		</ID>
+	   		<CityName>
+	   			BOGOTA, D.C.
+	   		</CityName>
+	   		<CountrySubentity>
+	   			BOGOTA
+	   		</CountrySubentity>
+	   		<CountrySubentityCode>
+	   			11
+	   		</CountrySubentityCode>
+	   		<AddressLine>
+	   			<Line>
+	   				No aplica
+	   			</Line>
+	   		</AddressLine>
+	   		<Country>
+	   			<IdentificationCode>
+	   				CO
+	   			</IdentificationCode>
+	   			<Name languageID="es">
+	   				Colombia
+	   			</Name>
+	   		</Country>
+	   	</RegistrationAddress>
+	   	<TaxScheme>
+	   		<ID>
+	   			ZZ
+	   		</ID>
+	   		<Name>
+	   			No aplica
+	   		</Name>
+	   	</TaxScheme>
+	   </PartyTaxScheme>
+	   <PartyLegalEntity>
+	   	<RegistrationName>
+	   		Consumidor Final
+	   	</RegistrationName>
+	   	<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="7" schemeName="13">
+	   		222222222222
+	   	</CompanyID>
+	   	<CorporateRegistrationScheme>
+	   		<ID>
+	   			FEDS
+	   		</ID>
+	   	</CorporateRegistrationScheme>
+	   </PartyLegalEntity>
+	   <Contact>
+	   	<Telephone>
+	   		3166078657
+	   	</Telephone>
+	   	<ElectronicMail>
+	   		ivsmca90@gmail.com
+	   	</ElectronicMail>
+	   </Contact>
+	</Party>
  </cac:AccountingCustomerParty>`
 
 }
@@ -408,10 +459,10 @@ const accountingCustomerParty = () => {
 const payTotalLegal = () => {
 
     return `<cac:TaxRepresentativeParty>
-    <cac:PartyIdentification>
-       <cbc:ID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">989123123</cbc:ID>
-    </cac:PartyIdentification>
- </cac:TaxRepresentativeParty>
+               <cac:PartyIdentification>
+                  <cbc:ID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">989123123</cbc:ID>
+               </cac:PartyIdentification>
+            </cac:TaxRepresentativeParty>
 
  <cac:Delivery>
     <cac:DeliveryAddress>
@@ -497,177 +548,119 @@ const payTotalLegal = () => {
 
 const totalTributos = () => {
 
-    return `<cac:TaxTotal>      
-    <cbc:TaxAmount currencyID="COP">2424.01</cbc:TaxAmount>
-    <cac:TaxSubtotal>
-       <cbc:TaxableAmount currencyID="COP">12600.06</cbc:TaxableAmount>
-       <cbc:TaxAmount currencyID="COP">2394.01</cbc:TaxAmount>
-       <cac:TaxCategory>
-          <cbc:Percent>19.00</cbc:Percent>
-          <cac:TaxScheme>
-             <cbc:ID>01</cbc:ID>
-             <cbc:Name>IVA</cbc:Name>
-          </cac:TaxScheme>
-       </cac:TaxCategory>
-    </cac:TaxSubtotal>
+    return `<TaxTotal>
+					<TaxAmount currencyID="COP">
+						0.00
+					</TaxAmount>
+					<TaxSubtotal>
+						<TaxableAmount currencyID="COP">
+							1025.00
+						</TaxableAmount>
+						<TaxAmount currencyID="COP">
+							0.00
+						</TaxAmount>
+						<TaxCategory>
+							<Percent>
+								0.00
+							</Percent>
+							<TaxScheme>
+								<ID>
+									01
+								</ID>
+								<Name>
+									IVA
+								</Name>
+							</TaxScheme>
+						</TaxCategory>
+					</TaxSubtotal>
+				</TaxTotal>
 
-    <cac:TaxSubtotal>
-       <cbc:TaxableAmount currencyID="COP">187.50</cbc:TaxableAmount>
-       <cbc:TaxAmount currencyID="COP">30.00</cbc:TaxAmount>
-       <cac:TaxCategory>
-          <cbc:Percent>16.00</cbc:Percent>
-          <cac:TaxScheme>
-             <cbc:ID>01</cbc:ID>
-             <cbc:Name>IVA</cbc:Name>
-          </cac:TaxScheme>
-       </cac:TaxCategory>
-    </cac:TaxSubtotal>
-
- </cac:TaxTotal>
-
- <cac:TaxTotal>
-    
-    <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
-    <cac:TaxSubtotal>
-       <cbc:TaxableAmount currencyID="COP">0.00</cbc:TaxableAmount>
-       <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
-       <cac:TaxCategory>
-          <cbc:Percent>0.00</cbc:Percent>
-          <cac:TaxScheme>
-             <cbc:ID>03</cbc:ID>
-             <cbc:Name>ICA</cbc:Name>
-          </cac:TaxScheme>
-       </cac:TaxCategory>
-    </cac:TaxSubtotal>
-
- </cac:TaxTotal>
-
- <cac:TaxTotal>
-    
-    <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
-    <cac:TaxSubtotal>
-       <cbc:TaxableAmount currencyID="COP">0.00</cbc:TaxableAmount>
-       <cbc:TaxAmount currencyID="COP">0.00</cbc:TaxAmount>
-       <cac:TaxCategory>
-          <cbc:Percent>0.00</cbc:Percent>
-          <cac:TaxScheme>
-             <cbc:ID>04</cbc:ID>
-             <cbc:Name>INC</cbc:Name>
-          </cac:TaxScheme>
-       </cac:TaxCategory>
-    </cac:TaxSubtotal>
-
- </cac:TaxTotal>`
+            <LegalMonetaryTotal>
+					<LineExtensionAmount currencyID="COP">
+						1025.00
+					</LineExtensionAmount>
+					<TaxExclusiveAmount currencyID="COP">
+						1025.00
+					</TaxExclusiveAmount>
+					<TaxInclusiveAmount currencyID="COP">
+						1025.00
+					</TaxInclusiveAmount>
+					<PayableAmount currencyID="COP">
+						1025.00
+					</PayableAmount>
+				</LegalMonetaryTotal>`
 
 }
 
 const invoiceLine = () => {
 
-    return `<cac:InvoiceLine>
-      <cbc:ID>1</cbc:ID>
-      <cbc:InvoicedQuantity unitCode="EA">1.000000</cbc:InvoicedQuantity>
-      <cbc:LineExtensionAmount currencyID="COP">12600.06</cbc:LineExtensionAmount>
-      <cbc:FreeOfChargeIndicator>false</cbc:FreeOfChargeIndicator>
+    return `<InvoiceLine>
+						<ID>
+							1
+						</ID>
 
-      <cac:Delivery>
-         <cac:DeliveryLocation>
-            <cbc:ID schemeID="999" schemeName="EAN">613124312412</cbc:ID>
-         </cac:DeliveryLocation>
-      </cac:Delivery>
+						<InvoicedQuantity unitCode="PA">
+							1.00
+						</InvoicedQuantity>
 
-      <cac:AllowanceCharge>
-         <cbc:ID>1</cbc:ID>
-         <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
-         <cbc:AllowanceChargeReason>Descuento por cliente frecuente</cbc:AllowanceChargeReason>
-         <cbc:MultiplierFactorNumeric>33.33</cbc:MultiplierFactorNumeric>
-         <cbc:Amount currencyID="COP">6299.94</cbc:Amount>
-         <cbc:BaseAmount currencyID="COP">18900.00</cbc:BaseAmount>
-      </cac:AllowanceCharge>
+						<LineExtensionAmount currencyID="COP">
+							1025.00
+						</LineExtensionAmount>
 
-      <cac:TaxTotal>
-         <cbc:TaxAmount currencyID="COP">2394.01</cbc:TaxAmount>
-         <cac:TaxSubtotal>
-            <cbc:TaxableAmount currencyID="COP">12600.06</cbc:TaxableAmount>
-            <cbc:TaxAmount currencyID="COP">2394.01</cbc:TaxAmount>
-            <cac:TaxCategory>
-               <cbc:Percent>19.00</cbc:Percent>
-               <cac:TaxScheme>
-                  <cbc:ID>01</cbc:ID>
-                  <cbc:Name>IVA</cbc:Name>
-               </cac:TaxScheme>
-            </cac:TaxCategory>
-         </cac:TaxSubtotal>
-      </cac:TaxTotal>
-      <cac:Item>
-         <cbc:Description>AV OASYS -2.25 (8.4) LENTE DE CONTATO</cbc:Description>
-         <cac:SellersItemIdentification>
-            <cbc:ID>AOHV84-225</cbc:ID>
-         </cac:SellersItemIdentification>
-         <cac:AdditionalItemIdentification>
-            <cbc:ID schemeID="999" schemeName="EAN13">6543542313534</cbc:ID>
-         </cac:AdditionalItemIdentification>
-      </cac:Item>
-      <cac:Price>
-         <cbc:PriceAmount currencyID="COP">18900.00</cbc:PriceAmount>
-         <cbc:BaseQuantity unitCode="EA">1.000000</cbc:BaseQuantity>
-      </cac:Price>
-   </cac:InvoiceLine>
-   <cac:InvoiceLine>
-      <cbc:ID>2</cbc:ID>
-      <cbc:InvoicedQuantity unitCode="NIU">1.000000</cbc:InvoicedQuantity>
-      <cbc:LineExtensionAmount currencyID="COP">0.00</cbc:LineExtensionAmount>
-      <cbc:FreeOfChargeIndicator>true</cbc:FreeOfChargeIndicator>
-      <cac:DocumentReference>
-         <cbc:ID>TST1543623</cbc:ID>
-         <cbc:IssueDate>2019-03-02</cbc:IssueDate>
-         <cbc:DocumentTypeCode>1001-A</cbc:DocumentTypeCode>
-         <cbc:DocumentType>Bienes Propios</cbc:DocumentType>
-      </cac:DocumentReference>
-      <cac:DocumentReference>
-         <cbc:ID>GR8713461</cbc:ID>
-         <cbc:IssueDate>2019-03-02</cbc:IssueDate>
-         <cbc:DocumentTypeCode>AR</cbc:DocumentTypeCode>
-      </cac:DocumentReference>
-      <cac:PricingReference>
-         <cac:AlternativeConditionPrice>
-            <cbc:PriceAmount currencyID="COP">100.00</cbc:PriceAmount>
-            <cbc:PriceTypeCode>03</cbc:PriceTypeCode>
-            <cbc:PriceType>Otro valor</cbc:PriceType>
-         </cac:AlternativeConditionPrice>
-      </cac:PricingReference>
-      <cac:Delivery>
-         <cac:DeliveryLocation>
-            <cbc:ID schemeID="999" schemeName="EAN">613124312412</cbc:ID>
-         </cac:DeliveryLocation>
-      </cac:Delivery>
-      <cac:TaxTotal>
-         <cbc:TaxAmount currencyID="COP">30.00</cbc:TaxAmount>
-         <cac:TaxSubtotal>
-            <cbc:TaxableAmount currencyID="COP">187.50</cbc:TaxableAmount>
-            <cbc:TaxAmount currencyID="COP">30.00</cbc:TaxAmount>
-            <cac:TaxCategory>
-               <cbc:Percent>16.00</cbc:Percent>
-               <cac:TaxScheme>
-                  <cbc:ID>01</cbc:ID>
-                  <cbc:Name>IVA</cbc:Name>
-               </cac:TaxScheme>
-            </cac:TaxCategory>
-         </cac:TaxSubtotal>
-      </cac:TaxTotal>
-      <cac:Item>
-         <cbc:Description>Bolsa</cbc:Description>
-         <cac:SellersItemIdentification>
-            <cbc:ID>91412012412</cbc:ID>
-         </cac:SellersItemIdentification>
-         <cac:StandardItemIdentification>
-            <cbc:ID schemeAgencyID="10" schemeID="001" schemeName="UNSPSC">18937100-7</cbc:ID>
-         </cac:StandardItemIdentification>
-      </cac:Item>
-      <cac:Price>
-         <cbc:PriceAmount currencyID="COP">0.00</cbc:PriceAmount>
-         <cbc:BaseQuantity unitCode="NIU">1.000000</cbc:BaseQuantity>
-      </cac:Price>
-   </cac:InvoiceLine>`
+						<TaxTotal>
+
+							<TaxAmount currencyID="COP">
+								0.00
+							</TaxAmount>
+
+							<TaxSubtotal>
+
+								<TaxableAmount currencyID="COP">
+									1025.00
+								</TaxableAmount>
+
+								<TaxAmount currencyID="COP">
+									0.00
+								</TaxAmount>
+
+								<TaxCategory>
+									<Percent>
+										0.00
+									</Percent>
+									<TaxScheme>
+										<ID>
+											01
+										</ID>
+										<Name>
+											IVA
+										</Name>
+									</TaxScheme>
+								</TaxCategory>
+
+							</TaxSubtotal>
+
+						</TaxTotal>
+
+						<Item>
+
+							<Description>
+								servicio de parqueo
+							</Description>
+							<StandardItemIdentification>
+								<ID schemeID="999">
+									0000000
+								</ID>
+							</StandardItemIdentification>
+						</Item>
+						<Price>
+							<PriceAmount currencyID="COP">
+								1025.00
+							</PriceAmount>
+							<BaseQuantity unitCode="PA">
+								1.00
+							</BaseQuantity>
+						</Price>
+					</InvoiceLine>`
 
 }
 
