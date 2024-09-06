@@ -749,11 +749,9 @@ const createInvoice = async(req, res = response) => {
             .populate('user', 'name');
 
 
-        if (invoiceNew.electronica) {
-            const sendDian = await sendElectronica(invoiceNew);
-        }
-
-
+        // if (invoiceNew.electronica) {
+        //     const sendDian = await sendElectronica(invoiceNew);
+        // }
 
         res.json({
             ok: true,
