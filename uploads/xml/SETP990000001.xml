@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:schemaLocation="http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<UBLExtensions>
+		<UBLExtension>
+			<ExtensionContent>
+				<DianExtensions>
+					<InvoiceControl>
+						<InvoiceAuthorization>
+							18760000001
+						</InvoiceAuthorization>
+						<AuthorizationPeriod>
+							<StartDate>
+								19-01-2019
+							</StartDate>
+							<EndDate>
+								19-01-2030
+							</EndDate>
+						</AuthorizationPeriod>
+						<AuthorizedInvoices>
+							<Prefix>
+								SETP
+							</Prefix>
+							<From>
+								990000000
+							</From>
+							<To>
+								995000000
+							</To>
+						</AuthorizedInvoices>
+					</InvoiceControl>
+					<InvoiceSource>
+						<IdentificationCode listAgencyID="6" listAgencyName="United Nations Economic Commission for Europe" listSchemeURI="urn:oasis:names:specification:ubl:codelist:gc:CountryIdentificationCode-2.1">
+							CO
+						</IdentificationCode>
+					</InvoiceSource>
+					<SoftwareProvider>
+						<ProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="8" schemeName="31">
+							88243048
+						</ProviderID>
+						<SoftwareID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+							37fa0107-a7c3-4f84-934c-6a12faa17b40
+						</SoftwareID>
+					</SoftwareProvider>
+					<SoftwareSecurityCode schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
+						e2fe3bc89ed0b91f744db3c7e1f11fa6506c27330536ee34455f25f7d90bf1ed2ee3c35d2bce474c4c031157054557e2
+					</SoftwareSecurityCode>
+					<AuthorizationProvider>
+						<AuthorizationProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">
+							88243048
+						</AuthorizationProviderID>
+					</AuthorizationProvider>
+					<QRCode>
+						https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=b9d31fb9a2f4477ade2321f8e3302c18b730f4226a05484e827a3035904b8d195ad9d18baf164ed57aba413259d46954
+					</QRCode>
+				</DianExtensions>
+			</ExtensionContent>
+		</UBLExtension>
+		<UBLExtension>
+			<ExtensionContent>
+				<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+					<SignedInfo>
+						<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+						<SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
+						<Reference URI="">
+							<Transforms>
+								<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+								<Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+							</Transforms>
+							<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+							<DigestValue>
+								qay/VkXkY0cFgjQlavOc2Bjx0VunkKL5qvYcTDhJTR4=
+							</DigestValue>
+						</Reference>
+						<Reference URI="">
+							<Transforms>
+								<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+								<Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+							</Transforms>
+							<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
+							<DigestValue>
+								hTbbuAGQNLeSZL532DtZ4gFh/KBP4+Obp+2L6bLZEy4=
+							</DigestValue>
+						</Reference>
+					</SignedInfo>
+					<SignatureValue>
+						i3s9sqLS6MZkmCRBCqPaZEZKGIDssm1hGXZmNJJNkrCBn78uHhF5DJepIzOtD34VHFtrBRY+qTgWsvGFlXG0fZktQ0PC8+/2Vay+kjEPNzDtWZtbasKjD9GxWF8RseZwUL5SiwAFDE29j1Q/myxFZggNFO7u8DrYnB0Elnmo476MIeZ+fBCYn7Uoy+lUW0wSkPIX98iYcBg9Mg+HrCk/hcctf8wr+kHhmTffsRIjav/AoaVz2lGcD9VY8350WCy8BPnYf2Ch33nsDwQWG5SaxxicUqIqea1mLD5A8XQau9Fl9fUyWVNQcAmsYYRFdF8B2thO2Ov7CNdq5Qn9Er752w==
+					</SignatureValue>
+					<KeyInfo>
+						<X509Data>
+							<X509Certificate>
+								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
+							</X509Certificate>
+						</X509Data>
+					</KeyInfo>
+				</Signature>
+			</ExtensionContent>
+		</UBLExtension>
+	</UBLExtensions>
+	<UBLVersionID xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+		UBL 2.1
+	</UBLVersionID>
+	<CustomizationID>
+		10
+	</CustomizationID>
+	<ProfileID>
+		DIAN 2.1: Factura Electrónica de Venta
+	</ProfileID>
+	<ProfileExecutionID>
+		1
+	</ProfileExecutionID>
+	<ID>
+		990000001
+	</ID>
+	<UUID schemeID="1" schemeName="CUFE-SHA384">
+		b9d31fb9a2f4477ade2321f8e3302c18b730f4226a05484e827a3035904b8d195ad9d18baf164ed57aba413259d46954
+	</UUID>
+	<IssueDate>
+		2024-9-7
+	</IssueDate>
+	<IssueTime>
+		18:45:28-05:00
+	</IssueTime>
+	<InvoiceTypeCode>
+		01
+	</InvoiceTypeCode>
+	<DocumentCurrencyCode>
+		COP
+	</DocumentCurrencyCode>
+	<LineCountNumeric>
+		1
+	</LineCountNumeric>
+	<AccountingSupplierParty>
+		<AdditionalAccountID>
+			2
+		</AdditionalAccountID>
+		<Party>
+			<IndustryClassificationCode>
+				9511
+			</IndustryClassificationCode>
+			<PartyName>
+				<Name>
+					DISCOVERY SYSTEMS POS
+				</Name>
+			</PartyName>
+			<PhysicalLocation>
+				<Address>
+					<ID>
+						68001
+					</ID>
+					<CityName>
+						BUCARAMANGA
+					</CityName>
+					<CountrySubentity>
+						SANTANDER
+					</CountrySubentity>
+					<CountrySubentityCode>
+						68
+					</CountrySubentityCode>
+					<AddressLine>
+						<Line>
+							CR 18 34 43 CC PAEZ LC 310
+						</Line>
+					</AddressLine>
+					<Country>
+						<IdentificationCode>
+							CO
+						</IdentificationCode>
+						<Name languageID="es">
+							Colombia
+						</Name>
+					</Country>
+				</Address>
+			</PhysicalLocation>
+			<PartyTaxScheme>
+				<RegistrationName>
+					ELKIN DANIEL CASTILLO PEREZ
+				</RegistrationName>
+				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="6" schemeName="13">
+					88243048
+				</CompanyID>
+				<TaxLevelCode listName="48">
+					R-99-PN
+				</TaxLevelCode>
+				<RegistrationAddress>
+					<ID>
+						68001
+					</ID>
+					<CityName>
+						BUCARAMANGA
+					</CityName>
+					<CountrySubentity>
+						SANTANDER
+					</CountrySubentity>
+					<CountrySubentityCode>
+						68
+					</CountrySubentityCode>
+					<AddressLine>
+						<Line>
+							CR 18 34 43 CC PAEZ LC 310
+						</Line>
+					</AddressLine>
+					<Country>
+						<IdentificationCode>
+							CO
+						</IdentificationCode>
+						<Name languageID="es">
+							Colombia
+						</Name>
+					</Country>
+				</RegistrationAddress>
+				<TaxScheme>
+					<ID>
+						01
+					</ID>
+					<Name>
+						IVA
+					</Name>
+				</TaxScheme>
+			</PartyTaxScheme>
+			<PartyLegalEntity>
+				<RegistrationName>
+					ELKIN DANIEL CASTILLO PEREZ
+				</RegistrationName>
+				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="6" schemeName="13">
+					88243048
+				</CompanyID>
+				<CorporateRegistrationScheme>
+					<ID>
+						SETP
+					</ID>
+				</CorporateRegistrationScheme>
+			</PartyLegalEntity>
+			<Contact>
+				<Telephone>
+					3155962626
+				</Telephone>
+				<ElectronicMail>
+					elkindanielcastillo@gmail.com
+				</ElectronicMail>
+			</Contact>
+		</Party>
+	</AccountingSupplierParty>
+	<AccountingCustomerParty>
+		<AdditionalAccountID>
+			1
+		</AdditionalAccountID>
+		<Party>
+			<PartyName>
+				<Name>
+					ETICO SERRANO GOMEZ
+				</Name>
+			</PartyName>
+			<PartyTaxScheme>
+				<RegistrationName>
+					ETICO SERRANO GOMEZ
+				</RegistrationName>
+				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="7" schemeName="31">
+					892300678
+				</CompanyID>
+				<TaxLevelCode listName="48">
+					R-99-PN
+				</TaxLevelCode>
+				<TaxScheme>
+					<ID>
+						01
+					</ID>
+					<Name>
+						IVA
+					</Name>
+				</TaxScheme>
+			</PartyTaxScheme>
+			<PartyLegalEntity>
+				<RegistrationName>
+					ETICO SERRANO GOMEZ
+				</RegistrationName>
+				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="7" schemeName="31">
+					892300678
+				</CompanyID>
+				<CorporateRegistrationScheme>
+					<ID>
+						SETP
+					</ID>
+				</CorporateRegistrationScheme>
+			</PartyLegalEntity>
+			<Contact>
+				<Telephone>
+					3156889563
+				</Telephone>
+				<ElectronicMail>
+					FARMACIA3160@ETICOS.COM
+				</ElectronicMail>
+			</Contact>
+		</Party>
+	</AccountingCustomerParty>
+	<PaymentMeans>
+		<ID>
+			1
+		</ID>
+		<PaymentMeansCode>
+			10
+		</PaymentMeansCode>
+		<PaymentDueDate>
+			2024-9-7
+		</PaymentDueDate>
+	</PaymentMeans>
+	<TaxTotal>
+		<TaxAmount currencyID="COP">
+			4750.00
+		</TaxAmount>
+		<TaxSubtotal>
+			<TaxableAmount currencyID="COP">
+				25000.00
+			</TaxableAmount>
+			<TaxAmount currencyID="COP">
+				4750.00
+			</TaxAmount>
+			<TaxCategory>
+				<Percent>
+					19.00
+				</Percent>
+				<TaxScheme>
+					<ID>
+						01
+					</ID>
+					<Name>
+						IVA
+					</Name>
+				</TaxScheme>
+			</TaxCategory>
+		</TaxSubtotal>
+	</TaxTotal>
+	<LegalMonetaryTotal>
+		<LineExtensionAmount currencyID="COP">
+			25000.00
+		</LineExtensionAmount>
+		<TaxExclusiveAmount currencyID="COP">
+			25000.00
+		</TaxExclusiveAmount>
+		<TaxInclusiveAmount currencyID="COP">
+			29750.00
+		</TaxInclusiveAmount>
+		<PayableAmount currencyID="COP">
+			29750.00
+		</PayableAmount>
+	</LegalMonetaryTotal>
+	<InvoiceLine>
+		<ID>
+			1
+		</ID>
+		<InvoicedQuantity unitCode="94">
+			1.00
+		</InvoicedQuantity>
+		<LineExtensionAmount currencyID="COP">
+			25000.00
+		</LineExtensionAmount>
+		<TaxTotal>
+			<TaxAmount currencyID="COP">
+				4750.00
+			</TaxAmount>
+			<TaxSubtotal>
+				<TaxableAmount currencyID="COP">
+					25000.00
+				</TaxableAmount>
+				<TaxAmount currencyID="COP">
+					4750.00
+				</TaxAmount>
+				<TaxCategory>
+					<Percent>
+						19.00
+					</Percent>
+					<TaxScheme>
+						<ID>
+							01
+						</ID>
+						<Name>
+							IVA
+						</Name>
+					</TaxScheme>
+				</TaxCategory>
+			</TaxSubtotal>
+		</TaxTotal>
+		<Item>
+			<Description>
+				cargador v8 marca speedsong  sg-53C
+			</Description>
+			<StandardItemIdentification>
+				<ID schemeID="999">
+					23082024
+				</ID>
+			</StandardItemIdentification>
+		</Item>
+		<Price>
+			<PriceAmount currencyID="COP">
+				25000.00
+			</PriceAmount>
+			<BaseQuantity unitCode="94">
+				1.00
+			</BaseQuantity>
+		</Price>
+	</InvoiceLine>
+</Invoice>
