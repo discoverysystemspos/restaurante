@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:schemaLocation="http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<UBLExtensions>
+<?xml version="1.0" encoding="UTF-8"?><Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:schemaLocation="http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><UBLExtensions>
 		<UBLExtension>
 			<ExtensionContent>
 				<DianExtensions>
@@ -50,53 +48,16 @@
 						</AuthorizationProviderID>
 					</AuthorizationProvider>
 					<QRCode>
-						https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=b9d31fb9a2f4477ade2321f8e3302c18b730f4226a05484e827a3035904b8d195ad9d18baf164ed57aba413259d46954
+						https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=88049383b600851137a22cc4d8321b4ccc0783a8b3db3cbc577e14bb419c791bc22032cdda731a975927f8b09bd7fe62
 					</QRCode>
 				</DianExtensions>
 			</ExtensionContent>
 		</UBLExtension>
 		<UBLExtension>
 			<ExtensionContent>
-				<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
-					<SignedInfo>
-						<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
-						<SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" />
-						<Reference URI="">
-							<Transforms>
-								<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
-								<Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
-							</Transforms>
-							<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
-							<DigestValue>
-								qay/VkXkY0cFgjQlavOc2Bjx0VunkKL5qvYcTDhJTR4=
-							</DigestValue>
-						</Reference>
-						<Reference URI="">
-							<Transforms>
-								<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
-								<Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
-							</Transforms>
-							<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256" />
-							<DigestValue>
-								hTbbuAGQNLeSZL532DtZ4gFh/KBP4+Obp+2L6bLZEy4=
-							</DigestValue>
-						</Reference>
-					</SignedInfo>
-					<SignatureValue>
-						i3s9sqLS6MZkmCRBCqPaZEZKGIDssm1hGXZmNJJNkrCBn78uHhF5DJepIzOtD34VHFtrBRY+qTgWsvGFlXG0fZktQ0PC8+/2Vay+kjEPNzDtWZtbasKjD9GxWF8RseZwUL5SiwAFDE29j1Q/myxFZggNFO7u8DrYnB0Elnmo476MIeZ+fBCYn7Uoy+lUW0wSkPIX98iYcBg9Mg+HrCk/hcctf8wr+kHhmTffsRIjav/AoaVz2lGcD9VY8350WCy8BPnYf2Ch33nsDwQWG5SaxxicUqIqea1mLD5A8XQau9Fl9fUyWVNQcAmsYYRFdF8B2thO2Ov7CNdq5Qn9Er752w==
-					</SignatureValue>
-					<KeyInfo>
-						<X509Data>
-							<X509Certificate>
-								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
-							</X509Certificate>
-						</X509Data>
-					</KeyInfo>
-				</Signature>
-			</ExtensionContent>
+			<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>WNAg3bfKIb988owZGnQfOfEpqFM+bPYseuK1aL89HNU=</DigestValue></Reference><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><DigestValue>hTbbuAGQNLeSZL532DtZ4gFh/KBP4+Obp+2L6bLZEy4=</DigestValue></Reference></SignedInfo><SignatureValue>glKWQX0bZean8zQHiXT3H+58UMHdfMZpaVRynI785LCPWwbmJ6kluC8m7ybOP4/e9MsWfFt+4qyBPFUUTdM6se0WPe+QLMjnNZvB/4pjly5GBlewyUkCB0KgFSKzCKdA20NrNMllgGtlz9fZdOP1l/qmfoV8FnkH1lnSt4y7oDqawedU5iXx5zL6zHTorY+zgTfdHje6YbWMxnJiB+GnWJuOnN35j8qJOnhRZZK/TvlGn2Znckd+BGGASMV9DpqQmZYSMLxpw34R08mjYvBJtXXOf1Adu1O0aZ2cOBIBd5W80nF+8ZJfIuTdTTNscRpd62XWHxxwJGLW05NbvFS72g==</SignatureValue><KeyInfo><X509Data><X509Certificate>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</X509Certificate></X509Data></KeyInfo></Signature></ExtensionContent>
 		</UBLExtension>
-	</UBLExtensions>
-	<UBLVersionID xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+	</UBLExtensions><UBLVersionID xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
 		UBL 2.1
 	</UBLVersionID>
 	<CustomizationID>
@@ -112,13 +73,13 @@
 		990000001
 	</ID>
 	<UUID schemeID="1" schemeName="CUFE-SHA384">
-		b9d31fb9a2f4477ade2321f8e3302c18b730f4226a05484e827a3035904b8d195ad9d18baf164ed57aba413259d46954
+		88049383b600851137a22cc4d8321b4ccc0783a8b3db3cbc577e14bb419c791bc22032cdda731a975927f8b09bd7fe62
 	</UUID>
 	<IssueDate>
-		2024-9-7
+      2024-9-9
 	</IssueDate>
 	<IssueTime>
-		18:45:28-05:00
+      14:53:1-05:00
 	</IssueTime>
 	<InvoiceTypeCode>
 		01
@@ -128,8 +89,7 @@
 	</DocumentCurrencyCode>
 	<LineCountNumeric>
 		1
-	</LineCountNumeric>
-	<AccountingSupplierParty>
+	</LineCountNumeric><AccountingSupplierParty>
 		<AdditionalAccountID>
 			2
 		</AdditionalAccountID>
@@ -239,8 +199,7 @@
 				</ElectronicMail>
 			</Contact>
 		</Party>
-	</AccountingSupplierParty>
-	<AccountingCustomerParty>
+	</AccountingSupplierParty><AccountingCustomerParty>
 		<AdditionalAccountID>
 			1
 		</AdditionalAccountID>
@@ -291,19 +250,17 @@
 				</ElectronicMail>
 			</Contact>
 		</Party>
-	</AccountingCustomerParty>
-	<PaymentMeans>
+	</AccountingCustomerParty><PaymentMeans>
 		<ID>
 			1
 		</ID>
 		<PaymentMeansCode>
 			10
 		</PaymentMeansCode>
-		<PaymentDueDate>
-			2024-9-7
+		<PaymentDueDate>         
+         2024-9-9
 		</PaymentDueDate>
-	</PaymentMeans>
-	<TaxTotal>
+	</PaymentMeans><TaxTotal>
 		<TaxAmount currencyID="COP">
 			4750.00
 		</TaxAmount>
@@ -329,7 +286,7 @@
 			</TaxCategory>
 		</TaxSubtotal>
 	</TaxTotal>
-	<LegalMonetaryTotal>
+   <LegalMonetaryTotal>
 		<LineExtensionAmount currencyID="COP">
 			25000.00
 		</LineExtensionAmount>
@@ -342,8 +299,7 @@
 		<PayableAmount currencyID="COP">
 			29750.00
 		</PayableAmount>
-	</LegalMonetaryTotal>
-	<InvoiceLine>
+	</LegalMonetaryTotal><InvoiceLine>
 		<ID>
 			1
 		</ID>
@@ -397,5 +353,4 @@
 				1.00
 			</BaseQuantity>
 		</Price>
-	</InvoiceLine>
-</Invoice>
+	</InvoiceLine></Invoice>

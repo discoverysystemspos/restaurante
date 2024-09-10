@@ -8,6 +8,7 @@ const fs = require('fs');
 const forge = require('node-forge');
 const { DOMParser, XMLSerializer } = require('xmldom');
 const { SignedXml } = require('xml-crypto');
+const xpath = require('xpath');
 
 // MODELS
 const Invoice = require('../models/invoices.model');
@@ -105,10 +106,6 @@ const sendElectronica = async(invoice) => {
 
     const xml = await firma2(XML);
 
-    console.log(xml);
-
-
-
     // Escribir el archivo XML
     await fs.writeFile(`uploads/xml/${dian.prefijo}${dian.number}.xml`, xml, (err) => {
         if (err) {
@@ -199,8 +196,47 @@ const firma2 = async(xml) => {
     // Serializar el XML de vuelta a cadena
     const finalXml = new XMLSerializer().serializeToString(doc);
 
+    // VALIDAR FIRMAS DEL XML
+    await validateFirma(finalXml, key, cert);
+
     // Obtener el XML firmado
     return finalXml;
+
+}
+
+const validateFirma = (xmlString, k, c) => {
+
+    // Parsear el XML firmado
+    const doc = new DOMParser().parseFromString(xmlString, 'application/xml');
+
+    // Utilizar xpath para encontrar el nodo de la firma
+    const select = xpath.useNamespaces({ "ds": "http://www.w3.org/2000/09/xmldsig#" });
+    const signatureNode = select("//*[local-name(.)='Signature']", doc)[0];
+    if (!signatureNode) {
+        throw new Error('No se encontró la firma en el documento.');
+    }
+
+    // Crear la instancia para validar la firma
+    const sig = new SignedXml();
+
+    // Cargar la firma desde el nodo Signature
+    sig.loadSignature(signatureNode);
+
+    // Extraer el certificado del nodo de firma
+    const certBase64 = sig.getKeyInfoContent({ publicCert: c }).match(/<X509Certificate>([^<]+)<\/X509Certificate>/)[1];
+    const certPem = `-----BEGIN CERTIFICATE-----\n${certBase64.match(/.{1,64}/g).join('\n')}\n-----END CERTIFICATE-----`;
+
+    // Parsear el certificado utilizando forge
+    const cert = forge.pki.certificateFromPem(certPem);
+
+    // Verificar la firma con respecto al contenido firmado
+    const isValid = sig.checkSignature(xmlString);
+
+    if (isValid) {
+        console.log('La firma es válida.');
+    } else {
+        console.log('La firma no es válida:', sig.validationErrors);
+    }
 
 }
 
