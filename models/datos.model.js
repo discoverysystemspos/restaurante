@@ -217,6 +217,11 @@ const DatoSchema = Schema({
         default: false
     },
 
+    marca: {
+        type: Boolean,
+        default: false
+    },
+
     status: {
         type: Boolean,
         default: true
