@@ -144,6 +144,9 @@ const InvoiceSchema = Schema({
         type: String,
         default: 'Local'
     },
+    placa: {
+        type: String
+    },
     amount: {
         type: Number,
         require: true

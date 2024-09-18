@@ -222,6 +222,11 @@ const DatoSchema = Schema({
         default: false
     },
 
+    placa: {
+        type: Boolean,
+        default: false
+    },
+
     status: {
         type: Boolean,
         default: true
