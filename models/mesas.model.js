@@ -115,6 +115,12 @@ const MesasSchema = Schema({
     porcentaje: {
         type: Number,
     },
+    placa: {
+        type: String,
+    },
+    notaf: {
+        type: String,
+    },
     carrito: [carritoSchema],
     fecha: {
         type: Date,
