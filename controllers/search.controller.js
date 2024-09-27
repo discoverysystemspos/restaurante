@@ -12,6 +12,7 @@ const Categoria = require('../models/categorias.model');
 const Pedido = require('../models/pedidos.model');
 const Car = require('../models/cars.model');
 const Proveedor = require('../models/proveedores.model');
+const Vehiculo = require('../models/vehiculos.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -197,6 +198,22 @@ const search = async(req, res = response) => {
                 .limit(20)
                 .populate('typeparq'),
                 Car.countDocuments()
+            ]);
+            break;
+
+        case 'vehiculo':
+
+            // data = await Client.find({ name: regex });
+            [data, total] = await Promise.all([
+                Vehiculo.find({
+                    $or: [
+                        { placa: regex },
+                    ]
+                })
+                .skip(0)
+                .limit(20)
+                .populate('client'),
+                Vehiculo.countDocuments()
             ]);
             break;
 

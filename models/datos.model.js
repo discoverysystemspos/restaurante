@@ -227,6 +227,11 @@ const DatoSchema = Schema({
         default: false
     },
 
+    taller: {
+        type: Boolean,
+        default: false
+    },
+
     status: {
         type: Boolean,
         default: true
