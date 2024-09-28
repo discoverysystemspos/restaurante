@@ -10,6 +10,16 @@ const notaSchema = Schema({
     }
 });
 
+const imagesSchema = Schema({
+    img: {
+        type: String
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 const carritoSchema = Schema({
     product: {
         type: Schema.Types.ObjectId,
@@ -121,6 +131,7 @@ const MesasSchema = Schema({
     notaf: {
         type: String,
     },
+    images: [imagesSchema],
     carrito: [carritoSchema],
     fecha: {
         type: Date,

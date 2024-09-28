@@ -5,6 +5,7 @@ const Product = require('../models/products.model');
 const User = require('../models/users.model');
 const Datos = require('../models/datos.model');
 const Department = require('../models/departments.model');
+const Mesa = require('../models/mesas.model');
 
 /** =====================================================================
  *  DELETE IMAGE
@@ -106,6 +107,26 @@ const updateImage = async(tipo, id, nameFile) => {
             await department.save();
             return true;
 
+            break;
+
+        case 'taller':
+
+            const mesa = await Mesa.findById(id);
+            if (!mesa) {
+                return false;
+            }
+
+            mesa.images.push({
+                img: nameFile,
+                fecha: new Date(Date.now())
+            })
+
+            await mesa.save();
+            return true;
+
+
+
+            // BREAK PRODUCT
             break;
 
         default:

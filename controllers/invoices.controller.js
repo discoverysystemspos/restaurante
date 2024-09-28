@@ -780,7 +780,14 @@ const postQueryInvoice = async(req, res = response) => {
 
     try {
 
-        const query = req.body;
+        let { desde, hasta, ...query } = req.body;
+        if (!desde) {
+            desde = 0;
+        }
+
+        if (!hasta) {
+            hasta = 50;
+        }
 
         const invoices = await Invoice.find(query)
             .populate('client')
@@ -795,6 +802,8 @@ const postQueryInvoice = async(req, res = response) => {
             .populate('user', 'name')
             .populate('mesero', 'name')
             .populate('mesa', 'name')
+            .skip(desde)
+            .limit(hasta)
             .sort({ invoice: -1 });
 
         let montos = 0;

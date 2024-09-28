@@ -48,7 +48,7 @@ const createVehiculo = async(req, res = response) => {
         vehiculo.placa = vehiculo.placa.trim().toUpperCase();
 
         // VALIDA PLACA
-        const validatePlaca = await Vehiculo.find({ placa: vehiculo.placa });
+        const validatePlaca = await Vehiculo.findOne({ placa: vehiculo.placa });
         if (validatePlaca) {
             return res.status(400).json({
                 ok: false,

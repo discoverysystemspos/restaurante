@@ -4,6 +4,16 @@ const autoIncrement = require('mongoose-auto-increment');
 
 autoIncrement.initialize(connection);
 
+const imagesSchema = Schema({
+    img: {
+        type: String
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 // PRODUCTS SCHEMA
 const ProductosSchema = Schema({
 
@@ -244,6 +254,7 @@ const InvoiceSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Alquileres'
     },
+    images: [imagesSchema],
     fecha: {
         type: Date,
         default: Date.now
