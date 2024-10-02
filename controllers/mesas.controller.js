@@ -11,7 +11,7 @@ const getMesas = async(req, res = response) => {
 
         const [mesas, total] = await Promise.all([
             Mesas.find()
-            .populate('mesero', 'name')
+            .populate('mesero', 'name uid')
             .populate('cliente', 'name'),
             Mesas.countDocuments()
         ]);
