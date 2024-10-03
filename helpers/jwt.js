@@ -25,7 +25,7 @@ const generarJWT = (uid) => {
         };
 
         /* The code `jwt.sign(payload, process.env.SECRET_SEED_JWT, { expiresIn: '4h' }, (err, token)
-        => { ... })` is generating a JSON Web Token (JWT) using the `jsonwebtoken` library. */
+        => { ... })` is generating a JSON Web Token (JWT) using the `jsonwebtoken` library. excelent*/
         jwt.sign(payload, process.env.SECRET_SEED_JWT, {
             expiresIn: '15h'
         }, (err, token) => {
