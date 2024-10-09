@@ -237,6 +237,10 @@ const DatoSchema = Schema({
         default: false
     },
 
+    kni: {
+        type: String
+    },
+
     vence: {
         type: Date
     },
