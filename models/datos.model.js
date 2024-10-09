@@ -232,6 +232,15 @@ const DatoSchema = Schema({
         default: false
     },
 
+    nube: {
+        type: Boolean,
+        default: false
+    },
+
+    vence: {
+        type: Date
+    },
+
     status: {
         type: Boolean,
         default: true
