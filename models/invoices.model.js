@@ -150,6 +150,10 @@ const InvoiceSchema = Schema({
         type: String,
         require: true
     },
+    marca: {
+        type: String,
+        require: false
+    },
     venta: {
         type: String,
         default: 'Local'

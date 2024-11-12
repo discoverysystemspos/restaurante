@@ -780,7 +780,7 @@ const postQueryInvoice = async(req, res = response) => {
 
     try {
 
-        let { desde, hasta, ...query } = req.body;
+        let { desde, hasta, sort, ...query } = req.body;
         if (!desde) {
             desde = 0;
         }
@@ -789,7 +789,9 @@ const postQueryInvoice = async(req, res = response) => {
             hasta = 50;
         }
 
-        const invoices = await Invoice.find(query)
+        const [invoices, total] = await Promise.all([
+
+            Invoice.find(query)
             .populate('client')
             .populate({
                 path: 'products.product',
@@ -804,7 +806,27 @@ const postQueryInvoice = async(req, res = response) => {
             .populate('mesa', 'name')
             .skip(desde)
             .limit(hasta)
-            .sort({ invoice: -1 });
+            .sort(sort),
+            Invoice.countDocuments()
+
+        ])
+
+        // const invoices = await Invoice.find(query)
+        //     .populate('client')
+        //     .populate({
+        //         path: 'products.product',
+        //         model: 'Product',
+        //         populate: {
+        //             path: 'taxid',
+        //             model: 'Tax',
+        //         }
+        //     })
+        //     .populate('user', 'name')
+        //     .populate('mesero', 'name')
+        //     .populate('mesa', 'name')
+        //     .skip(desde)
+        //     .limit(hasta)
+        //     .sort(sort);
 
         let montos = 0;
         let costos = 0;
@@ -823,6 +845,7 @@ const postQueryInvoice = async(req, res = response) => {
 
         res.json({
             ok: true,
+            total,
             invoices,
             montos,
             costos,

@@ -346,7 +346,7 @@ const returnStock = async(products, invoice, user) => {
                     product.inventario += products[i].qty;
 
                     // COMPROBAR SI EL PRODUCTO SE AGOTA
-                    const stock = (product.stock + product.returned + product.bought) - (product.sold + product.damaged);
+                    const stock = product.inventario;
 
                     if (stock > 0) {
 
