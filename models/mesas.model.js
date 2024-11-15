@@ -108,6 +108,10 @@ const MesasSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Clients'
     },
+    piso: {
+        type: Schema.Types.ObjectId,
+        ref: 'Pisos'
+    },
     nota: [notaSchema],
     comanda: [comandaSchema],
     status: {

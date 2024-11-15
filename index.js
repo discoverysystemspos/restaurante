@@ -73,6 +73,7 @@ app.use('/api/tax', require('./routes/tax.route'));
 app.use('/api/typeparq', require('./routes/typeparq.route'));
 app.use('/api/uploads', require('./routes/uploads.route'));
 app.use('/api/vehiculos', require('./routes/vehiculos.route'));
+app.use('/api/pisos', require('./routes/pisos.route'));
 
 // LOGS
 app.use('/api/log/products', require('./routes/log.products.route'));

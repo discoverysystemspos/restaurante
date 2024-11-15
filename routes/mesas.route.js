@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getMesas, createMesas, getMesaId, updateMesa, getMesasComanda, updateNota, deleteIngrediente, updateMenu, deletClientMesa } = require('../controllers/mesas.controller');
+const { getMesas, createMesas, getMesaId, updateMesa, getMesasComanda, updateNota, deleteIngrediente, updateMenu, deletClientMesa, getQueryMesas } = require('../controllers/mesas.controller');
 
 const router = Router();
 
@@ -37,6 +37,13 @@ router.get('/:id', getMesaId);
  *  GET MESA ID
 =========================================================================*/
 
+/** =====================================================================
+ *  POST QUERY MESA
+=========================================================================*/
+router.post('/query', getQueryMesas);
+/** =====================================================================
+ *  POST QUERY MESA
+=========================================================================*/
 
 /** =====================================================================
  *  CREATE MESAS

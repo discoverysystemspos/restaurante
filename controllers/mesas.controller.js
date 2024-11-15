@@ -3,6 +3,41 @@ const { response } = require('express');
 const Mesas = require('../models/mesas.model');
 
 /** =====================================================================
+ *  GET MESA QUERY
+=========================================================================*/
+const getQueryMesas = async(req, res = response) => {
+
+    try {
+
+        const { desde, hasta, sort, ...query } = req.body;
+
+        const [mesas, total] = await Promise.all([
+            Mesas.find(query)
+            .skip(desde)
+            .limit(hasta)
+            .populate('mesero', 'name uid')
+            .populate('piso', 'name piid')
+            .populate('cliente', 'name'),
+            Mesas.countDocuments()
+        ]);
+
+        res.json({
+            ok: true,
+            mesas,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+}
+
+/** =====================================================================
  *  GET MESA
 =========================================================================*/
 const getMesas = async(req, res = response) => {
@@ -12,6 +47,7 @@ const getMesas = async(req, res = response) => {
         const [mesas, total] = await Promise.all([
             Mesas.find()
             .populate('mesero', 'name uid')
+            .populate('piso', 'name piid')
             .populate('cliente', 'name'),
             Mesas.countDocuments()
         ]);
@@ -44,6 +80,7 @@ const getMesasComanda = async(req, res = response) => {
         const [mesas, total] = await Promise.all([
             Mesas.find({ disponible: false })
             .populate('mesero', 'name')
+            .populate('piso', 'name piid')
             .populate('cliente', 'name')
             .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
             .populate('carrito.product.taxid', 'name valor')
@@ -81,6 +118,7 @@ const getMesaId = async(req, res = response) => {
             .populate('carrito.product.taxid', 'name valor')
             .populate('comanda.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
+            .populate('piso', 'name piid')
             .populate('mesero', 'name');
 
         res.json({
@@ -179,6 +217,7 @@ const updateMesa = async(req, res = response) => {
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, campos, { new: true, useFindAndModify: false })
             .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
             .populate('carrito.product.taxid', 'name valor')
+            .populate('piso', 'name piid')
             .populate('comanda.product', 'name cost comanda tipo')
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
@@ -246,6 +285,7 @@ const updateNota = async(req, res = response) => {
             const mesaUpdate = await Mesas.findByIdAndUpdate(mid, mesaDB, { new: true, useFindAndModify: false })
                 .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
                 .populate('carrito.product.taxid', 'name valor')
+                .populate('piso', 'name piid')
                 .populate('cliente', 'name cedula phone email address city cid')
                 .populate('mesero', 'name');
 
@@ -262,6 +302,7 @@ const updateNota = async(req, res = response) => {
             const mesaUpdate = await Mesas.findByIdAndUpdate(mid, { nota }, { new: true, useFindAndModify: false })
                 .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
                 .populate('carrito.product.taxid', 'name valor')
+                .populate('piso', 'name piid')
                 .populate('cliente', 'name cedula phone email address city cid')
                 .populate('mesero', 'name');
 
@@ -309,6 +350,7 @@ const updateMenu = async(req, res = response) => {
         const mesaUpdate = await Mesas.findByIdAndUpdate(mid, { menu }, { new: true, useFindAndModify: false })
             .populate('carrito.product', 'name cost comanda tipo inventario tax impuesto taxid price wholesale mayoreo')
             .populate('carrito.product.taxid', 'name valor')
+            .populate('piso', 'name piid')
             .populate('cliente', 'name cedula phone email address city cid')
             .populate('mesero', 'name');
 
@@ -450,5 +492,6 @@ module.exports = {
     updateNota,
     deleteIngrediente,
     updateMenu,
-    deletClientMesa
+    deletClientMesa,
+    getQueryMesas
 };
