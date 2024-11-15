@@ -5,7 +5,11 @@ const privSchema = Schema({
     cierre: {
         type: Boolean,
         default: true
-    }
+    },
+    comandas: {
+        type: Boolean,
+        default: true
+    },
 
 });
 
@@ -27,7 +31,7 @@ const UserSchema = Schema({
         require: true
     },
 
-    privilegios: [privSchema],
+    privilegios: privSchema,
 
     role: {
         type: String,
