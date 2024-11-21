@@ -249,6 +249,16 @@ const DatoSchema = Schema({
         type: Boolean,
         default: true
     },
+    
+    paiddirect: {
+        type: Boolean,
+        default: false
+    },
+
+    kiosco: {
+        type: Boolean,
+        default: false
+    },
 
     fechakardex: {
         type: Date
