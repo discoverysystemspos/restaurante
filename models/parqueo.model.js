@@ -29,6 +29,11 @@ const ParqueoSchema = Schema({
         type: Number
     },
 
+    plenas: {
+        type: Number,
+        default: 0
+    },
+    
     total: {
         type: Number
     },
