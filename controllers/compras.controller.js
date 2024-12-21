@@ -4,7 +4,7 @@ const Compra = require('../models/compras.model');
 const { compraUpdate } = require('../helpers/products-stock');
 
 /** =====================================================================
- *  GET PARQUEO
+ *  GET QUERY
 =========================================================================*/
 const getCompras = async(req, res = response) => {
 
@@ -13,13 +13,14 @@ const getCompras = async(req, res = response) => {
         const { desde, hasta, sort, ...query } = req.body;
 
         const [compras, total] = await Promise.all([
-            Compras.find(query)
+            Compra.find(query)
             .skip(desde)
             .limit(hasta)
             .sort(sort)
             .populate('products')
+            .populate('proveedor')
             .populate('user', 'name email'),
-            Compras.countDocuments(query)
+            Compra.countDocuments(query)
         ]);
 
         res.json({
@@ -39,7 +40,7 @@ const getCompras = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  GET ONE PARQUEO
+ *  GET ONE ID
 =========================================================================*/
 const getComprasId = async(req, res = response) => {
 
@@ -75,7 +76,7 @@ const getComprasId = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  CREATE PARQUEO
+ *  CREATE
 =========================================================================*/
 const createCompras = async(req, res = response) => {
 
@@ -108,7 +109,7 @@ const createCompras = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  UPDATE PARQUEO
+ *  UPDATE
 =========================================================================*/
 const updateCompras = async(req, res = response) => {
 

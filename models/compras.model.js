@@ -41,6 +41,10 @@ const PaymentSchema = Schema({
     },
     description: {
         type: String
+    },
+    fecha: {
+        type: Date,
+        default: Date.now
     }
 });
 
