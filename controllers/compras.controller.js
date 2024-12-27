@@ -1,7 +1,7 @@
 const { response } = require('express');
 
 const Compra = require('../models/compras.model');
-const { compraUpdate } = require('../helpers/products-stock');
+const { returnCompraUpdate } = require('../helpers/products-stock');
 
 /** =====================================================================
  *  GET QUERY
@@ -149,10 +149,50 @@ const updateCompras = async(req, res = response) => {
 
 };
 
+/** =====================================================================
+ *  RETURN
+=========================================================================*/
+const returnCompra = async(req, res = response) => {
+
+    try {
+
+        const comid = req.params.id;        
+
+        const compraDB = await Compra.findById({ _id: comid });
+        if (!compraDB.status) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'esta factura de compra ya ha sido devuelta!'
+            });
+        }
+
+        compraDB.status = false;
+        compraDB.credito = false;
+
+        await returnCompraUpdate(compraDB);
+
+        await compraDB.save();
+
+        res.json({
+            ok: true,
+            msg: 'La compra fue cancelada exitosamente!'
+        });
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+}
+
 // EXPORTS
 module.exports = {
     getCompras,
     createCompras,
     updateCompras,
-    getComprasId
+    getComprasId,
+    returnCompra
 };

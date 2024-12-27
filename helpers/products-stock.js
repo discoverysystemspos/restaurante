@@ -444,14 +444,39 @@ const returnStock = async(products, invoice, user) => {
             });
         }
     }
-    /** =====================================================================
-     *  RETURN STOCK
-    =========================================================================*/
+
+/** =====================================================================
+ *  RETURN STOCK
+=========================================================================*/
+const returnCompraUpdate = async(compra) => {
+
+    try {
+
+        for (const producto of compra.products) {            
+
+            const productDB = await Product.findById(producto.product)
+
+            productDB.inventario -= producto.qty;
+            await productDB.save();            
+        }
+
+        return;
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+}
 
 // EXPORT
 module.exports = {
     soldProduct,
     returnStock,
     compraUpdate,
-    trasladoStock
+    trasladoStock,
+    returnCompraUpdate
 };

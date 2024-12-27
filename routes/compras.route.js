@@ -1,5 +1,5 @@
 /** =====================================================================
- *  PARQUEO ROUTER
+ *  COMPRAS ROUTER
 =========================================================================*/
 const { Router } = require('express');
 const { check } = require('express-validator');
@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getCompras, getComprasId, createCompras, updateCompras } = require('../controllers/compras.controller');
+const { getCompras, getComprasId, createCompras, updateCompras, returnCompra } = require('../controllers/compras.controller');
 
 const router = Router();
 
@@ -24,7 +24,7 @@ router.post('/query', getCompras);
 router.get('/one/:id', getComprasId);
 
 /** =====================================================================
- *  CREATE PARQUEO
+ *  CREATE 
 =========================================================================*/
 router.post('/', [
         validarJWT,
@@ -34,9 +34,14 @@ router.post('/', [
 );
 
 /** =====================================================================
- *  UPDATE PARQUEO
+ *  UPDATE
 =========================================================================*/
 router.put('/:id', validarJWT, updateCompras);
+
+/** =====================================================================
+ *  RETURN COMPRA
+=========================================================================*/
+router.delete('/:id', validarJWT, returnCompra);
 
 // EXPORTS
 module.exports = router;
