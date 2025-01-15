@@ -1,7 +1,7 @@
 const { response } = require('express');
 
 const Compra = require('../models/compras.model');
-const { returnCompraUpdate } = require('../helpers/products-stock');
+const { returnCompraUpdate, compraUpdate } = require('../helpers/products-stock');
 
 /** =====================================================================
  *  GET QUERY

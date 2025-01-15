@@ -9,7 +9,7 @@ const getBodega = async(req, res = response) => {
 
     try {
 
-        const { desde, hasta, ...query } = req.body;
+        const { desde, hasta, ...query } = req.body;        
 
         const [bodegas, total] = await Promise.all([
             Bodega.find(query)
@@ -75,7 +75,7 @@ const getBodegaId = async(req, res = response) => {
 =========================================================================*/
 const createBodega = async(req, res = response) => {
 
-    const name = req.body.name;
+    let name = req.body.name;
 
     try {
 
@@ -90,6 +90,7 @@ const createBodega = async(req, res = response) => {
 
         // SAVE BODEGA
         const bodega = new Bodega(req.body);
+        bodega.endpoint = bodega.trim().toLowerCase();
         await bodega.save();
 
         res.json({

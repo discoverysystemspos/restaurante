@@ -31,6 +31,14 @@ const ProductosSchema = Schema({
         type: Number,
         require: true
     },
+    distribuidor: {
+        type: Number,
+        require: true
+    },
+    confirmado: {
+        type: Boolean,
+        default: false
+    }
 
 });
 
@@ -49,6 +57,9 @@ const TrasladoSchema = Schema({
     bodega: {
         type: Schema.Types.ObjectId,
         ref: 'bid',
+    },
+    desde: {
+        type: String,
     },
     products: [ProductosSchema],
     estado: {

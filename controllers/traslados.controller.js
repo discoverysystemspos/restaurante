@@ -18,6 +18,7 @@ const getTraslados = async(req, res = response) => {
 
         const [traslados, total] = await Promise.all([
             Traslado.find(query)
+            .populate('bodega')
             .skip(desde)
             .limit(hasta)
             .sort(sort),
@@ -49,7 +50,8 @@ const getTrasladosId = async(req, res = response) => {
         const trasid = req.params.id;
 
         // VALIDATE CAR
-        const trasladoDB = await Traslado.findById(trasid);
+        const trasladoDB = await Traslado.findById(trasid)
+            .populate('bodega');
 
         if (!trasladoDB) {
             return res.status(400).json({
