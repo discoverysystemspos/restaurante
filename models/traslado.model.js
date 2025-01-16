@@ -22,6 +22,10 @@ const ProductosSchema = Schema({
         type: Number,
         require: true
     },
+    gain: {
+        type: Number,
+        require: true
+    },
     price: {
         type: Number,
         require: true
