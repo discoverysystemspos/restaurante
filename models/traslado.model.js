@@ -15,6 +15,9 @@ const ProductosSchema = Schema({
         type: String,
         require: true
     },
+    type: {
+        type: String
+    },
     qty: {
         type: Number,
         require: true
@@ -46,7 +49,7 @@ const ProductosSchema = Schema({
 const TrasladoSchema = Schema({
 
     referencia: {
-        type: Number
+        type: String
     },
     user: {
         type: String,
