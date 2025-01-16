@@ -96,7 +96,9 @@ const createTraslado = async(req, res = response) => {
         await traslado.save();
 
         // TODO: DESCONTAR INVENTARIO ENVIADO
-        await trasladoStock(traslado);
+        if (traslado.type === 'Enviado') {
+            await trasladoStock(traslado, uid);
+        }
 
         res.json({
             ok: true,

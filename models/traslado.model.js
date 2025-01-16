@@ -1,8 +1,4 @@
-const { Schema, model, connection } = require('mongoose');
-
-const autoIncrement = require('mongoose-auto-increment');
-
-autoIncrement.initialize(connection);
+const { Schema, model } = require('mongoose');
 
 // PRODUCTS SCHEMA
 const ProductosSchema = Schema({
@@ -96,12 +92,6 @@ TrasladoSchema.method('toJSON', function() {
     object.traid = _id;
     return object;
 
-});
-
-TrasladoSchema.plugin(autoIncrement.plugin, {
-    model: 'Traslados',
-    field: 'traslado',
-    startAt: process.env.INVOICE_INIT
 });
 
 // invoice

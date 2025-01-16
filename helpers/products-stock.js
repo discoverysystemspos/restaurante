@@ -258,7 +258,7 @@ const compraUpdate = async(compra) => {
 /** =====================================================================
  *  UPDATE STOCK TRASLADO
 =========================================================================*/
-const trasladoStock = async(traslado) => {
+const trasladoStock = async(traslado, uid) => {
 
     try {
 
@@ -266,7 +266,7 @@ const trasladoStock = async(traslado) => {
         if (traslado.type === 'Enviado') {
 
             for (let i = 0; i < traslado.products.length; i++) {
-                const product = traslado.prodcuts[i];
+                const product = traslado.products[i];
 
                 const productDB = await Product.findOne({ code: product.code }).populate('department', 'name');
 
@@ -296,7 +296,8 @@ const trasladoStock = async(traslado) => {
                     qty: product.qty,
                     monto: (product.price * product.qty),
                     stock: productDB.inventario,
-                    cajero: req.uid,
+                    cajero: uid,
+                    traslado: traslado._id,
                     department: productDB.department._id,
                     departamento: productDB.department.name
                 }

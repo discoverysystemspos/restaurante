@@ -33,6 +33,10 @@ const LogProductSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Compras'
     },
+    traslado: {
+        type: Schema.Types.ObjectId,
+        ref: 'Traslados'
+    },
     cajero: {
         type: Schema.Types.ObjectId,
         ref: 'User'
