@@ -55,7 +55,7 @@ const TrasladoSchema = Schema({
     },
     bodega: {
         type: Schema.Types.ObjectId,
-        ref: 'bid',
+        ref: 'Bodegas',
     },
     desde: {
         type: String,
