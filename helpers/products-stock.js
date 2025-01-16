@@ -265,7 +265,7 @@ const trasladoStock = async(traslado) => {
         // VERIFICAR EL TIPO DE TRASLADO
         if (traslado.type === 'Enviado') {
 
-            for (let i = 0; i < traslado.prodcuts.length; i++) {
+            for (let i = 0; i < traslado.products.length; i++) {
                 const product = traslado.prodcuts[i];
 
                 const productDB = await Product.findOne({ code: product.code }).populate('department', 'name');

@@ -87,9 +87,9 @@ const createTraslado = async(req, res = response) => {
         const user = await User.findById(uid);
 
         const traslado = new Traslado(req.body);
-        traslado.user = user.name;
-
+        
         if (traslado.type === 'Enviado' || !traslado.referencia) {
+            traslado.user = user.name;
             traslado.referencia = short.generate();
         }
 
