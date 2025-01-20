@@ -75,7 +75,8 @@ const getBodegaId = async(req, res = response) => {
 =========================================================================*/
 const createBodega = async(req, res = response) => {
 
-    let name = req.body.name;
+    let {name, endpoint} = req.body;
+    endpoint = endpoint.trim().toLowerCase();
 
     try {
 
@@ -89,8 +90,9 @@ const createBodega = async(req, res = response) => {
         }
 
         // SAVE BODEGA
-        const bodega = new Bodega(req.body);
-        bodega.endpoint = bodega.trim().toLowerCase();
+        const bodega = new Bodega(req.body);        
+
+        bodega.endpoint = endpoint;
         await bodega.save();
 
         res.json({
