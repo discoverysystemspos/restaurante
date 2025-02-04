@@ -9,65 +9,71 @@ const getPeso = async(req, res = response) => {
 
 
     try {
-        const init = Number(req.query.init);
-        const end = Number(req.query.end);
 
-        let data = fs.readFileSync(path.join(__dirname, '../bascula') + '/peso.txt', 'utf8');
-
-        let peso = data.toString();
-
-        var regex = /(\d+)/g;
-
-        if (peso.length > 17) {
-
-            const basc = ['ST'];
-            let w;
-
-
-            if (peso.includes(basc)) {
-
-                let pesos = peso.split(' ');
-                w = pesos[5];
-                console.log(pesos);
-
-            } else {
-                w = `${peso.match(regex)[0]}.${peso.match(regex)[1]}`;
-            }
-
-            res.json({
-                ok: true,
-                pesos: parseFloat(w),
-                init,
-                end
+        // Configura el puerto serial
+        const port = new SerialPort({
+          path: 'COM1', 
+          baudRate: 9600,
+        });
+      
+        let responseSent = false; // Evita múltiples respuestas
+        const parser = port.pipe(new ReadlineParser({ delimiter: '\r\n' }));
+      
+        // Timeout de 10 segundos
+        const timeout = setTimeout(() => {
+          if (!responseSent) {
+            responseSent = true;
+            res.json({ 
+              ok: true, 
+              pesos: 0 
             });
-
-        } else {
-
-
-            // let pesos = peso.split(' ');
-
-            // res.json({
-            //     ok: true,
-            //     pesos: parseFloat(pesos[2])
-            // });
-
-            let w = peso.slice(init, end);
-
-            res.json({
-                ok: true,
-                pesos: parseFloat(w),
-                init,
-                end
+            port.close();
+          }
+        }, 5000);
+      
+        // Escucha datos del puerto serial
+        parser.on('data', (data) => {
+          if (responseSent) return; // Si ya se respondió, ignora
+      
+          // Extrae números y puntos decimales
+          const numeros = data.replace(/[^0-9.]/g, '');
+          const peso = parseFloat(numeros);
+    
+        console.log('LECTURA: ', peso);
+      
+          // Verifica si es un número válido y mayor a 0
+          if (!isNaN(peso) && peso > 0) {
+            responseSent = true;
+        //console.log('PESO FINAL: ', peso);
+            clearTimeout(timeout); // Cancela el timeout
+            res.json({ 
+              ok: true, 
+              pesos: peso.toFixed(3) 
+            });
+            port.close(); // Cierra la conexión
+          }
+        });
+      
+        // Manejo de errores
+        port.on('error', (err) => {
+          if (!responseSent) {
+            responseSent = true;
+            clearTimeout(timeout);
+            res.status(500).json({ 
+              ok: false, 
+              msg: 'Error de conexión con la báscula, encienda la bascula, verifica que el cable de comunicacion o si la bascula esta conectada en el puerto correcto' 
+            });
+          }
+        });
+            
+    
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                ok: false,
+                msg: 'Error inesperado, porfavor intente nuevamente'
             });
         }
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error inesperado, porfavor intente nuevamente'
-        });
-    }
 
 }
 

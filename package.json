@@ -11,6 +11,7 @@
     "author": "Gilmer Contreras",
     "license": "ISC",
     "dependencies": {
+        "@serialport/parser-readline": "^13.0.0",
         "@xmldom/xmldom": "^0.8.10",
         "axios": "^1.7.7",
         "bcryptjs": "^2.4.3",
