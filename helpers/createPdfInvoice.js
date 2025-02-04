@@ -90,7 +90,7 @@ function generateCustomerInformation(doc, invoice, empresa) {
         .text("Fecha:", 50, customerInformationTop + 15)
         .text(formatDate(new Date(invoice.fecha)), 150, customerInformationTop + 15)
         .text("Vendedor:", 50, customerInformationTop + 30)
-        .text(invoice.mesero.name, 150, customerInformationTop + 30)
+        .text((invoice.mesero)? invoice.mesero.name:'Venta Online', 150, customerInformationTop + 30)
         .font("Helvetica-Bold")
         .text(`${name}`, 300, customerInformationTop)
         .font("Helvetica")
