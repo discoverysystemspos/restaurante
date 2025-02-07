@@ -42,7 +42,7 @@ const getPeso = async(req, res = response) => {
           const numeros = data.replace(/[^0-9.]/g, '');
           const peso = parseFloat(numeros);
     
-        console.log('LECTURA: ', peso);
+          console.log('LECTURA: ', peso);
       
           // Verifica si es un número válido y mayor a 0
           if (!isNaN(peso) && peso > 0) {
