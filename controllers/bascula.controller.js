@@ -2,6 +2,9 @@ const { response } = require('express');
 const fs = require('fs');
 const path = require('path');
 
+const { SerialPort } = require('serialport');
+const { ReadlineParser } = require('@serialport/parser-readline');
+
 /** =====================================================================
  *  GET PESO
 ==========================================================================*/
