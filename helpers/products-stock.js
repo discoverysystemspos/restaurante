@@ -292,7 +292,7 @@ const trasladoStock = async(traslado, uid) => {
                     name: productDB.name,
                     description: `Traslado #${traslado.referencia}`,
                     type: 'Traslado',
-                    befored: productDB.inventario - product.qty,
+                    befored: productDB.inventario + product.qty,
                     qty: product.qty,
                     monto: (product.price * product.qty),
                     stock: productDB.inventario,
