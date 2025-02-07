@@ -30,7 +30,7 @@
         "pdfkit": "^0.14.0",
         "pdfkit-table": "^0.1.99",
         "pkcs12-xml": "^1.0.7",
-        "serialport": "^13.0.0",
+        "serialport": "^10.5.0",
         "sharp": "^0.30.4",
         "short-uuid": "^5.2.0",
         "soap": "^1.0.3",
