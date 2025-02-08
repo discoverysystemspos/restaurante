@@ -20,6 +20,9 @@ const getPeso = async(req, res = response) => {
         const port = new SerialPort({
           path: 'COM1', 
           baudRate: 9600,
+          dataBits: 8,
+          parity: 'none',
+          stopBits: 1,
         });
       
         let responseSent = false; // Evita múltiples respuestas
