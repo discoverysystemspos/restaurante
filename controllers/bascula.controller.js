@@ -141,13 +141,13 @@ const getPeso = async(req, res = response) => {
             break;
         }   
     
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({
-                ok: false,
-                msg: 'Error inesperado, porfavor intente nuevamente'
-            });
-        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
 
 }
 
