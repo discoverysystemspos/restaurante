@@ -15,10 +15,11 @@ const getPeso = async(req, res = response) => {
     try {
 
         const type = req.query.type || '1';
+        const path = req.query.path || 'COM1';
 
         // Configura el puerto serial Nuevo
         const port = new SerialPort({
-          path: 'COM1', 
+          path, 
           baudRate: 9600,
           dataBits: 8,
           parity: 'none',

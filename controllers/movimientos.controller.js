@@ -1,6 +1,43 @@
 const { response } = require('express');
 const Movimiento = require('../models/movimientos.model');
 
+
+/** =====================================================================
+ *  GET MOVIMIENTOS QUERY
+=========================================================================*/
+const getMovimientosQuery = async(req, res = response) => {
+
+    try {
+
+        const { desde, hasta, sort, ...query } = req.body;
+
+        const [movimientos, total] = await Promise.all([
+            Movimiento.find(query)
+            .populate('user', 'name')
+            .sort(sort)
+            .skip(desde)
+            .limit(hasta),
+            Movimiento.countDocuments()
+        ]);
+
+        res.json({
+            ok: true,
+            movimientos,
+            total
+        });
+
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+
 /** =====================================================================
  *  GET MOVIMIENTOS
 =========================================================================*/
@@ -224,4 +261,5 @@ module.exports = {
     getMovimientos,
     getMovimientosDate,
     createMovimiento,
+    getMovimientosQuery
 };

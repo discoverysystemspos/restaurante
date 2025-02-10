@@ -9,9 +9,14 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getLogProducts, getLogDate, getOneProducLog } = require('../controllers/log.products.controller');
+const { getLogProducts, getLogDate, getOneProducLog, getLogProductsQuery } = require('../controllers/log.products.controller');
 
 const router = Router();
+
+/** =====================================================================
+ *  GET LOG PRODUCTS QUERY
+=========================================================================*/
+router.post('/query', validarJWT, getLogProductsQuery);
 
 /** =====================================================================
  *  GET LOG PRODUCTS

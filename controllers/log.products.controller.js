@@ -3,6 +3,41 @@ const { response } = require('express');
 const LogProducts = require('../models/log.products.model');
 
 /** =====================================================================
+ *  POST QUERY LOG PRODUCTS
+=========================================================================*/
+const getLogProductsQuery = async(req, res = response) => {
+
+    try {
+
+        const { desde, hasta, sort, ...query } = req.body;
+
+        const [products, total] = await Promise.all([
+            LogProducts.find(query)
+            .populate('cajero', 'name')
+            .populate('invoice')
+            .skip(desde)
+            .limit(hasta)
+            .sort(sort),
+            LogProducts.countDocuments()
+        ]);
+
+        res.json({
+            ok: true,
+            products,
+            total
+        });
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+}
+
+/** =====================================================================
  *  GET LOG PRODUCTS
 =========================================================================*/
 const getLogProducts = async(req, res = response) => {
@@ -154,5 +189,6 @@ const getOneProducLog = async(req, res = response) => {
 module.exports = {
     getLogProducts,
     getLogDate,
-    getOneProducLog
+    getOneProducLog,
+    getLogProductsQuery
 };

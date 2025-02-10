@@ -9,33 +9,29 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getMovimientos, getMovimientosDate, createMovimiento } = require('../controllers/movimientos.controller');
+const { getMovimientos, getMovimientosDate, createMovimiento, getMovimientosQuery } = require('../controllers/movimientos.controller');
 
 const router = Router();
 
 /** =====================================================================
- *  GET TURNOS 
+ *  GET MOVIMIENTOS 
 =========================================================================*/
 router.get('/', validarJWT, getMovimientos);
-/** =====================================================================
- *  GET TURNOS
-=========================================================================*/
 
 /** =====================================================================
- *  GET TURNOS FOR BY DATE
+ *  GET MOVIMIENTOS FOR BY DATE
 =========================================================================*/
 router.get('/date/', validarJWT, getMovimientosDate);
-/** =====================================================================
- *  GET TURNOS FOR BY DATE
-=========================================================================*/
 
 /** =====================================================================
- *  CREATE TURNO
+ *  POST QUERY MOVIMIENTO
+=========================================================================*/
+router.post('/query', validarJWT, getMovimientosQuery);
+
+/** =====================================================================
+ *  CREATE MOVIMIENTO
 =========================================================================*/
 router.post('/', validarJWT, createMovimiento);
-/** =====================================================================
- *  CREATE TURNO
-=========================================================================*/
 
 // EXPORTS
 module.exports = router;
