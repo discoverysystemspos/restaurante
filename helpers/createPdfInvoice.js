@@ -1,250 +1,144 @@
+const PdfPrinter = require('pdfmake');
+const fs = require('fs');
 const path = require('path');
-const fs = require("fs");
-const PDFDocument = require("pdfkit");
 
-// layout: 'landscape'
-
-function createInvoicePDF(invoice, empresa, path) {
-    let doc = new PDFDocument({ size: "A4" });
-
-    generateHeader(doc, empresa);
-    generateCustomerInformation(doc, invoice, empresa);
-    generateInvoiceTable(doc, invoice);
-    // generateFooter(doc);
-
-    doc.end();
-    doc.pipe(fs.createWriteStream(path));
-}
-
-function generateHeader(doc, empresa) {
-    if (empresa.logo) {
-
-        doc
-            .image(path.join(__dirname, `../uploads/logo/${empresa.logo}`), 50, 45, { width: 80 })
-            .fontSize(10)
-            .text(empresa.name, 200, 50, { align: "right" })
-            .text(empresa.nit, 200, 65, { align: "right" })
-            .text(empresa.address, 200, 80, { align: "right" })
-            .text(empresa.phone, 200, 95, { align: "right" })
-    } else {
-        doc
-            .fillColor("#444444")
-            .fontSize(20)
-            .text(empresa.name, 110, 57)
-            .fontSize(10)
-            .text(empresa.nit, 200, 65, { align: "right" })
-            .text(empresa.address, 200, 80, { align: "right" })
-            .text(empresa.phone, 200, 95, { align: "right" })
-
+const fonts = {
+    Roboto: {
+        normal: path.join(__dirname, 'fonts/Roboto-Regular.ttf'),
+        bold: path.join(__dirname, 'fonts/Roboto-Bold.ttf'),
+        italics: path.join(__dirname, 'fonts/Roboto-Italic.ttf'),
+        bolditalics: path.join(__dirname, 'fonts/Roboto-BoldItalic.ttf')
     }
+};
 
-    if (!empresa.impuesto) {
-        doc
-            .fontSize(10)
-            .text('No responsable de IVA', { align: "right" })
+const printer = new PdfPrinter(fonts);
 
-    } else {
+function createInvoicePDF(invoice, empresa, filePath) {
 
-        if (empresa.responsable) {
-            doc
-                .fontSize(10)
-                .text('Responsable de iva', { align: "right" })
-
-        } else if (empresa.impuestoconsumo) {
-            doc
-                .fontSize(10)
-                .text('Responsable nacional al consumo', { align: "right" })
-
-        }
-        doc
-            .fontSize(10)
-            .text(`Resolucion: ${empresa.resolucion}`, { align: "right" })
-            .text(`Prefijo Pos: ${empresa.prefijopos}`, { align: "right" })
-
-
-    }
-
-}
-
-function generateCustomerInformation(doc, invoice, empresa) {
-
-    const customerInformationTop = 150;
-
-    let name = 'Ocasional';
-    let address = empresa.address;
-    let city = '';
-    let department = '';
+    let departamento_ciudad = '';
 
     if (invoice.client) {
-        name = invoice.client.name;
-        address = invoice.client.address;
-        city = invoice.client.city;
-        department = invoice.client.department
+        departamento_ciudad = `${(invoice.client.city)? invoice.client.city : ''} ${(invoice.client.city && invoice.client.department)? ' - ': ''}  ${(invoice.client.department)? invoice.client.department : ''}`
     }
 
-    doc
-        .fontSize(10)
-        .font("Helvetica-Bold")
-        .text("# " + invoice.invoice, 50, customerInformationTop)
-        .font("Helvetica")
-        .text("Fecha:", 50, customerInformationTop + 15)
-        .text(formatDate(new Date(invoice.fecha)), 150, customerInformationTop + 15)
-        .text("Vendedor:", 50, customerInformationTop + 30)
-        .text((invoice.mesero)? invoice.mesero.name:'Venta Online', 150, customerInformationTop + 30)
-        .font("Helvetica-Bold")
-        .text(`${name}`, 300, customerInformationTop)
-        .font("Helvetica")
-        .text(`${address}`, 300, customerInformationTop + 15)
-        .text(
-            city +
-            ", " +
-            department,
-            300,
-            customerInformationTop + 30
-        )
-        .moveDown();
-
-    generateHr(doc, 215);
-}
-
-function generateInvoiceTable(doc, invoice) {
-    let i;
-    const invoiceTableTop = 220;
-
-    doc.font("Helvetica-Bold");
-    generateTableRow(
-        doc,
-        invoiceTableTop,
-        "Codigo",
-        "Descripcion",
-        "Cant",
-        "Precio U",
-        "IVA",
-        "Val IVA",
-        "Total"
-    );
-    generateHr(doc, invoiceTableTop + 10);
-    doc.font("Helvetica");
-
-    for (i = 0; i < invoice.products.length; i++) {
-        const item = invoice.products[i];
-        const position = invoiceTableTop + (i + 1) * 25;
-
-        let valorIva = 0;
-        if (item.product.tax) {
-            valorIva = item.product.taxid.valor;
+    const docDefinition = {
+        content: [
+            // Encabezado con logo e información de la empresa
+            {
+                // Logo centrado
+                columns: [
+                    { text: '', width: '*' },
+                    {
+                        image: path.join(__dirname, `../uploads/logo/${empresa.logo}`),
+                        width: 75,
+                        alignment: 'center'
+                    },
+                    { text: '', width: '*' }
+                ],
+                margin: [0, 0, 0, 20]
+            },
+            {
+                columns: [
+                    {
+                        text: [
+                            { text: 'Cliente: ', bold: true }, invoice.client ? invoice.client.name : 'Consumidor Final', '\n',
+                            { text: 'Nit/CC: ', bold: true }, invoice.client ? invoice.client.cedula : '22222222', '\n',
+                            { text: 'Telefono: ', bold: true }, invoice.client ? invoice.client.phone : '', '\n',
+                            { text: 'Dirección: ', bold: true }, invoice.client ? invoice.client.address : empresa.address, '\n',
+                            departamento_ciudad,'\n',
+                        ],
+                        width: '50%'
+                    },
+                    {
+                        alignment: 'right',
+                        width: '50%',
+                        stack: [
+                            { text: empresa.name, bold: true },
+                            empresa.header
+                        ].filter(Boolean) // Elimina valores nulos
+                    }
+                ],
+                margin: [0, 0, 0, 10]
+            },
+            
+            // Número de factura y Fecha
+            {
+                columns: [
+                    { text: `Factura # ${invoice.invoice}`, style: 'header'},
+                    { 
+                        alignment: 'right',
+                        width: '50%',
+                        text: [
+                            {text: `Fecha:`, bold: true}, `${formatDate(invoice.fecha) }` 
+                        ],
+                        
+                    }                 
+                ],
+                margin: [0, 0, 0, 2]
+            },
+            // { text: `Factura # ${invoice.invoice}`, style: 'header' },
+            // { text: `Fecha: ${formatDate(invoice.fecha)}`, margin: [0, 0, 0, 5] },
+            
+            // Tabla de productos
+            {
+                table: {
+                    widths: ['15%', '35%', '10%', '15%', '10%', '15%'],
+                    body: [
+                        [{ text: 'Código', bold: true }, { text: 'Descripción', bold: true }, { text: 'Cant.', bold: true },
+                         { text: 'Precio U', bold: true }, { text: 'IVA', bold: true }, { text: 'Total', bold: true }],
+                        ...invoice.products.map(item => [
+                            item.product.code,
+                            item.product.name,
+                            item.qty,
+                            formatCurrency(item.price),
+                            `${item.product.taxid ? item.product.taxid.valor : 0}%`,
+                            formatCurrency(item.price * item.qty * (1 + (item.product.taxid ? item.product.taxid.valor / 100 : 0)))
+                        ])
+                    ]
+                },
+                margin: [0, 2, 0, 1]
+            },
+            
+            // Totales
+            {
+                columns: [
+                    { text: '', width: '50%' },
+                    {
+                        table: {
+                            widths: ['50%', '50%'],
+                            body: [
+                                [{ text: 'Subtotal', bold: true }, formatCurrency(invoice.base)],
+                                [{ text: 'IVA', bold: true }, formatCurrency(invoice.iva)],
+                                [{ text: 'Total', bold: true }, formatCurrency(invoice.amount)]
+                            ]
+                        },
+                        alignment: 'right',
+                        width: '50%'
+                    }
+                ],
+                margin: [0, 0, 0, 0]
+            }
+        ],
+        styles: {
+            header: {
+                fontSize: 14,
+                bold: true
+            }
         }
+    };
 
-        generateTableRow(
-            doc,
-            position,
-            item.product.code,
-            item.product.name,
-            item.qty,
-            formatCurrency(item.price),
-            `${valorIva}%`,
-            formatCurrency((valorIva) / 100),
-            formatCurrency((item.price + (valorIva) / 100) * item.qty)
-        );
-
-        generateHr(doc, position + 15);
-    }
-
-    const subtotalPosition = invoiceTableTop + (i + 1) * 25;
-    generateTableRow(
-        doc,
-        subtotalPosition,
-        "",
-        "",
-        "",
-        "",
-        "Subtotal",
-        "",
-        formatCurrency(invoice.base)
-    );
-
-    const paidToDatePosition = subtotalPosition + 18;
-    generateTableRow(
-        doc,
-        paidToDatePosition,
-        "",
-        "",
-        "",
-        "",
-        "IVA",
-        "",
-        formatCurrency(invoice.iva)
-    );
-
-    const duePositionN = subtotalPosition + 31;
-    generateTableRow(
-        doc,
-        duePositionN,
-        "",
-        "",
-        "",
-        "",
-        "Total",
-        "",
-        formatCurrency(invoice.amount)
-    );
-    doc.font("Helvetica");
+    const pdfDoc = printer.createPdfKitDocument(docDefinition);
+    pdfDoc.pipe(fs.createWriteStream(filePath));
+    pdfDoc.end();
 }
 
-function generateFooter(doc) {
-    doc
-        .fontSize(10)
-        .text(
-            "Payment is due within 15 days. Thank you for your business.",
-            50,
-            780, { align: "center", width: 500 }
-        );
-}
-
-function generateTableRow(
-    doc,
-    y,
-    Codigo,
-    Descripcion,
-    Cant,
-    Precio,
-    IVA,
-    Val,
-    Total,
-) {
-    doc
-        .fontSize(6)
-        .text(Codigo, 50, y)
-        .fontSize(8)
-        .text(Descripcion, 110, y)
-        .text(Cant, 320, y)
-        .text(Precio, 350, y)
-        .text(`${IVA}`, 400, y)
-        .text(Val, 430, y)
-        .text(Total, 0, y, { align: "right" });
-}
-
-function generateHr(doc, y) {
-    doc
-        .strokeColor("#aaaaaa")
-        .lineWidth(1)
-        .moveTo(50, y)
-        .lineTo(530, y)
-        .stroke();
-}
-
-function formatCurrency(cents) {
-    return "$" + (cents).toFixed(0);
+function formatCurrency(value) {
+    return `$${value.toFixed(2)}`;
 }
 
 function formatDate(date) {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-
-    return day + "/" + month + "/" + year;
+    const d = new Date(date);
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
 
-module.exports = {
-    createInvoicePDF
-};
+module.exports = { createInvoicePDF };
