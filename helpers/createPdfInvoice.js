@@ -133,6 +133,7 @@ function createInvoicePDF(invoice, empresa, filePath) {
 }
 
 function formatCurrency(value) {
+    value = Number(value);
     return `$${value.toFixed(2)}`;
 }
 
