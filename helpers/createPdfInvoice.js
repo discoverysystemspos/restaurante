@@ -1,6 +1,7 @@
 const PdfPrinter = require('pdfmake');
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
 
 const fonts = {
     Roboto: {
@@ -13,7 +14,9 @@ const fonts = {
 
 const printer = new PdfPrinter(fonts);
 
-function createInvoicePDF(invoice, empresa, filePath) {
+async function createInvoicePDF(invoice, empresa, filePath) {
+
+    let logoBase64 = await convertWebPToBase64(path.join(__dirname, `../uploads/logo/${empresa.logo}`));
 
     let departamento_ciudad = '';
 
@@ -29,7 +32,7 @@ function createInvoicePDF(invoice, empresa, filePath) {
                 columns: [
                     { text: '', width: '*' },
                     {
-                        image: path.join(__dirname, `../uploads/logo/${empresa.logo}`),
+                        image: logoBase64,
                         width: 75,
                         alignment: 'center'
                     },
@@ -130,6 +133,16 @@ function createInvoicePDF(invoice, empresa, filePath) {
     const pdfDoc = printer.createPdfKitDocument(docDefinition);
     pdfDoc.pipe(fs.createWriteStream(filePath));
     pdfDoc.end();
+}
+
+async function convertWebPToBase64(imagePath) {
+    try {
+        const buffer = await sharp(imagePath).toFormat('png').toBuffer();
+        return `data:image/png;base64,${buffer.toString('base64')}`;
+    } catch (error) {
+        console.error('Error al convertir la imagen WebP a Base64:', error);
+        return null;
+    }
 }
 
 function formatCurrency(value) {
