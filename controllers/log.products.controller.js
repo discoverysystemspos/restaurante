@@ -18,7 +18,7 @@ const getLogProductsQuery = async(req, res = response) => {
             .skip(desde)
             .limit(hasta)
             .sort(sort),
-            LogProducts.countDocuments()
+            LogProducts.countDocuments(query)
         ]);
 
         res.json({

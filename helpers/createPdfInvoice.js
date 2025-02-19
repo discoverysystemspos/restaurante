@@ -16,7 +16,11 @@ const printer = new PdfPrinter(fonts);
 
 async function createInvoicePDF(invoice, empresa, filePath) {
 
-    let logoBase64 = await convertWebPToBase64(path.join(__dirname, `../uploads/logo/${empresa.logo}`));
+    let logoBase64 = null;
+
+    if (empresa.logo) {
+        logoBase64 = await convertWebPToBase64(path.join(__dirname, `../uploads/logo/${empresa.logo}`));        
+    }
 
     let departamento_ciudad = '';
 
@@ -28,14 +32,11 @@ async function createInvoicePDF(invoice, empresa, filePath) {
         content: [
             // Encabezado con logo e información de la empresa
             {
-                // Logo centrado
                 columns: [
                     { text: '', width: '*' },
-                    {
-                        image: logoBase64,
-                        width: 75,
-                        alignment: 'center'
-                    },
+                    logoBase64
+                        ? { image: logoBase64, width: 100, alignment: 'center' }
+                        : { text: '', width: '20%' }, // Si no hay logo, se mantiene el formato
                     { text: '', width: '*' }
                 ],
                 margin: [0, 0, 0, 20]
@@ -105,7 +106,11 @@ async function createInvoicePDF(invoice, empresa, filePath) {
             // Totales
             {
                 columns: [
-                    { text: '', width: '50%' },
+                    { text: [
+                            {text: `Nota: `, bold: true}, `${invoice.nota}` 
+                        ], 
+                        width: '50%' 
+                    },
                     {
                         table: {
                             widths: ['50%', '50%'],
