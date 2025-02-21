@@ -20,18 +20,20 @@ const login = async(req, res = response) => {
 
         // VERIFICAR SI ES UNA NUBE
         const datos = await Datos.findOne({ status: true });
-        if (datos.nube) {
-
-            const fechaActual = new Date();
-            const fechaLimite = new Date(datos.vence);
-            fechaLimite.setDate(fechaLimite.getDate() + 5);
-
-            if (new Date(fechaLimite).getTime() < fechaActual.getTime()) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'El sistema esta vencido por falta de pago, si ya realizaste el pago comunicate con el numero de soporte!'
-                });
-            }
+        if (datos) {
+            if (datos.nube) {
+    
+                const fechaActual = new Date();
+                const fechaLimite = new Date(datos.vence);
+                fechaLimite.setDate(fechaLimite.getDate() + 5);
+    
+                if (new Date(fechaLimite).getTime() < fechaActual.getTime()) {
+                    return res.status(400).json({
+                        ok: false,
+                        msg: 'El sistema esta vencido por falta de pago, si ya realizaste el pago comunicate con el numero de soporte!'
+                    });
+                }
+            }            
         }
 
         // VALIDATE USER
@@ -214,18 +216,20 @@ const renewJWT = async(req, res = response) => {
 
     // VERIFICAR SI ES UNA NUBE
     const datos = await Datos.findOne({ status: true });
-    if (datos.nube) {
-
-        const fechaActual = new Date();
-        const fechaLimite = new Date(datos.vence);
-        fechaLimite.setDate(fechaLimite.getDate() + 5);
-
-        if (new Date(fechaLimite).getTime() < fechaActual.getTime()) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'El sistema esta vencido por falta de pago, si ya realizaste el pago comunicate con el numero de soporte!'
-            });
-        }
+    if (datos) {
+        if (datos.nube) {
+    
+            const fechaActual = new Date();
+            const fechaLimite = new Date(datos.vence);
+            fechaLimite.setDate(fechaLimite.getDate() + 5);
+    
+            if (new Date(fechaLimite).getTime() < fechaActual.getTime()) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'El sistema esta vencido por falta de pago, si ya realizaste el pago comunicate con el numero de soporte!'
+                });
+            }
+        }        
     }
 
     const uid = req.uid;
