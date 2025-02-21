@@ -17,6 +17,15 @@ const printer = new PdfPrinter(fonts);
 async function createInvoicePDF(invoice, empresa, filePath) {
 
     let logoBase64 = null;
+    let totalPagos = 0;
+
+    for (const paid of invoice.payments) {
+        totalPagos += paid.amount;        
+    }
+
+    for (const paid of invoice.paymentsCredit) {
+        totalPagos += paid.amount;        
+    }
 
     if (empresa.logo) {
         logoBase64 = await convertWebPToBase64(path.join(__dirname, `../uploads/logo/${empresa.logo}`));        
@@ -107,7 +116,7 @@ async function createInvoicePDF(invoice, empresa, filePath) {
             {
                 columns: [
                     { text: [
-                            {text: `Nota: `, bold: true}, `${invoice.nota}` 
+                            {text: `Nota: `, bold: true}, `${invoice.nota || 'Sin nota'}` 
                         ], 
                         width: '50%' 
                     },
@@ -124,7 +133,32 @@ async function createInvoicePDF(invoice, empresa, filePath) {
                         width: '50%'
                     }
                 ],
-                margin: [0, 0, 0, 0]
+                margin: [0, 0, 0, 20]
+            },
+            { text: [
+                    {text: `Historial de pagos: `, bold: true} 
+                ], 
+                width: '50%' 
+            },
+            {
+                table: {
+                    widths: ['30%', '30%', '40%'],
+                    body: [
+                        [{ text: 'Descripcion', bold: true }, { text: 'Tipo', bold: true }, { text: 'Monto', bold: true }],
+                        ...invoice.payments.map(paid => [
+                            paid.description || 'Sin descripción',
+                            paid.type,
+                            formatCurrency(paid.amount)
+                        ]),
+                        ...invoice.paymentsCredit.map(paid => [
+                            `${paid.description || 'Sin descripción'} \n ${new Date(paid.fecha).getDate()}/${new Date(paid.fecha).getMonth() + 1 }/${new Date(paid.fecha).getFullYear()}`,
+                            paid.type,
+                            formatCurrency(paid.amount)
+                        ]),
+                        [{ text: '', bold: true }, { text: 'Resta', bold: true }, { text: formatCurrency((invoice.amount - totalPagos)) , bold: true }]
+                    ]
+                },
+                margin: [0, 2, 0, 1]
             }
         ],
         styles: {
