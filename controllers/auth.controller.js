@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 
 const User = require('../models/users.model');
 const Client = require('../models/clients.model');
+const Datos = require('../models/datos.model');
 
 const { generarJWT, generarClientJWT } = require('../helpers/jwt');
 const { googleVerify } = require('../helpers/google-verify');
@@ -16,6 +17,22 @@ const login = async(req, res = response) => {
     const { usuario, password } = req.body;
 
     try {
+
+        // VERIFICAR SI ES UNA NUBE
+        const datos = await Datos.findOne({ status: true });
+        if (datos.nube) {
+
+            const fechaActual = new Date();
+            const fechaLimite = new Date(datos.vence);
+            fechaLimite.setDate(fechaLimite.getDate() + 5);
+
+            if (new Date(fechaLimite).getTime() < fechaActual.getTime()) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'El sistema esta vencido por falta de pago, si ya realizaste el pago comunicate con el numero de soporte!'
+                });
+            }
+        }
 
         // VALIDATE USER
         const userDB = await User.findOne({ usuario });
@@ -194,6 +211,22 @@ const googleSignIn = async(req, res = response) => {
  *  RENEW TOKEN
 ======================================================================*/
 const renewJWT = async(req, res = response) => {
+
+    // VERIFICAR SI ES UNA NUBE
+    const datos = await Datos.findOne({ status: true });
+    if (datos.nube) {
+
+        const fechaActual = new Date();
+        const fechaLimite = new Date(datos.vence);
+        fechaLimite.setDate(fechaLimite.getDate() + 5);
+
+        if (new Date(fechaLimite).getTime() < fechaActual.getTime()) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El sistema esta vencido por falta de pago, si ya realizaste el pago comunicate con el numero de soporte!'
+            });
+        }
+    }
 
     const uid = req.uid;
 
