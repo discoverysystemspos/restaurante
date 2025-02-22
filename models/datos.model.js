@@ -240,9 +240,14 @@ const DatoSchema = Schema({
     kni: {
         type: String
     },
-
+    
     vence: {
         type: Date
+    },
+    
+    pais: {
+        type: String,
+        default: 'Colombia'
     },
 
     status: {
