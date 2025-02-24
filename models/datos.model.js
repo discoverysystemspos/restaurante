@@ -13,16 +13,19 @@ const ComisionesSchema = Schema({
     }
 });
 
-const HeaderSchema = Schema({
-    texto: {
+const NotificacionesSchema = Schema({
+    msg: {
         type: String,
     },
-    bold: {
-        type: Boolean,
-        default: false
+    hasta: {
+        type: Date,
     },
-    size: {
-        type: Number
+    fecha: {
+        type: Date,
+        default: Date.now
+    },
+    icon: {
+        type: String
     }
 });
 
@@ -244,6 +247,13 @@ const DatoSchema = Schema({
     vence: {
         type: Date
     },
+
+    msgv: {
+        type: String,
+        default: 'Recuerda hacer el pago de la nube antes del 5, para evitar que se desactive!. Si ya realizaste el pago, envia el comprobante, gracias por preferirnos!'
+    },
+
+    notificaciones: [NotificacionesSchema],
     
     pais: {
         type: String,
