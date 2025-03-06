@@ -3,12 +3,16 @@ const axios = require('axios');
 const crypto = require('crypto');
 const http = require('http');
 
+const AdmZip = require('adm-zip');
+
 const Dsig = require('pkcs12-xml');
 const fs = require('fs');
+const xpath = require('xpath');
 const forge = require('node-forge');
 const { DOMParser, XMLSerializer } = require('xmldom');
 const { SignedXml } = require('xml-crypto');
-const xpath = require('xpath');
+
+const { create } = require('xmlbuilder2');
 
 // MODELS
 const Invoice = require('../models/invoices.model');
@@ -112,6 +116,24 @@ const sendElectronica = async(invoice) => {
             console.error('Error al escribir el archivo', err);
         } else {
             console.log('Archivo XML guardado con éxito');
+
+			// Crea una instancia de AdmZip
+			const zip = new AdmZip();
+
+			// Agrega el XML al ZIP con un nombre de archivo, por ejemplo, "invoice.xml"
+			zip.addFile(`${dian.prefijo}${dian.number}.xml`, Buffer.from(xml, 'utf8'));
+
+			// Opcional: Puedes escribir el archivo ZIP a disco si lo necesitas
+			// zip.writeZip("invoice.zip");
+
+			// Obtén el contenido del ZIP como Buffer
+			const zipBuffer = zip.toBuffer();
+
+			// Convierte el Buffer a una cadena Base64
+			const base64Zip = zipBuffer.toString('base64');
+
+			console.log('XML comprimido y convertido a Base64:');
+			console.log(base64Zip);
         }
     });
 
@@ -152,6 +174,7 @@ const firma2 = async(xml) => {
         privateKey: key,
         publicCert: cert
     });
+
     sig.addReference({
         xpath: "//*[local-name(.)='UBLExtension']",
         digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
@@ -160,6 +183,7 @@ const firma2 = async(xml) => {
         ],
         isEmptyUri: true
     });
+
     sig.signingKey = key;
 
     // Incluir el certificado en la firma
@@ -305,6 +329,144 @@ const firma = async() => {
 
 }
 
+const creatXML = (invoice, dian, empresa) => {
+
+	// Construcción del XML de la factura electrónica en formato UBL 2.1
+	const invoiceXML = create({ version: '1.0', encoding: 'UTF-8' })
+	.ele('Invoice', {
+	  xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
+	  'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
+	  'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
+	  'xmlns:ext': 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2',
+	  'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#',
+	  'xmlns:sts': 'dian:gov:co:facturaelectronica:Structures-2-1',
+	  'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+	  'xsi:schemaLocation': 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd'
+	})
+	
+	// Sección de UBLExtensions
+	.ele('ext:UBLExtensions')
+		// Primer UBLExtension: Datos DIAN
+		.ele('ext:UBLExtension')
+			.ele('ext:ExtensionContent')
+			.ele('sts:DianExtensions')
+				.ele('sts:InvoiceControl')
+					.ele('sts:InvoiceAuthorization').txt(`${dian.resolucion}`).up()
+					.ele('sts:AuthorizationPeriod')
+						.ele('cbc:StartDate')
+							.txt(`2019-01-19`)
+						.up()
+						.ele('cbc:EndDate')
+							.txt(`2030-01-19`)
+						.up()
+					.up()
+				.up() // Cierra sts:InvoiceControl
+			.up() // Cierra sts:DianExtensions
+			.up() // Cierra ExtensionContent
+		.up() // Cierra primer UBLExtension
+
+	  // Segundo UBLExtension: Firma digital
+		.ele('ext:UBLExtension')
+			.ele('ext:ExtensionContent')
+				
+			.up() // Cierra ExtensionContent (firma)
+		.up() // Cierra segundo UBLExtension
+
+  	.up() // Cierra ext:UBLExtensions
+  
+	// Datos básicos de la factura
+	.ele('cbc:UBLVersionID').txt('2.1').up()
+	.ele('cbc:CustomizationID').txt('DIAN-2.1').up()
+	.ele('cbc:ProfileID').txt('DIAN 2.1').up()
+	.ele('cbc:ID').txt('990000001').up()
+	.ele('cbc:IssueDate').txt('2025-03-05').up()
+	.ele('cbc:InvoiceTypeCode').txt('01').up()
+	.ele('cbc:DocumentCurrencyCode').txt('COP').up()
+	.ele('cbc:CUFE').txt('951b5042595602fa7c363316396a87177f95ebcc03a6d677d4d5bee369af41603c8c8bc726b5337b6d20b97ebb64cd97').up()
+  
+	// Información del Emisor
+	.ele('cac:AccountingSupplierParty')
+	  .ele('cac:Party')
+		.ele('cbc:EndpointID', { schemeID: '31' }).txt('88243048').up()
+		.ele('cac:PartyName')
+		  .ele('cbc:Name').txt('DISCOVERY SYSTEMS POS ELKIN DANIEL CASTILLO PEREZ').up()
+		.up()
+		.ele('cac:PartyTaxScheme')
+		  .ele('cbc:RegistrationName').txt('DISCOVERY SYSTEMS POS ELKIN DANIEL CASTILLO PEREZ').up()
+		  .ele('cbc:CompanyID').txt('88243048').up()
+		  .ele('cac:TaxScheme')
+			.ele('cbc:ID').txt('01').up()
+		  .up()
+		.up()
+		.ele('cac:PartyLegalEntity')
+		  .ele('cbc:RegistrationName').txt('DISCOVERY SYSTEMS POS ELKIN DANIEL CASTILLO PEREZ').up()
+		  .ele('cbc:CompanyID').txt('88243048').up()
+		  .ele('cac:RegistrationAddress')
+			.ele('cbc:CityName').txt('Bogotá').up()
+			.ele('cbc:CountrySubentity').txt('Cundinamarca').up()
+			.ele('cac:AddressLine')
+			  .ele('cbc:Line').txt('Calle 123 # 45-67').up()
+			.up()
+		  .up()
+		.up()
+	  .up()
+	.up() // Cierra AccountingSupplierParty
+  
+	// Información del Receptor
+	.ele('cac:AccountingCustomerParty')
+	  .ele('cac:Party')
+		.ele('cbc:EndpointID', { schemeID: '13' }).txt('22222222').up()
+		.ele('cac:PartyLegalEntity')
+		  .ele('cbc:RegistrationName').txt('Consumidor Final').up()
+		  .ele('cbc:CompanyID').txt('22222222').up()
+		  .ele('cac:RegistrationAddress')
+			.ele('cbc:CityName').txt('Medellín').up()
+			.ele('cbc:CountrySubentity').txt('Antioquia').up()
+			.ele('cac:AddressLine')
+			  .ele('cbc:Line').txt('Carrera 89 # 12-34').up()
+			.up()
+		  .up()
+		.up()
+	  .up()
+	.up() // Cierra AccountingCustomerParty
+  
+	// Detalle de la factura (InvoiceLine)
+	.ele('cac:InvoiceLine')
+	  .ele('cbc:ID').txt('1').up()
+	  .ele('cbc:InvoicedQuantity', { unitCode: 'EA' }).txt('10').up()
+	  .ele('cbc:LineExtensionAmount', { currencyID: 'COP' }).txt('100000').up()
+	  .ele('cac:Item')
+		.ele('cbc:Description').txt('Producto A').up()
+	  .up()
+	  .ele('cac:Price')
+		.ele('cbc:PriceAmount', { currencyID: 'COP' }).txt('10000').up()
+	  .up()
+	.up() // Cierra InvoiceLine
+  
+	// Totales e Impuestos (TaxTotal)
+	.ele('cac:TaxTotal')
+	  .ele('cbc:TaxAmount', { currencyID: 'COP' }).txt('19000').up()
+	  .ele('cac:TaxSubtotal')
+		.ele('cbc:TaxableAmount', { currencyID: 'COP' }).txt('100000').up()
+		.ele('cbc:TaxAmount', { currencyID: 'COP' }).txt('19000').up()
+		.ele('cac:TaxCategory')
+		  .ele('cbc:ID').txt('01').up()
+		  .ele('cac:TaxScheme')
+			.ele('cbc:ID').txt('01').up()
+		  .up()
+		.up()
+	  .up()
+	.up(); // Cierra TaxTotal
+
+	// Genera el XML final con formato bonito (prettyPrint)
+	const xmlOutput = invoiceXML.end({ prettyPrint: true });
+
+	// Visualización del XML generado
+	return xmlOutput;
+
+
+}
+
 const headXML = () => {
     return `<?xml version="1.0" encoding="UTF-8"?><Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:schemaLocation="http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">`;
 }
@@ -371,68 +533,8 @@ const ublExtentionXML = (dian, qrCode) => {
 			</ExtensionContent>
 		</UBLExtension>
 	</UBLExtensions>`
-    }
-    // const ublExtentionXML = (firma, dian, qrCode) => {
-
-//     return `<UBLExtensions>
-// 		<UBLExtension>
-// 			<ExtensionContent>
-// 				<DianExtensions>
-// 					<InvoiceControl>
-// 						<InvoiceAuthorization>
-// 							${dian.resolucion}
-// 						</InvoiceAuthorization>
-// 						<AuthorizationPeriod>
-// 							<StartDate>
-// 								19-01-2019
-// 							</StartDate>
-// 							<EndDate>
-// 								19-01-2030
-// 							</EndDate>
-// 						</AuthorizationPeriod>
-// 						<AuthorizedInvoices>
-// 							<Prefix>
-// 								${dian.prefijo}
-// 							</Prefix>
-// 							<From>
-// 								${dian.desde}
-// 							</From>
-// 							<To>
-// 								${dian.hasta}
-// 							</To>
-// 						</AuthorizedInvoices>
-// 					</InvoiceControl>
-// 					<InvoiceSource>
-// 						<IdentificationCode listAgencyID="6" listAgencyName="United Nations Economic Commission for Europe" listSchemeURI="urn:oasis:names:specification:ubl:codelist:gc:CountryIdentificationCode-2.1">
-// 							CO
-// 						</IdentificationCode>
-// 					</InvoiceSource>
-// 					<SoftwareProvider>
-// 						<ProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="8" schemeName="31">
-// 							${dian.cedula}
-// 						</ProviderID>
-// 						<SoftwareID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-// 							${dian.id}
-// 						</SoftwareID>
-// 					</SoftwareProvider>
-// 					<SoftwareSecurityCode schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-// 						${dian.SoftwareSecurityCode}
-// 					</SoftwareSecurityCode>
-// 					<AuthorizationProvider>
-// 						<AuthorizationProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">
-// 							${dian.cedula}
-// 						</AuthorizationProviderID>
-// 					</AuthorizationProvider>
-// 					<QRCode>
-// 						https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=${dian.cufe}
-// 					</QRCode>
-// 				</DianExtensions>
-// 			</ExtensionContent>
-// 		</UBLExtension>
-// 		${firma}
-// 	</UBLExtensions>`
-// }
-
+}
+    
 const versionXML = (dian, cufe) => {
 
     return `<UBLVersionID>
