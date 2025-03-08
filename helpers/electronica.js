@@ -29,8 +29,6 @@ const sendElectronica = async(invoice) => {
 
     const { ciudad, departamento } = await searchCity(data.city, data.department);
 
-
-
     //  SoftwareSecurityCode (Id Software + Pin + NroDocumentos)
     const SoftwareSecurityCode = crypto.createHash('sha384').update('37fa0107-a7c3-4f84-934c-6a12faa17b40' + '54565' + '50', 'utf8').digest('hex');
 
@@ -58,10 +56,6 @@ const sendElectronica = async(invoice) => {
         hora: `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}-05:00`,
     }
 
-
-
-
-
     let numberI = await Invoice.countDocuments({ prefix: dian.prefijo, send: true, electronica: true });
 
     numberI++;
@@ -70,7 +64,7 @@ const sendElectronica = async(invoice) => {
         return { ok: false, msg: 'Ha llegado al limite de facturas en esta resolucion' };
     }
 
-    numberI += 990000000;
+    numberI = 990000000;
 
     dian.number = numberI.toString();
 
@@ -93,25 +87,14 @@ const sendElectronica = async(invoice) => {
     // let firm = await firma();
 
     const url = 'https://vpfe-hab.dian.gov.co/WcfDianCustomerServices.svc?wsdl';
-    const _headXML = headXML();
-    // const _ublExtentionXML = ublExtentionXML(firm, dian, qrCode);
-    const _ublExtentionXML = ublExtentionXML(dian, qrCode);
-    const _versionXML = versionXML(dian, cufe);
-    const _accountingSuplierParty = accountingSuplierParty(datos, data, ciudad, departamento);
-    const _accountingCustomerParty = accountingCustomerParty();
-    const _payTotalLegal = payTotalLegal();
-    const _totalTributos = totalTributos();
-    const _invoiceLine = invoiceLine();
-    const _footerXML = footerXML();
 
-    //  PREPARAR XML
-    let XML = `${_headXML.toString()}${_ublExtentionXML.toString()}${_versionXML.toString()}${_accountingSuplierParty.toString()}${_accountingCustomerParty.toString()}${_payTotalLegal.toString()}${_totalTributos.toString()}${_invoiceLine.toString()}${_footerXML.toString()}`
-        // const XML = prepareXML(XMLBefore, dian);
+	const { clave, certificado } = await extraerCertificadoYClave('uploads/p12/firma.p12', 'Abcd.1234');  
 
-    const xml = await firma2(XML);
+	let xml = await generarFacturaUBL(invoice, dian, datos);
+	const xmlFirmado = firmarXML(xml, certificado, clave);
 
     // Escribir el archivo XML
-    await fs.writeFile(`uploads/xml/${dian.prefijo}${dian.number}.xml`, xml, (err) => {
+    await fs.writeFile(`uploads/xml/${dian.prefijo}${dian.number}.xml`, xmlFirmado, (err) => {
         if (err) {
             console.error('Error al escribir el archivo', err);
         } else {
@@ -121,7 +104,7 @@ const sendElectronica = async(invoice) => {
 			const zip = new AdmZip();
 
 			// Agrega el XML al ZIP con un nombre de archivo, por ejemplo, "invoice.xml"
-			zip.addFile(`${dian.prefijo}${dian.number}.xml`, Buffer.from(xml, 'utf8'));
+			zip.addFile(`${dian.prefijo}${dian.number}.xml`, Buffer.from(xmlFirmado, 'utf8'));
 
 			// Opcional: Puedes escribir el archivo ZIP a disco si lo necesitas
 			// zip.writeZip("invoice.zip");
@@ -137,901 +120,105 @@ const sendElectronica = async(invoice) => {
         }
     });
 
+	
+
 
 };
 
-const firma2 = async(xml) => {
+const extraerCertificadoYClave = async (rutaP12, password)  => {
+	try {
 
-    // Cargar archivo .p12
-    const p12File = fs.readFileSync('uploads/p12/firma.p12');
-    const password = 'Abcd.1234';
+		// Leer el archivo P12 como buffer
+		const p12Buffer = await fs.readFileSync(rutaP12);		
 
-    // Parsear el archivo .p12
-    const p12Asn1 = forge.asn1.fromDer(p12File.toString('binary'));
-    const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
-
-    // Extraer la clave privada y el certificado
-    let key, cert;
-    p12.safeContents.forEach(safeContent => {
-        safeContent.safeBags.forEach(safeBag => {
-            if (safeBag.type === forge.pki.oids.pkcs8ShroudedKeyBag) {
-                key = forge.pki.privateKeyToPem(safeBag.key);
-            } else if (safeBag.type === forge.pki.oids.certBag) {
-                cert = forge.pki.certificateToPem(safeBag.cert);
-            }
-        });
-    });
-
-    // Asegúrate de que tanto la clave privada como el certificado han sido extraídos
-    if (!key || !cert) {
-        throw new Error('No se pudo extraer la clave privada o el certificado del archivo .p12');
-    }
-
-    const doc = new DOMParser().parseFromString(xml, 'application/xml');
-
-    // Crear la firma
-    const sig = new SignedXml({
-        privateKey: key,
-        publicCert: cert
-    });
-
-    sig.addReference({
-        xpath: "//*[local-name(.)='UBLExtension']",
-        digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
-        transforms: ['http://www.w3.org/2000/09/xmldsig#enveloped-signature',
-            'http://www.w3.org/2001/10/xml-exc-c14n#',
-        ],
-        isEmptyUri: true
-    });
-
-    sig.signingKey = key;
-
-    // Incluir el certificado en la firma
-    sig.keyInfoProvider = {
-        getKeyInfo: () => `<X509Data><X509Certificate>${cert.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\n/g, '')}</X509Certificate></X509Data>`
-    };
-
-    sig.canonicalizationAlgorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-    sig.signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-
-
-    // Firmar el documento
-    sig.computeSignature(xml);
-
-    // Obtener el XML firmado
-    const signedXml = sig.getSignedXml();
-
-    // Parsear la firma resultante para insertarla en el nodo <ExtensionContent>
-    const signedDoc = new DOMParser().parseFromString(signedXml, 'application/xml');
-
-    // Seleccionar el nodo <ExtensionContent> donde debe ir la firma
-    const extensionContentNode = doc.getElementsByTagName('ExtensionContent')[1];
-    if (!extensionContentNode) {
-        throw new Error("No se encontró el nodo 'ExtensionContent' en el XML.");
-    }
-
-    // Importar el nodo de la firma en el documento original
-    const signatureElement = signedDoc.getElementsByTagName('Signature')[0];
-    const importedSignature = doc.importNode(signatureElement, true);
-
-    // Insertar la firma dentro de <ExtensionContent>
-    extensionContentNode.appendChild(importedSignature);
-
-    // Serializar el XML de vuelta a cadena
-    const finalXml = new XMLSerializer().serializeToString(doc);
-
-    // VALIDAR FIRMAS DEL XML
-    await validateFirma(finalXml, key, cert);
-
-    // Obtener el XML firmado
-    return finalXml;
-
-}
-
-const validateFirma = (xmlString, k, c) => {
-
-    // Parsear el XML firmado
-    const doc = new DOMParser().parseFromString(xmlString, 'application/xml');
-
-    // Utilizar xpath para encontrar el nodo de la firma
-    const select = xpath.useNamespaces({ "ds": "http://www.w3.org/2000/09/xmldsig#" });
-    const signatureNode = select("//*[local-name(.)='Signature']", doc)[0];
-    if (!signatureNode) {
-        throw new Error('No se encontró la firma en el documento.');
-    }
-
-    // Crear la instancia para validar la firma
-    const sig = new SignedXml();
-
-    // Cargar la firma desde el nodo Signature
-    sig.loadSignature(signatureNode);
-
-    // Extraer el certificado del nodo de firma
-    const certBase64 = sig.getKeyInfoContent({ publicCert: c }).match(/<X509Certificate>([^<]+)<\/X509Certificate>/)[1];
-    const certPem = `-----BEGIN CERTIFICATE-----\n${certBase64.match(/.{1,64}/g).join('\n')}\n-----END CERTIFICATE-----`;
-
-    // Parsear el certificado utilizando forge
-    const cert = forge.pki.certificateFromPem(certPem);
-
-    // Verificar la firma con respecto al contenido firmado
-    const isValid = sig.checkSignature(xmlString);
-
-    if (isValid) {
-        console.log('La firma es válida.');
-    } else {
-        console.log('La firma no es válida:', sig.validationErrors);
-    }
-
-}
-
-const firma = async() => {
-
-    // Cargar archivo .p12
-    const p12File = fs.readFileSync('uploads/p12/firma.p12');
-    const password = 'Abcd.1234';
-
-    // Parsear el archivo .p12 utilizando la clave
-    const p12Asn1 = forge.asn1.fromDer(p12File.toString('binary'));
-    const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
-
-    // Extraer la clave privada y el certificado del archivo .p12
-    let key, cert;
-    p12.safeContents.forEach(safeContent => {
-        safeContent.safeBags.forEach(safeBag => {
-            if (safeBag.type === forge.pki.oids.pkcs8ShroudedKeyBag) {
-                key = forge.pki.privateKeyToPem(safeBag.key);
-            } else if (safeBag.type === forge.pki.oids.certBag) {
-                cert = forge.pki.certificateToPem(safeBag.cert);
-            }
-        });
-    });
-
-    // Asegúrate de que tanto la clave privada como el certificado han sido extraídos
-    if (!key || !cert) {
-        throw new Error('No se pudo extraer la clave privada o el certificado del archivo .p12');
-    }
-
-    //  XML FIRMA
-    const xml = `<UBLExtension><ExtensionContent></ExtensionContent></UBLExtension>`;
-
-    // Crear la firma
-    const sig = new SignedXml({
-        privateKey: key,
-        publicCert: cert
-    });
-    sig.addReference({
-        xpath: "//*[local-name(.)='ExtensionContent']",
-        digestAlgorithm: "http://www.w3.org/2001/04/xmlenc#sha256",
-        transforms: ['http://www.w3.org/2000/09/xmldsig#enveloped-signature',
-            'http://www.w3.org/2001/10/xml-exc-c14n#',
-        ],
-        isEmptyUri: true
-    });
-    sig.signingKey = key;
-
-    // Incluir el certificado en la firma
-    sig.keyInfoProvider = {
-        getKeyInfo: () => `<X509Data><X509Certificate>${cert.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\n/g, '')}</X509Certificate></X509Data>`
-    };
-
-    sig.canonicalizationAlgorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-    sig.signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-
-
-    // Firmar el documento
-    sig.computeSignature(xml, {
-        prefix: "ds",
-        location: { reference: "//*[local-name(.)='ExtensionContent']" }
-    });
-
-    // Obtener el XML firmado
-    return sig.getSignedXml();
-
-}
-
-const creatXML = (invoice, dian, empresa) => {
-
-	// Construcción del XML de la factura electrónica en formato UBL 2.1
-	const invoiceXML = create({ version: '1.0', encoding: 'UTF-8' })
-	.ele('Invoice', {
-	  xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
-	  'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
-	  'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
-	  'xmlns:ext': 'urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2',
-	  'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#',
-	  'xmlns:sts': 'dian:gov:co:facturaelectronica:Structures-2-1',
-	  'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-	  'xsi:schemaLocation': 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd'
-	})
+		// Convertir el buffer a una cadena binaria para node-forge
+		const p12Asn1 = forge.asn1.fromDer(p12Buffer.toString('binary'));
+		// Procesar el archivo P12 usando la contraseña proporcionada
+		const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
 	
-	// Sección de UBLExtensions
-	.ele('ext:UBLExtensions')
-		// Primer UBLExtension: Datos DIAN
-		.ele('ext:UBLExtension')
-			.ele('ext:ExtensionContent')
-			.ele('sts:DianExtensions')
-				.ele('sts:InvoiceControl')
-					.ele('sts:InvoiceAuthorization').txt(`${dian.resolucion}`).up()
-					.ele('sts:AuthorizationPeriod')
-						.ele('cbc:StartDate')
-							.txt(`2019-01-19`)
-						.up()
-						.ele('cbc:EndDate')
-							.txt(`2030-01-19`)
-						.up()
-					.up()
-				.up() // Cierra sts:InvoiceControl
-			.up() // Cierra sts:DianExtensions
-			.up() // Cierra ExtensionContent
-		.up() // Cierra primer UBLExtension
+		let keyPem, certPem;
+		// Recorrer los safeContents para extraer la clave y el certificado
+		for (const safeContent of p12.safeContents) {
+		  for (const safeBag of safeContent.safeBags) {
+			if (!keyPem && safeBag.type === forge.pki.oids.pkcs8ShroudedKeyBag && safeBag.key) {
+			  keyPem = forge.pki.privateKeyToPem(safeBag.key);
+			} else if (!certPem && safeBag.type === forge.pki.oids.certBag && safeBag.cert) {
+			  certPem = forge.pki.certificateToPem(safeBag.cert);
+			}
+		  }
+		}
+	
+		if (!keyPem || !certPem) {
+		  throw new Error('No se pudo extraer la clave privada o el certificado del archivo P12');
+		}
 
-	  // Segundo UBLExtension: Firma digital
-		.ele('ext:UBLExtension')
-			.ele('ext:ExtensionContent')
-				
-			.up() // Cierra ExtensionContent (firma)
-		.up() // Cierra segundo UBLExtension
-
-  	.up() // Cierra ext:UBLExtensions
-  
-	// Datos básicos de la factura
-	.ele('cbc:UBLVersionID').txt('2.1').up()
-	.ele('cbc:CustomizationID').txt('DIAN-2.1').up()
-	.ele('cbc:ProfileID').txt('DIAN 2.1').up()
-	.ele('cbc:ID').txt('990000001').up()
-	.ele('cbc:IssueDate').txt('2025-03-05').up()
-	.ele('cbc:InvoiceTypeCode').txt('01').up()
-	.ele('cbc:DocumentCurrencyCode').txt('COP').up()
-	.ele('cbc:CUFE').txt('951b5042595602fa7c363316396a87177f95ebcc03a6d677d4d5bee369af41603c8c8bc726b5337b6d20b97ebb64cd97').up()
-  
-	// Información del Emisor
-	.ele('cac:AccountingSupplierParty')
-	  .ele('cac:Party')
-		.ele('cbc:EndpointID', { schemeID: '31' }).txt('88243048').up()
-		.ele('cac:PartyName')
-		  .ele('cbc:Name').txt('DISCOVERY SYSTEMS POS ELKIN DANIEL CASTILLO PEREZ').up()
-		.up()
-		.ele('cac:PartyTaxScheme')
-		  .ele('cbc:RegistrationName').txt('DISCOVERY SYSTEMS POS ELKIN DANIEL CASTILLO PEREZ').up()
-		  .ele('cbc:CompanyID').txt('88243048').up()
-		  .ele('cac:TaxScheme')
-			.ele('cbc:ID').txt('01').up()
-		  .up()
-		.up()
-		.ele('cac:PartyLegalEntity')
-		  .ele('cbc:RegistrationName').txt('DISCOVERY SYSTEMS POS ELKIN DANIEL CASTILLO PEREZ').up()
-		  .ele('cbc:CompanyID').txt('88243048').up()
-		  .ele('cac:RegistrationAddress')
-			.ele('cbc:CityName').txt('Bogotá').up()
-			.ele('cbc:CountrySubentity').txt('Cundinamarca').up()
-			.ele('cac:AddressLine')
-			  .ele('cbc:Line').txt('Calle 123 # 45-67').up()
-			.up()
-		  .up()
-		.up()
-	  .up()
-	.up() // Cierra AccountingSupplierParty
-  
-	// Información del Receptor
-	.ele('cac:AccountingCustomerParty')
-	  .ele('cac:Party')
-		.ele('cbc:EndpointID', { schemeID: '13' }).txt('22222222').up()
-		.ele('cac:PartyLegalEntity')
-		  .ele('cbc:RegistrationName').txt('Consumidor Final').up()
-		  .ele('cbc:CompanyID').txt('22222222').up()
-		  .ele('cac:RegistrationAddress')
-			.ele('cbc:CityName').txt('Medellín').up()
-			.ele('cbc:CountrySubentity').txt('Antioquia').up()
-			.ele('cac:AddressLine')
-			  .ele('cbc:Line').txt('Carrera 89 # 12-34').up()
-			.up()
-		  .up()
-		.up()
-	  .up()
-	.up() // Cierra AccountingCustomerParty
-  
-	// Detalle de la factura (InvoiceLine)
-	.ele('cac:InvoiceLine')
-	  .ele('cbc:ID').txt('1').up()
-	  .ele('cbc:InvoicedQuantity', { unitCode: 'EA' }).txt('10').up()
-	  .ele('cbc:LineExtensionAmount', { currencyID: 'COP' }).txt('100000').up()
-	  .ele('cac:Item')
-		.ele('cbc:Description').txt('Producto A').up()
-	  .up()
-	  .ele('cac:Price')
-		.ele('cbc:PriceAmount', { currencyID: 'COP' }).txt('10000').up()
-	  .up()
-	.up() // Cierra InvoiceLine
-  
-	// Totales e Impuestos (TaxTotal)
-	.ele('cac:TaxTotal')
-	  .ele('cbc:TaxAmount', { currencyID: 'COP' }).txt('19000').up()
-	  .ele('cac:TaxSubtotal')
-		.ele('cbc:TaxableAmount', { currencyID: 'COP' }).txt('100000').up()
-		.ele('cbc:TaxAmount', { currencyID: 'COP' }).txt('19000').up()
-		.ele('cac:TaxCategory')
-		  .ele('cbc:ID').txt('01').up()
-		  .ele('cac:TaxScheme')
-			.ele('cbc:ID').txt('01').up()
-		  .up()
-		.up()
-	  .up()
-	.up(); // Cierra TaxTotal
-
-	// Genera el XML final con formato bonito (prettyPrint)
-	const xmlOutput = invoiceXML.end({ prettyPrint: true });
-
-	// Visualización del XML generado
-	return xmlOutput;
-
-
+		let certificado = certPem.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\n/g, '')
+	
+		return { 
+			clave: keyPem, 
+			certificado : certificado.trim()
+		};
+		
+	} catch (error) {
+		console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+	}
 }
 
-const headXML = () => {
-    return `<?xml version="1.0" encoding="UTF-8"?><Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:schemaLocation="http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">`;
+function generarFacturaUBL(factura, dian, datos) {
+    const xml = create({ version: '1.0', encoding: 'UTF-8' })
+        .ele('Invoice', { xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2' })
+            .ele('ID').txt(dian.number).up()
+            .ele('IssueDate').txt(dian.fecha).up()
+            .ele('AccountingSupplierParty')
+                .ele('Party')
+                    .ele('PartyName')
+                        .ele('Name').txt(datos.name).up()
+                    .up()
+                .up()
+            .up()
+            .ele('AccountingCustomerParty')
+                .ele('Party')
+                    .ele('PartyName')
+                        .ele('Name').txt('Consumidor Final').up()
+                    .up()
+                .up()
+            .up()
+            .ele('LegalMonetaryTotal')
+                .ele('LineExtensionAmount', { currencyID: 'COP' }).txt(factura.amount).up()
+            .up()
+        .end({ prettyPrint: true });
+
+    return xml;
 }
 
-const ublExtentionXML = (dian, qrCode) => {
+function firmarXML(xml, certificado, clavePrivada) {
+    const doc = new DOMParser().parseFromString(xml);
+    const signature = create({ version: '1.0', encoding: 'UTF-8' })
+        .ele('Signature', { xmlns: 'http://www.w3.org/2000/09/xmldsig#' })
+            .ele('SignedInfo')
+                .ele('CanonicalizationMethod', { Algorithm: 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' }).up()
+                .ele('SignatureMethod', { Algorithm: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256' }).up()
+                .ele('Reference', { URI: '' })
+                    .ele('DigestMethod', { Algorithm: 'http://www.w3.org/2001/04/xmlenc#sha256' }).up()
+                    .ele('DigestValue').txt(crypto.createHash('sha256').update(xml).digest('base64')).up()
+                .up()
+            .up()
+            .ele('SignatureValue').txt('...').up()
+            .ele('KeyInfo')
+                .ele('X509Data')
+                    .ele('X509Certificate').txt(certificado).up()
+                .up()
+            .up()
+        .end({ prettyPrint: true });
 
-        return `<UBLExtensions>
-		<UBLExtension>
-			<ExtensionContent>
-				<DianExtensions>
-					<InvoiceControl>
-						<InvoiceAuthorization>
-							${dian.resolucion}
-						</InvoiceAuthorization>
-						<AuthorizationPeriod>
-							<StartDate>
-								19-01-2019
-							</StartDate>
-							<EndDate>
-								19-01-2030
-							</EndDate>
-						</AuthorizationPeriod>
-						<AuthorizedInvoices>
-							<Prefix>
-								${dian.prefijo}
-							</Prefix>
-							<From>
-								${dian.desde}
-							</From>
-							<To>
-								${dian.hasta}
-							</To>
-						</AuthorizedInvoices>
-					</InvoiceControl>
-					<InvoiceSource>
-						<IdentificationCode listAgencyID="6" listAgencyName="United Nations Economic Commission for Europe" listSchemeURI="urn:oasis:names:specification:ubl:codelist:gc:CountryIdentificationCode-2.1">
-							CO
-						</IdentificationCode>
-					</InvoiceSource>
-					<SoftwareProvider>
-						<ProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="8" schemeName="31">
-							${dian.cedula}
-						</ProviderID>
-						<SoftwareID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-							${dian.id}
-						</SoftwareID>
-					</SoftwareProvider>
-					<SoftwareSecurityCode schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-						${dian.SoftwareSecurityCode}
-					</SoftwareSecurityCode>
-					<AuthorizationProvider>
-						<AuthorizationProviderID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="4" schemeName="31">
-							${dian.cedula}
-						</AuthorizationProviderID>
-					</AuthorizationProvider>
-					<QRCode>
-						https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey=${dian.cufe}
-					</QRCode>
-				</DianExtensions>
-			</ExtensionContent>
-		</UBLExtension>
-		<UBLExtension>
-			<ExtensionContent>
-			</ExtensionContent>
-		</UBLExtension>
-	</UBLExtensions>`
-}
-    
-const versionXML = (dian, cufe) => {
+    const signatureNode = new DOMParser().parseFromString(signature).documentElement;
+    doc.documentElement.appendChild(signatureNode);
 
-    return `<UBLVersionID>
-		UBL 2.1
-	</UBLVersionID>
-	<CustomizationID>
-		10
-	</CustomizationID>
-	<ProfileID>
-		DIAN 2.1: Factura Electrónica de Venta
-	</ProfileID>
-	<ProfileExecutionID>
-		1
-	</ProfileExecutionID>
-	<ID>
-		${dian.number}
-	</ID>
-	<UUID schemeID="1" schemeName="CUFE-SHA384">
-		${dian.cufe}
-	</UUID>
-	<IssueDate>
-      ${dian.fecha}
-	</IssueDate>
-	<IssueTime>
-      ${dian.hora}
-	</IssueTime>
-	<InvoiceTypeCode>
-		01
-	</InvoiceTypeCode>
-	<DocumentCurrencyCode>
-		COP
-	</DocumentCurrencyCode>
-	<LineCountNumeric>
-		1
-	</LineCountNumeric>`;
-}
-
-//TODO: MODIFICAR EL accountingSuplierParty
-const accountingSuplierParty = (datos, data, ciudad, departamento) => {
-
-    return `<AccountingSupplierParty>
-		<AdditionalAccountID>
-			2
-		</AdditionalAccountID>
-		<Party>
-			<IndustryClassificationCode>
-				9511
-			</IndustryClassificationCode>
-			<PartyName>
-				<Name>
-					DISCOVERY SYSTEMS POS
-				</Name>
-			</PartyName>
-			<PhysicalLocation>
-				<Address>
-					<ID>
-						68001
-					</ID>
-					<CityName>
-						BUCARAMANGA
-					</CityName>
-					<CountrySubentity>
-						SANTANDER
-					</CountrySubentity>
-					<CountrySubentityCode>
-						68
-					</CountrySubentityCode>
-					<AddressLine>
-						<Line>
-							CR 18 34 43 CC PAEZ LC 310
-						</Line>
-					</AddressLine>
-					<Country>
-						<IdentificationCode>
-							CO
-						</IdentificationCode>
-						<Name languageID="es">
-							Colombia
-						</Name>
-					</Country>
-				</Address>
-			</PhysicalLocation>
-			<PartyTaxScheme>
-				<RegistrationName>
-					ELKIN DANIEL CASTILLO PEREZ
-				</RegistrationName>
-				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="6" schemeName="13">
-					88243048
-				</CompanyID>
-				<TaxLevelCode listName="48">
-					R-99-PN
-				</TaxLevelCode>
-				<RegistrationAddress>
-					<ID>
-						68001
-					</ID>
-					<CityName>
-						BUCARAMANGA
-					</CityName>
-					<CountrySubentity>
-						SANTANDER
-					</CountrySubentity>
-					<CountrySubentityCode>
-						68
-					</CountrySubentityCode>
-					<AddressLine>
-						<Line>
-							CR 18 34 43 CC PAEZ LC 310
-						</Line>
-					</AddressLine>
-					<Country>
-						<IdentificationCode>
-							CO
-						</IdentificationCode>
-						<Name languageID="es">
-							Colombia
-						</Name>
-					</Country>
-				</RegistrationAddress>
-				<TaxScheme>
-					<ID>
-						01
-					</ID>
-					<Name>
-						IVA
-					</Name>
-				</TaxScheme>
-			</PartyTaxScheme>
-			<PartyLegalEntity>
-				<RegistrationName>
-					ELKIN DANIEL CASTILLO PEREZ
-				</RegistrationName>
-				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="6" schemeName="13">
-					88243048
-				</CompanyID>
-				<CorporateRegistrationScheme>
-					<ID>
-						SETP
-					</ID>
-				</CorporateRegistrationScheme>
-			</PartyLegalEntity>
-			<Contact>
-				<Telephone>
-					3155962626
-				</Telephone>
-				<ElectronicMail>
-					elkindanielcastillo@gmail.com
-				</ElectronicMail>
-			</Contact>
-		</Party>
-	</AccountingSupplierParty>`
-
-}
-
-//TODO: MODIFICAR EL accountingCustomerParty
-const accountingCustomerParty = () => {
-
-    return `<AccountingCustomerParty>
-		<AdditionalAccountID>
-			1
-		</AdditionalAccountID>
-		<Party>
-			<PartyName>
-				<Name>
-					ETICO SERRANO GOMEZ
-				</Name>
-			</PartyName>
-			<PartyTaxScheme>
-				<RegistrationName>
-					ETICO SERRANO GOMEZ
-				</RegistrationName>
-				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="7" schemeName="31">
-					892300678
-				</CompanyID>
-				<TaxLevelCode listName="48">
-					R-99-PN
-				</TaxLevelCode>
-				<TaxScheme>
-					<ID>
-						01
-					</ID>
-					<Name>
-						IVA
-					</Name>
-				</TaxScheme>
-			</PartyTaxScheme>
-			<PartyLegalEntity>
-				<RegistrationName>
-					ETICO SERRANO GOMEZ
-				</RegistrationName>
-				<CompanyID schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)" schemeID="7" schemeName="31">
-					892300678
-				</CompanyID>
-				<CorporateRegistrationScheme>
-					<ID>
-						SETP
-					</ID>
-				</CorporateRegistrationScheme>
-			</PartyLegalEntity>
-			<Contact>
-				<Telephone>
-					3156889563
-				</Telephone>
-				<ElectronicMail>
-					FARMACIA3160@ETICOS.COM
-				</ElectronicMail>
-			</Contact>
-		</Party>
-	</AccountingCustomerParty>`
-
-}
-
-//TODO: MODIFICAR EL payTotalLegal
-const payTotalLegal = () => {
-    return `<PaymentMeans>
-		<ID>
-			1
-		</ID>
-		<PaymentMeansCode>
-			10
-		</PaymentMeansCode>
-		<PaymentDueDate>         
-         ${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}
-		</PaymentDueDate>
-	</PaymentMeans>`
-}
-
-//TODO: MODIFICAR EL totalTributos
-const totalTributos = () => {
-
-    return `<TaxTotal>
-		<TaxAmount currencyID="COP">
-			4750.00
-		</TaxAmount>
-		<TaxSubtotal>
-			<TaxableAmount currencyID="COP">
-				25000.00
-			</TaxableAmount>
-			<TaxAmount currencyID="COP">
-				4750.00
-			</TaxAmount>
-			<TaxCategory>
-				<Percent>
-					19.00
-				</Percent>
-				<TaxScheme>
-					<ID>
-						01
-					</ID>
-					<Name>
-						IVA
-					</Name>
-				</TaxScheme>
-			</TaxCategory>
-		</TaxSubtotal>
-	</TaxTotal>
-   <LegalMonetaryTotal>
-		<LineExtensionAmount currencyID="COP">
-			25000.00
-		</LineExtensionAmount>
-		<TaxExclusiveAmount currencyID="COP">
-			25000.00
-		</TaxExclusiveAmount>
-		<TaxInclusiveAmount currencyID="COP">
-			29750.00
-		</TaxInclusiveAmount>
-		<PayableAmount currencyID="COP">
-			29750.00
-		</PayableAmount>
-	</LegalMonetaryTotal>`
-
-}
-
-//TODO: MODIFICAR EL invoiceLine
-const invoiceLine = () => {
-
-    return `<InvoiceLine>
-		<ID>
-			1
-		</ID>
-		<InvoicedQuantity unitCode="94">
-			1.00
-		</InvoicedQuantity>
-		<LineExtensionAmount currencyID="COP">
-			25000.00
-		</LineExtensionAmount>
-		<TaxTotal>
-			<TaxAmount currencyID="COP">
-				4750.00
-			</TaxAmount>
-			<TaxSubtotal>
-				<TaxableAmount currencyID="COP">
-					25000.00
-				</TaxableAmount>
-				<TaxAmount currencyID="COP">
-					4750.00
-				</TaxAmount>
-				<TaxCategory>
-					<Percent>
-						19.00
-					</Percent>
-					<TaxScheme>
-						<ID>
-							01
-						</ID>
-						<Name>
-							IVA
-						</Name>
-					</TaxScheme>
-				</TaxCategory>
-			</TaxSubtotal>
-		</TaxTotal>
-		<Item>
-			<Description>
-				cargador v8 marca speedsong  sg-53C
-			</Description>
-			<StandardItemIdentification>
-				<ID schemeID="999">
-					23082024
-				</ID>
-			</StandardItemIdentification>
-		</Item>
-		<Price>
-			<PriceAmount currencyID="COP">
-				25000.00
-			</PriceAmount>
-			<BaseQuantity unitCode="94">
-				1.00
-			</BaseQuantity>
-		</Price>
-	</InvoiceLine>`
-
-}
-
-const footerXML = () => { return "</Invoice>" }
-
-const prepareXML = (xml, dian) => {
-    return `
-   
-   <?xml version="1.0" encoding="UTF-8"?>
-<AttachedDocument xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:schemaLocation="http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" xmlns:sts="dian:gov:co:facturaelectronica:Structures-2-1" xmlns="urn:oasis:names:specification:ubl:schema:xsd:AttachedDocument-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-	<UBLVersionID>
-		UBL 2.1
-	</UBLVersionID>
-	<CustomizationID>
-		Documentos adjuntos
-	</CustomizationID>
-	<ProfileID>
-		Factura Electrónica de Venta
-	</ProfileID>
-	<ProfileExecutionID>
-		1
-	</ProfileExecutionID>
-	<ID>
-		${dian.id}
-	</ID>
-	<IssueDate>
-		${dian.fecha}
-	</IssueDate>
-	<IssueTime>
-		${dian.hora}
-	</IssueTime>
-	<DocumentType>
-		Contenedor de Factura Electrónica
-	</DocumentType>
-	<ParentDocumentID>
-		${dian.prefijo}${dian.number}
-	</ParentDocumentID>
-	<SenderParty>
-		<PartyTaxScheme>
-			<RegistrationName>
-				ELKIN DANIEL CASTILLO PEREZ
-			</RegistrationName>
-			<CompanyID schemeID="6" schemeName="13" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-				88243048
-			</CompanyID>
-			<TaxLevelCode listName="48">
-				R-99-PN
-			</TaxLevelCode>
-			<RegistrationAddress>
-				<ID>
-					68001
-				</ID>
-				<CityName>
-					BUCARAMANGA
-				</CityName>
-				<CountrySubentity>
-					SANTANDER
-				</CountrySubentity>
-				<CountrySubentityCode>
-					68
-				</CountrySubentityCode>
-				<AddressLine>
-					<Line>
-						CR 18 34 43 CC PAEZ LC 310
-					</Line>
-				</AddressLine>
-				<Country>
-					<IdentificationCode>
-						CO
-					</IdentificationCode>
-					<Name languageID="es">
-						Colombia
-					</Name>
-				</Country>
-			</RegistrationAddress>
-			<TaxScheme>
-				<ID>
-					01
-				</ID>
-				<Name>
-					IVA
-				</Name>
-			</TaxScheme>
-		</PartyTaxScheme>
-	</SenderParty>
-	<ReceiverParty>
-		<PartyTaxScheme>
-			<RegistrationName>
-				ETICO SERRANO GOMEZ
-			</RegistrationName>
-			<CompanyID schemeID="7" schemeName="31" schemeAgencyID="195" schemeAgencyName="CO, DIAN (Dirección de Impuestos y Aduanas Nacionales)">
-				892300678
-			</CompanyID>
-			<TaxLevelCode listName="48">
-				R-99-PN
-			</TaxLevelCode>
-			<TaxScheme>
-				<ID>
-					01
-				</ID>
-				<Name>
-					IVA
-				</Name>
-			</TaxScheme>
-		</PartyTaxScheme>
-	</ReceiverParty>
-	<Attachment>
-		<ExternalReference>
-			<MimeCode>
-				text/xml
-			</MimeCode>
-			<EncodingCode>
-				UTF-8
-			</EncodingCode>
-			<Description>
-				<![CDATA[ ${xml} ]]>
-			</Description>
-		</ExternalReference>
-	</Attachment>
-	<ParentDocumentLineReference>
-		<LineID>
-			1
-		</LineID>
-		<DocumentReference>
-			<ID>
-            ${dian.prefijo}${dian.number}
-			</ID>
-			<UUID schemeName="CUFE-SHA384">
-				${dian.cufe}
-			</UUID>
-			<IssueDate>
-				2024-08-23
-			</IssueDate>
-			<DocumentType>
-				ApplicationResponse
-			</DocumentType>
-			<Attachment>
-				<ExternalReference>
-					<MimeCode>
-						text/xml
-					</MimeCode>
-					<EncodingCode>
-						UTF-8
-					</EncodingCode>
-					<Description>
-						<![CDATA[ ${xml} ]]>
-					</Description>
-				</ExternalReference>
-			</Attachment>
-			<ResultOfVerification>
-				<ValidatorID>
-					Unidad Especial Dirección de Impuestos y Aduanas Nacionales
-				</ValidatorID>
-				<ValidationResultCode>
-					02
-				</ValidationResultCode>
-				<ValidationDate>
-					2024-08-23
-				</ValidationDate>
-				<ValidationTime>
-					16:08:51-05:00
-				</ValidationTime>
-			</ResultOfVerification>
-		</DocumentReference>
-	</ParentDocumentLineReference>
-</AttachedDocument>`;
+    return doc.toString();
 }
 
 

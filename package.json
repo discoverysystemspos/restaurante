@@ -37,6 +37,7 @@
         "short-uuid": "^5.2.0",
         "soap": "^1.0.3",
         "uuid": "^8.3.2",
+        "xadesjs": "^2.4.4",
         "xml-crypto": "^6.0.0",
         "xmlbuilder2": "^3.1.1",
         "xmldom": "^0.6.0",
