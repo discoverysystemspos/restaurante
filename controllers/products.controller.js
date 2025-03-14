@@ -6,6 +6,42 @@ const LogProducts = require('../models/log.products.model');
 const { expirateProduct } = require('../helpers/products-stock');
 
 /** =====================================================================
+ *  GET PRODUCTS QUERY
+=========================================================================*/
+const getProductsQuery = async(req, res = response) => {
+
+    try {
+
+        const {desde, hasta, sort, ...query} = req.body;
+
+        const [products, total] = await Promise.all([
+            Product.find(query)
+            .populate('cajero', 'name')
+            .populate('invoice')
+            .skip(desde)
+            .limit(hasta)
+            .sort(sort),
+            Product.countDocuments(query)
+        ]);
+
+        res.json({
+            ok: true,
+            products,
+            total
+        });
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+}
+
+
+/** =====================================================================
  *  GET PRODUCTS
 =========================================================================*/
 const getProducts = async(req, res = response) => {
@@ -1007,5 +1043,6 @@ module.exports = {
     ivaAllProducts,
     getProductsDeletes,
     resetInv,
-    createProductExcel
+    createProductExcel,
+    getProductsQuery
 };
