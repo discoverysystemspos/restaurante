@@ -9,6 +9,7 @@ const Invoice = require('../models/invoices.model');
 
 // MODELS
 const Pedido = require('../models/pedidos.model');
+const Client = require('../models/clients.model');
 
 /** =====================================================================
  *  GET PEDIDO
@@ -111,7 +112,14 @@ const getPedidoOne = async(req, res = response) => {
 
         const pedido = await Pedido.findById(id)
             .populate('client', 'name cedula phone email address city tip')
-            .populate('products.product', 'name code')
+            .populate({
+                path: 'products.product',
+                model: 'Product',
+                populate: {
+                    path: 'taxid',
+                    model: 'Tax',
+                }
+            })
             .populate('user', 'name');
 
         res.json({
@@ -155,9 +163,6 @@ const postPedidos = async(req, res = response) => {
         } else {
             client = req.cid;
         }
-
-
-
 
         const pedido = new Pedido(req.body);
         const referencia = req.body.referencia;
@@ -213,6 +218,47 @@ const postPedidos = async(req, res = response) => {
 /** =====================================================================
  *  POST PEDIDO
 =========================================================================*/
+const postPedidosLocal = async(req, res = response) => {
+
+    try {
+        
+        const pedido = new Pedido(req.body);
+
+        const client = await Client.findOne({cedula: pedido.cedula});
+        if (client) {
+            pedido.client = client.cid;
+        }else{
+            pedido.clientedb = false;
+        }        
+        
+        // VALIDATE CODE
+        const validateReference = await Pedido.findOne({ referencia: pedido.referencia });
+        if (validateReference) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Ya existe un pedido con esta referencia de pago'
+            });
+        }
+
+        await pedido.save();
+
+        res.json({
+            ok: true,
+            pedido
+        });
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+
+};
 
 /** =====================================================================
  *  POST FEEDBACK
@@ -309,5 +355,6 @@ module.exports = {
     getPedidosClient,
     getPedidoOne,
     UpdateStatusPedido,
-    postFeedBack
+    postFeedBack,
+    postPedidosLocal
 }

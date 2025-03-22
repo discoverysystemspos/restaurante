@@ -53,6 +53,19 @@ const PaymentSchema = Schema({
     }
 });
 
+// Cliente SCHEMA
+const ClienteSchema = Schema({
+    first_name: {
+        type: String
+    },
+    family_name: {
+        type: String
+    },
+    cedula: {
+        type: Number
+    }
+});
+
 // INVOICE SCHEMA
 const PedidoSchema = Schema({
 
@@ -61,8 +74,7 @@ const PedidoSchema = Schema({
     },
     client: {
         type: Schema.Types.ObjectId,
-        ref: 'Clients',
-        require: true
+        ref: 'Clients'
     },
     user: {
         type: Schema.Types.ObjectId,
@@ -74,6 +86,11 @@ const PedidoSchema = Schema({
         require: true
     },
     payments: [PaymentSchema],
+    cliente: ClienteSchema,
+    clientedb: {
+        type: Boolean,
+        default: true
+    },
     ciudad: {
         type: String
     },
@@ -103,6 +120,10 @@ const PedidoSchema = Schema({
     transaccion: {
         type: String,
         unique: true
+    },
+    local: {
+        type: Boolean,
+        default: false
     },
     confirmado: {
         type: Boolean,

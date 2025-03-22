@@ -18,6 +18,7 @@ const getProductsQuery = async(req, res = response) => {
             Product.find(query)
             .populate('cajero', 'name')
             .populate('invoice')
+            .populate('taxid')
             .skip(desde)
             .limit(hasta)
             .sort(sort),

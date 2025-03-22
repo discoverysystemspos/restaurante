@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT, validarClientJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getPedidos, postPedidos, getPedidosClient, getPedidoOne, UpdateStatusPedido, postFeedBack } = require('../controllers/pedidos.controller');
+const { getPedidos, postPedidos, getPedidosClient, getPedidoOne, UpdateStatusPedido, postFeedBack, postPedidosLocal } = require('../controllers/pedidos.controller');
 
 const router = Router();
 
@@ -47,9 +47,17 @@ router.post('/', [
         validarCampos
     ],
     postPedidos);
+
 /** =====================================================================
-*  CREATE PEDIDOS
+ *  CREATE PEDIDOS LOCAL
 =========================================================================*/
+router.post('/local', [
+        validarClientJWT,
+        validarJWT,
+        check('products', 'No ha seleccionado ningun producto').not().isEmpty(),
+        validarCampos
+    ],
+    postPedidosLocal);
 
 /** =====================================================================
 *  CREATE FEEDBACK
