@@ -80,7 +80,8 @@ const getClients = async(req, res = response) => {
 =========================================================================*/
 const createClient = async(req, res = response) => {
 
-    const cedula = req.body.cedula;
+    let cedula = req.body.cedula;
+    cedula = String(cedula).trim();
 
     try {
 
@@ -95,6 +96,7 @@ const createClient = async(req, res = response) => {
 
         // SAVE CLIENT
         const client = new Client(req.body);
+        client.cedula = cedula;
         await client.save();
 
         res.json({
