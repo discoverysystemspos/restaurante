@@ -223,7 +223,6 @@ const postPedidosLocal = async(req, res = response) => {
     try {
         
         const pedido = new Pedido(req.body);
-        pedido.cedula = pedido.cedula.trim();
 
         const client = await Client.findOne({cedula: pedido.cedula});
         if (client) {
