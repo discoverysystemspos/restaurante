@@ -388,7 +388,7 @@ const productsExcel = async(req, res = response) => {
 
     try {
 
-        const products = await Product.find({}, 'code name type cost inventario gain price wholesale department stock bought sold returned damaged fecha');
+        const products = await Product.find({}, 'code sku name type cost inventario gain price wholesale department stock bought sold returned damaged fecha');
 
         res.json({
             ok: true,
