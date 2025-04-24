@@ -149,6 +149,10 @@ const DatoSchema = Schema({
         type: Boolean,
         default: false
     },
+    basculakg: {
+        type: Boolean,
+        default: true
+    },
     basculaimp: {
         type: Boolean,
         default: false

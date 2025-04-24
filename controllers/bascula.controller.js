@@ -16,6 +16,7 @@ const getPeso = async(req, res = response) => {
 
         const type = req.query.type || '1';
         const path = req.query.path || 'COM1';
+        const kg = req.query.kg || 'true';
 
         // Configura el puerto serial Nuevo
         const port = new SerialPort({
@@ -63,7 +64,7 @@ const getPeso = async(req, res = response) => {
                 clearTimeout(timeout); // Cancela el timeout
                 res.json({ 
                   ok: true, 
-                  pesos: peso.toFixed(3) 
+                  pesos: (kg === 'true')? peso.toFixed(3) : peso.toFixed(3) / 1000 
                 });
                 port.close(); // Cierra la conexión
               }
@@ -116,7 +117,7 @@ const getPeso = async(req, res = response) => {
                 clearTimeout(timeout2); // Cancela el timeout
                 res.json({ 
                   ok: true, 
-                  pesos: peso.toFixed(3) 
+                  pesos: (kg === 'true')? peso.toFixed(3) : peso.toFixed(3) / 1000 
                 });
                 port.close(); // Cierra la conexión
               }
