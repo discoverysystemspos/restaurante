@@ -205,24 +205,24 @@ const getCostProducts = async(req, res = response) => {
 
     try {
 
-        const product = await Product.find({ status: true, out: false });
+        const products = await Product.find({ status: true, out: false });
 
         let costo = 0;
         let precio = 0;
         let inventario = 0;
+        
+        for (let i = 0; i < products.length; i++) {
+            
+            const product = products[i];
 
-        for (let i = 0; i < product.length; i++) {
-
-            if (product[i].type !== 'Paquete') {
-
-                const stock = product[i].inventario;
-
-                inventario += stock;
-                costo += (stock * product[i].cost);
-                precio += (stock * product[i].price);
+            if (product !== 'Paquete') {                
+                inventario += product.inventario;
+                costo += (product.inventario * product.cost);
+                precio += (product.inventario * product.price);
             }
 
         }
+        
 
         res.json({
             ok: true,
