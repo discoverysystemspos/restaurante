@@ -432,6 +432,25 @@ const returnStock = async(products, invoice, user) => {
                         productKit.inventario += log.qty * kits[i].qty;
                         const productUpdate = await Product.findByIdAndUpdate(id, productKit, { new: true, useFindAndModify: false });
 
+                        let habiaKit = productKit.inventario - (log.qty * kits[i].qty);
+
+                        let logKit = {
+                            code: productKit.code,
+                            name: productKit.name,
+                            description: factura,
+                            type: 'Devolución',
+                            befored: habiaKit,
+                            qty: log.qty * kits[i].qty,
+                            stock: productKit.inventario,
+                            cajero: user,
+                            department: productKit.department,
+                            departamento: productKit.department.name
+                        }
+
+                        const logProducts = new LogProducts(logKit);
+
+                        await logProducts.save();
+
                     }
 
                 }
