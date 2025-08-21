@@ -9,10 +9,7 @@ const autoIncrement = require('mongoose-auto-increment');
 const dbConection = async() => {
 
     try {
-
-        /* The code `const connection = await mongoose.connect(process.env.DB_CNN, { useNewUrlParser:
-        true, useUnifiedTopology: true, useCreateIndex: true });` is establishing a connection to a
-        MongoDB database using the `mongoose` library. */
+        
         const connection = await mongoose.connect(process.env.DB_CNN);
 
         autoIncrement.initialize(connection);
