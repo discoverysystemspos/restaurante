@@ -833,12 +833,8 @@ const postQueryInvoice = async(req, res = response) => {
         let iva = 0;
 
         invoices.forEach(invoice => {
-
-            if (!invoice.base) {
-                invoice.base = invoice.amount;
-            }
-
-            montos += invoice.base;
+           
+            montos += invoice.amount;
             costos += invoice.cost;
             iva += invoice.iva;
         });
