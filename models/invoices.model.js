@@ -254,6 +254,9 @@ const InvoiceSchema = Schema({
     uuid: {
         type: String,
     },
+    ncomanda: {
+        type: Date,
+    },
     alquiler: {
         type: Schema.Types.ObjectId,
         ref: 'Alquileres'
