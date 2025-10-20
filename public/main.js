@@ -52039,7 +52039,7 @@ const environment = {
         url: 'simids.com',
         phone: '573007325684'
     },
-    base_url: 'https://tallerbikefastelectric.poslatino.com/api',
+    base_url: 'http://localhost:3000/api',
     local_url: 'https://castitoner.com/api',
     dataico_url: 'https://api.dataico.com/dataico_api/v2'
 };
