@@ -11,6 +11,11 @@ const privSchema = Schema({
         default: true
     },
 
+    mpv: {
+        type: Boolean,
+        default: true
+    }
+
 });
 
 const UserSchema = Schema({

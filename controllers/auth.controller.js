@@ -244,7 +244,8 @@ const renewJWT = async(req, res = response) => {
     if (!usuario.privilegios) {
         usuario.privilegios = {
             cierre: true,
-            comandas: true
+            comandas: true,
+            mpv: true
         }
     }
 
