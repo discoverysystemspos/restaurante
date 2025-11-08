@@ -29,6 +29,18 @@ const NotificacionesSchema = Schema({
     }
 });
 
+const PrinterSchema = Schema({
+    name: {
+        type: String,
+    },
+    type: {
+        type: String,
+    },
+    interface: {
+        type: String,
+    }
+});
+
 const DatoSchema = Schema({
 
     name: {
@@ -282,6 +294,13 @@ const DatoSchema = Schema({
     fechakardex: {
         type: Date
     },
+
+    ipserver:{
+        type: String,
+        default: '192.168.1.150'
+    },
+
+    printers: [PrinterSchema],
 
     fecha: {
         type: Date,
