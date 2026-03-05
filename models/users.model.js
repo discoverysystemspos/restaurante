@@ -11,6 +11,19 @@ const privSchema = Schema({
         default: true
     },
 
+    // Modificar el precio en parqueadero
+    parqueaderop: {
+        type: Boolean,
+        default: true
+    },
+
+    // Eliminar Producto en venta
+    delpv:{
+        type: Boolean,
+        default: true
+    },
+
+    // Mayoreo producto en venta
     mpv: {
         type: Boolean,
         default: true
