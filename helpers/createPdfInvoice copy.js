@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
 
-// layout: 'landscape' UPDATESSS
+// layout: 'landscape' 
 
 function createInvoicePDF(invoice, empresa, path) {
     let doc = new PDFDocument({ size: "A4" });
