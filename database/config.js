@@ -10,11 +10,7 @@ const dbConection = async() => {
 
     try {
         
-        const connection = await mongoose.connect(process.env.DB_CNN, {
-            useCreateIndex: true,
-            useUnifiedTopology: true,
-            useNewUrlParser: true
-        });
+        const connection = await mongoose.connect(process.env.DB_CNN);
 
         autoIncrement.initialize(connection);
         console.log('DB Online');
